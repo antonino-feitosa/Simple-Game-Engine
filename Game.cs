@@ -5,8 +5,8 @@ public class Game {
 
     protected int _fps = 32;
 
-    protected InputSystem _input_system;
-    protected RenderSystem _render_system;
+    protected ISystem _render_system;
+    protected LinkedList<ISystem> _systems;
 
     private bool _running;
 
@@ -14,9 +14,10 @@ public class Game {
     protected LinkedList <Entity> _entities_destroy;
     protected Dictionary<Entity, LinkedListNode<Entity>> _entities_reference;
 
-    public Game(){
-        _input_system = new InputSystem();
-        _render_system = new RenderSystem();
+    public Game(ISystem render_system, int fps = 32){
+        _fps = fps;
+        _render_system = render_system;
+        _systems = new LinkedList<ISystem>();
         _entities = new LinkedList<Entity>();
         _entities_destroy = new LinkedList<Entity>();
         _entities_reference = new Dictionary<Entity, LinkedListNode<Entity>>();
@@ -33,23 +34,33 @@ public class Game {
         _entities_destroy.AddLast(e);
     }
 
+    public void AttachSystem(ISystem system){
+        _systems.AddLast(system);
+    }
+
     public void Start (){
         _running = true;
-        _input_system.Start();
         _render_system.Start();
+        foreach(var sys in _systems){
+            sys.Start();
+        }
     }
 
     public void Stop(){
         _running = false;
-        _input_system.Finish();
         _render_system.Finish();
+        foreach(var sys in _systems){
+            sys.Finish();
+        }
     }
 
     public async void Run(){
         long end;
         long start = Stopwatch.GetTimestamp();
         while(_running){
-            _input_system.Process();
+            foreach(var sys in _systems){
+                sys.Process();
+            }
 
             foreach(var ent in _entities){
                 ent.Update();
