@@ -4,7 +4,7 @@ using System.Diagnostics;
 public class Game
 {
 
-    protected int _fps = 32;
+    protected int _frame_rate_ticks = 1;
 
     protected ISubSystem _render_system;
     protected LinkedList<ISubSystem> _systems;
@@ -15,9 +15,9 @@ public class Game
     protected LinkedList<Entity> _entities_destroy;
     protected Dictionary<Entity, LinkedListNode<Entity>> _entities_reference;
 
-    public Game(ISubSystem render_system, int fps = 32)
+    public Game(ISubSystem render_system, int fps = 1)
     {
-        _fps = fps;
+        _frame_rate_ticks = 1000 / fps; // 1000 milliseconds
         _render_system = render_system;
         _systems = new LinkedList<ISubSystem>();
         _entities = new LinkedList<Entity>();
@@ -25,9 +25,8 @@ public class Game
         _entities_reference = new Dictionary<Entity, LinkedListNode<Entity>>();
     }
 
-    public Entity CreateEntity()
+    public Entity RegisterEntity(Entity e)
     {
-        Entity e = new Entity();
         var node = _entities.AddLast(e);
         _entities_reference.Add(e, node);
         return e;
@@ -63,12 +62,11 @@ public class Game
         }
     }
 
-    public async void Run()
-    {
-        long end;
-        long start = Stopwatch.GetTimestamp();
+    public void Run()
+    {   
         while (_running)
         {
+            DateTime startTime = DateTime.Now;
             foreach (var sys in _systems)
             {
                 sys.Process();
@@ -87,13 +85,11 @@ public class Game
 
             _render_system.Process();
 
-            end = Stopwatch.GetTimestamp();
-            start = end;
-            int wait = (int)((end - start) - _fps * 10); // 10,000 Ticks form a millisecond.
-            if (wait > 0)
-            {
-                await Task.Delay(wait);
-            }
+            DateTime endTime = DateTime.Now;
+            TimeSpan elapsedTime = endTime - startTime;
+            int wait = _frame_rate_ticks - (int)(elapsedTime.TotalMilliseconds);
+            if (wait > 0) Thread.Sleep(wait);
+            startTime = DateTime.Now;
         }
     }
 }

@@ -27,6 +27,8 @@ public class ConsoleInputSystem : SubSystem<ConsoleInputComponent>
     protected bool _running;
     protected Game _game;
 
+    private object Lock = new object();
+
     public ConsoleInputSystem(Game game)
     {
         _game = game;
@@ -53,34 +55,44 @@ public class ConsoleInputSystem : SubSystem<ConsoleInputComponent>
             }
             else
             {
-                _update.Add(keyInfo.KeyChar);
+                lock (Lock)
+                {
+                    _update.Add(keyInfo.KeyChar);
+                }
             }
             Thread.Yield();
         }
     }
 
-    public override void Process()
+    private void FireEvents(HashSet<char> keys, Func<ConsoleInputComponent, char, bool> method)
     {
-        var upkeys = _pressed.Except(_update);
-        var downkeys = _update.Except(_pressed);
-        _pressed.IntersectWith(_update);
-        _update.Clear();
-
-        foreach (var comp in _components)
-        {
-            foreach (var up in upkeys)
-            {
-                comp.OnKeyDown(up);
-            }
-            foreach (var down in downkeys)
-            {
-                comp.OnKeyDown(down);
-            }
-            foreach (var press in _pressed)
-            {
-                comp.OnKeyDown(press);
+        foreach (var k in keys){
+            foreach (var comp in _components){
+                if (method(comp, k))
+                    break;
             }
         }
+    }
+
+    public override void Process()
+    {
+        HashSet<char> upkeys, downkeys;
+        lock (Lock)
+        {
+            upkeys = _pressed.Except(_update).ToHashSet();
+            downkeys = _update.Except(_pressed).ToHashSet();
+            _pressed.Clear();
+            _pressed.UnionWith(_update);
+            _update.Clear();
+        }
+
+        Func<ConsoleInputComponent, char, bool> keyUpFunction = (obj, key) => obj.OnKeyUp(key);
+        Func<ConsoleInputComponent, char, bool> keyDownFunction = (obj, key) => obj.OnKeyDown(key);
+        Func<ConsoleInputComponent, char, bool> keyPressFunction = (obj, key) => obj.OnKeyPressed(key);
+
+        FireEvents(upkeys, keyUpFunction);
+        FireEvents(downkeys, keyDownFunction);
+        FireEvents(_pressed, keyPressFunction);
     }
 
     public override void Finish()

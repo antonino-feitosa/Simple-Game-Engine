@@ -5,7 +5,7 @@ public interface ISubSystem
     void Start();
 }
 
-public abstract class SubSystem<T> where T : Component
+public class SubSystem<T> : ISubSystem where T : Component
 {
 
     protected HashSet<T> _components;
