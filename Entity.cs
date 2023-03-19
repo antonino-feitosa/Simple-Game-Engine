@@ -1,9 +1,11 @@
 
 public class Entity {
 
+    private Game _game;
     protected HashSet<Component> _components;
 
-    public Entity(){
+    public Entity(Game game){
+        _game = game;
         _components = new HashSet<Component>();
     }
 
@@ -13,13 +15,20 @@ public class Entity {
 
     public void Start(){
         foreach(var comp in _components){
-            comp.Start();
+            comp._entity = this;
+            comp.OnStart();
         }
     }
 
     public void Update(){
         foreach(var comp in _components){
-            comp.Update();
+            comp.OnUpdate();
+        }
+    }
+
+    public void Finish(){
+        foreach(var comp in _components){
+            comp.DoDestroy();
         }
     }
 
@@ -29,5 +38,9 @@ public class Entity {
 
     public void DetachComponent(Component comp){
         _components.Remove(comp);
+    }
+
+    public void Destroy(){
+        _game.DestroyEntity(this);
     }
 }

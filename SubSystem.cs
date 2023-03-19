@@ -1,42 +1,37 @@
-public interface ISubSystem
-{
-    void Finish();
-    void Process();
-    void Start();
-}
 
-public class SubSystem<T> : ISubSystem where T : Component
+public class SubSystem
 {
 
-    protected HashSet<T> _components;
+    protected Game? _game;
+    protected HashSet<Component> _components;
 
     public SubSystem()
     {
-        _components = new HashSet<T>();
+        _components = new HashSet<Component>();
     }
 
-    public virtual void Register(T comp)
+    public HashSet<T> GetComponents<T>() where T : Component {
+        return _components.Cast<T>().ToHashSet();
+    }
+
+    public virtual void Register(Component comp)
     {
         _components.Add(comp);
     }
 
-    public virtual void Deregister(T comp)
+    public virtual void Deregister(Component comp)
     {
         _components.Remove(comp);
     }
 
-    public virtual void Start()
+    public virtual void SetGame(Game game)
     {
-
+        _game = game;
     }
 
-    public virtual void Process()
-    {
+    public virtual void Start() { }
 
-    }
+    public virtual void Process() { }
 
-    public virtual void Finish()
-    {
-
-    }
+    public virtual void Finish() { }
 }

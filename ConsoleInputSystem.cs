@@ -18,20 +18,18 @@ public class ConsoleInputComponent : Component
     }
 }
 
-public class ConsoleInputSystem : SubSystem<ConsoleInputComponent>
+public class ConsoleInputSystem : SubSystem
 {
 
     protected HashSet<char> _pressed;
     protected HashSet<char> _update;
     protected Thread _thread;
     protected bool _running;
-    protected Game _game;
 
     private object Lock = new object();
 
-    public ConsoleInputSystem(Game game)
+    public ConsoleInputSystem()
     {
-        _game = game;
         _update = new HashSet<char>();
         _pressed = new HashSet<char>();
         _thread = new Thread(new ThreadStart(this.ListenInput));
@@ -51,7 +49,7 @@ public class ConsoleInputSystem : SubSystem<ConsoleInputComponent>
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
             if (keyInfo.Key == ConsoleKey.C && keyInfo.Modifiers == ConsoleModifiers.Control)
             {
-                _game.Stop();
+                _game?.Stop();
             }
             else
             {
@@ -66,8 +64,10 @@ public class ConsoleInputSystem : SubSystem<ConsoleInputComponent>
 
     private void FireEvents(HashSet<char> keys, Func<ConsoleInputComponent, char, bool> method)
     {
-        foreach (var k in keys){
-            foreach (var comp in _components){
+        foreach (var k in keys)
+        {
+            foreach (var comp in GetComponents<ConsoleInputComponent>())
+            {
                 if (method(comp, k))
                     break;
             }

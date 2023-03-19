@@ -1,13 +1,11 @@
 
-using System.Diagnostics;
-
 public class Game
 {
 
     protected int _frame_rate_ticks = 1;
 
-    protected ISubSystem _render_system;
-    protected LinkedList<ISubSystem> _systems;
+    protected SubSystem _render_system;
+    protected LinkedList<SubSystem> _systems;
 
     private bool _running;
 
@@ -15,18 +13,19 @@ public class Game
     protected LinkedList<Entity> _entities_destroy;
     protected Dictionary<Entity, LinkedListNode<Entity>> _entities_reference;
 
-    public Game(ISubSystem render_system, int fps = 1)
+    public Game(SubSystem render_system, int fps = 1)
     {
         _frame_rate_ticks = 1000 / fps; // 1000 milliseconds
         _render_system = render_system;
-        _systems = new LinkedList<ISubSystem>();
+        _systems = new LinkedList<SubSystem>();
         _entities = new LinkedList<Entity>();
         _entities_destroy = new LinkedList<Entity>();
         _entities_reference = new Dictionary<Entity, LinkedListNode<Entity>>();
     }
 
-    public Entity RegisterEntity(Entity e)
+    public Entity CreateEntity()
     {
+        Entity e = new Entity(this);
         var node = _entities.AddLast(e);
         _entities_reference.Add(e, node);
         return e;
@@ -37,8 +36,9 @@ public class Game
         _entities_destroy.AddLast(e);
     }
 
-    public void AttachSystem(ISubSystem system)
+    public void AttachSystem(SubSystem system)
     {
+        system.SetGame(this);
         _systems.AddLast(system);
     }
 
@@ -79,6 +79,7 @@ public class Game
             foreach (var del in _entities_destroy)
             {
                 var node = _entities_reference[del];
+                del.Finish();
                 _entities.Remove(node);
             }
             _entities_destroy.Clear();

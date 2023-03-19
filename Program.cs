@@ -1,11 +1,11 @@
 ﻿
-var render = new SubSystem<Component>();
-var game = new Game(render);
+var console = new ConsoleInputSystem();
+var render = new SubSystem();
 
-var console = new ConsoleInputSystem(game);
+var game = new Game(render);
 game.AttachSystem(console);
 
-var entity = new Entity();
+var entity = game.CreateEntity();
 var echo = new EchoComponent();
 entity.AttachComponent(echo);
 console.Register(echo);
