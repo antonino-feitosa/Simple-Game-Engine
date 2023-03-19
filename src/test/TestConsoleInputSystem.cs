@@ -1,18 +1,22 @@
-﻿
-var console = new ConsoleInputSystem();
-var render = new SubSystem();
 
-var game = new Game(render);
-game.AttachSystem(console);
+public class TestConsoleInputSystem {
 
-var entity = game.CreateEntity();
-var echo = new EchoComponent();
-entity.AttachComponent(echo);
-console.Register(echo);
+    public static void Main(){
+        var console = new ConsoleInputSystem();
+        var render = new SubSystem();
 
-game.Start();
-game.Run();
+        var game = new Game(render);
+        game.AttachSystem(console);
 
+        var entity = game.CreateEntity();
+        var echo = new EchoComponent();
+        entity.AttachComponent(echo);
+        console.Register(echo);
+
+        game.Start();
+        game.Run();
+    }
+}
 
 class EchoComponent : ConsoleInputComponent {
 
