@@ -16,6 +16,7 @@ public class SubSystem
 
     public virtual void Register(Component comp)
     {
+        comp._system = this;
         _components.Add(comp);
     }
 

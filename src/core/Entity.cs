@@ -28,7 +28,7 @@ public class Entity {
 
     public void Finish(){
         foreach(var comp in _components){
-            comp.DoDestroy();
+            comp.OnDestroy();
         }
     }
 

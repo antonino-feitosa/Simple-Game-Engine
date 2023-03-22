@@ -3,11 +3,7 @@ public class Component
 {
     protected internal Entity? _entity;
 
-    protected internal HashSet <SubSystem> _systems;
-
-    public Component(){
-        _systems = new HashSet<SubSystem>();
-    }
+    protected internal SubSystem? _system;
 
     public virtual void OnStart() { }
 
@@ -15,10 +11,8 @@ public class Component
 
     public virtual void OnDestroy() { }
 
-    protected internal void DoDestroy(){
-        OnDestroy();
-        foreach(var sys in _systems){
-            sys.Deregister(this);
-        }
+    public T? GetSystem<T>() where T : SubSystem
+    {
+        return _system as T;
     }
 }
