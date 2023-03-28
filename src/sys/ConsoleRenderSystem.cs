@@ -82,8 +82,9 @@ public class ConsoleRenderComponent : Component
         Background = Color.Black;
     }
 
-    public override void OnUpdate()
+    protected internal override void DoUpdate()
     {
+        base.DoUpdate();
         GetSystem<ConsoleRenderSystem>()?.Render(this);
     }
 }

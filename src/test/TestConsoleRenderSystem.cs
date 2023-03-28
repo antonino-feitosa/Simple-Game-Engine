@@ -8,7 +8,7 @@ public class TestConsoleRenderSystem {
 
         sys.Start();
 
-        comp.OnUpdate();
+        comp.DoUpdate();
 
         sys.Process();
         sys.Finish();

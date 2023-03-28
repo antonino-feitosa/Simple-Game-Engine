@@ -16,19 +16,19 @@ public class Entity {
     public void Start(){
         foreach(var comp in _components){
             comp._entity = this;
-            comp.OnStart();
+            comp.DoStart();
         }
     }
 
     public void Update(){
         foreach(var comp in _components){
-            comp.OnUpdate();
+            comp.DoUpdate();
         }
     }
 
     public void Finish(){
         foreach(var comp in _components){
-            comp.OnDestroy();
+            comp.DoDestroy();
         }
     }
 

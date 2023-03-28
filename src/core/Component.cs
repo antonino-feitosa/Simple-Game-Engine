@@ -5,11 +5,23 @@ public class Component
 
     protected internal SubSystem? _system;
 
-    public virtual void OnStart() { }
+    protected internal virtual void DoStart() {
+        OnStart();
+    }
 
-    public virtual void OnUpdate() { }
+    protected internal virtual void DoUpdate() {
+        OnUpdate();
+    }
 
-    public virtual void OnDestroy() { }
+    protected internal virtual void DoDestroy() {
+        OnDestroy();
+    }
+
+    protected virtual void OnStart() { }
+
+    protected virtual void OnUpdate() { }
+
+    protected virtual void OnDestroy() { }
 
     public T? GetSystem<T>() where T : SubSystem
     {
