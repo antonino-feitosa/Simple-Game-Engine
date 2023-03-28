@@ -114,7 +114,7 @@ public class TilemapMotionSystem : SubSystem
     {
         Console.WriteLine("Process");
         while (_free.Count() > 0)
-        { // TODO topologic sort
+        {
             var node = _free.First();
             Console.WriteLine("Free" + node);
             _free.Remove(node);
@@ -127,11 +127,10 @@ public class TilemapMotionSystem : SubSystem
                 node.Pos = dest;
                 foreach (var c in node._collision)
                 {
-                    c._collision.Remove(node);
-                    if (c._collision.Count() == 0)
+                    dest = _moving[c];
+                    if (!_objects.ContainsKey(dest))
                     {
                         _free.Add(c);
-                        _collision.Remove(c);
                     }
                 }
                 _collision.Remove(node);
@@ -157,7 +156,6 @@ public class TilemapMotionSystem : SubSystem
 
     private void DoCollision(TilemapMotionComponent comp, TilePosition destination){
         var other = _objects[destination];
-        comp._collision.Add(other);
         other._collision.Add(comp);
         _collision.Add(comp);
         _collision.Add(other);
