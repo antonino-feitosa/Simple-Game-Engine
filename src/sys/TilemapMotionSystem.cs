@@ -72,6 +72,11 @@ public class TilemapMotionComponent : Component
             _count = UpdateTime;
             base.DoUpdate();
         }
+        foreach (var comp in _collision)
+        {
+            OnCollision(comp);
+        }
+        _collision.Clear();
     }
 
     protected internal override void DoDestroy()
@@ -79,11 +84,6 @@ public class TilemapMotionComponent : Component
         var sys = GetSystem<TilemapMotionSystem>();
         sys?.Deregister(this);
         base.DoDestroy();
-        foreach (var comp in _collision)
-        {
-            OnCollision(comp);
-        }
-        _collision.Clear();
     }
 
     public void Move(Direction direction)
@@ -134,5 +134,12 @@ public class TilemapMotionSystem : SubSystem
         base.Register(comp);
         if (comp is TilemapMotionComponent t)
             _objects.Add(t.Pos, t);
+    }
+
+    public override void Deregister(Component comp)
+    {
+        base.Deregister(comp);
+        if (comp is TilemapMotionComponent t)
+            _objects.Remove(t.Pos);
     }
 }
