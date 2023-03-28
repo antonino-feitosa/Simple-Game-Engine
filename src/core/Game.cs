@@ -23,11 +23,13 @@ public class Game
         _entities_reference = new Dictionary<Entity, LinkedListNode<Entity>>();
     }
 
-    public Entity CreateEntity()
+    public Entity CreateEntity(params Component[] components)
     {
         Entity e = new Entity(this);
         var node = _entities.AddLast(e);
         _entities_reference.Add(e, node);
+        foreach (var c in components)
+            e.AttachComponent(c);
         return e;
     }
 
@@ -63,7 +65,7 @@ public class Game
     }
 
     public void Run()
-    {   
+    {
         while (_running)
         {
             DateTime startTime = DateTime.Now;
@@ -91,6 +93,7 @@ public class Game
             int wait = _frame_rate_ticks - (int)(elapsedTime.TotalMilliseconds);
             if (wait > 0) Thread.Sleep(wait);
             startTime = DateTime.Now;
+            Console.WriteLine("Next Step");
         }
     }
 }

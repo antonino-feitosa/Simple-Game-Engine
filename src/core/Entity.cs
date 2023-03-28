@@ -4,9 +4,11 @@ public class Entity {
     private Game _game;
     protected HashSet<Component> _components;
 
-    public Entity(Game game){
+    public Entity(Game game, params Component [] components){
         _game = game;
         _components = new HashSet<Component>();
+        foreach(var c in components)
+            AttachComponent(c);
     }
 
     public T? GetComponent<T>() where T: Component {

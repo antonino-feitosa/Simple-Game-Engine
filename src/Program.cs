@@ -3,8 +3,9 @@ public class Program {
 
     public static void Main(){
 
-         TestConsoleRenderSystem.Main();
+        //TestConsoleRenderSystem.Main();
 
         //TestConsoleInputSystem.Main();
+        TestTilemapMotionSystem.Main();
     }
 }

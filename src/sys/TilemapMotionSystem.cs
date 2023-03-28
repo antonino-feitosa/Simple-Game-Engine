@@ -33,7 +33,7 @@ public class TilePosition
 
     public TilePosition RelativeTo(Direction direction)
     {
-        return new TilePosition(X + direction.X, Y = direction.Y);
+        return new TilePosition(X + direction.X, Y + direction.Y);
     }
 
     public override bool Equals(object? obj)
@@ -44,6 +44,11 @@ public class TilePosition
     public override int GetHashCode()
     {
         return HashCode.Combine(X, Y);
+    }
+
+    public override string ToString()
+    {
+        return "<" + X + "," + Y + ">";
     }
 }
 
@@ -72,11 +77,6 @@ public class TilemapMotionComponent : Component
             _count = UpdateTime;
             base.DoUpdate();
         }
-        foreach (var comp in _collision)
-        {
-            OnCollision(comp);
-        }
-        _collision.Clear();
     }
 
     protected internal override void DoDestroy()
@@ -97,10 +97,56 @@ public class TilemapMotionComponent : Component
 public class TilemapMotionSystem : SubSystem
 {
     protected Dictionary<TilePosition, TilemapMotionComponent> _objects;
+    protected Dictionary<TilemapMotionComponent, TilePosition> _moving;
+
+    protected HashSet<TilemapMotionComponent> _free;
+    protected HashSet<TilemapMotionComponent> _collision;
 
     public TilemapMotionSystem()
     {
+        _free = new HashSet<TilemapMotionComponent>();
+        _collision = new HashSet<TilemapMotionComponent>();
+        _moving = new Dictionary<TilemapMotionComponent, TilePosition>();
         _objects = new Dictionary<TilePosition, TilemapMotionComponent>();
+    }
+
+    public override void Process()
+    {
+        Console.WriteLine("Process");
+        while (_free.Count() > 0)
+        { // TODO topologic sort
+            var node = _free.First();
+            Console.WriteLine("Free" + node);
+            _free.Remove(node);
+            var dest = _moving[node];
+            if(_objects.ContainsKey(dest)){
+                DoCollision(node, dest);
+            } else {
+                _objects.Remove(node.Pos);
+                _objects.Add(dest, node);
+                node.Pos = dest;
+                foreach (var c in node._collision)
+                {
+                    c._collision.Remove(node);
+                    if (c._collision.Count() == 0)
+                    {
+                        _free.Add(c);
+                        _collision.Remove(c);
+                    }
+                }
+                _collision.Remove(node);
+                node._collision.Clear();
+            }
+        }
+        foreach (var comp in _collision)
+        {
+            foreach (var c in comp._collision)
+            {
+                comp.OnCollision(c);
+            }
+        }
+        _collision.Clear();
+        _moving.Clear();
     }
 
     public bool CanMoveTo(TilemapMotionComponent comp, Direction direction)
@@ -109,23 +155,26 @@ public class TilemapMotionSystem : SubSystem
         return !_objects.ContainsKey(destination);
     }
 
+    private void DoCollision(TilemapMotionComponent comp, TilePosition destination){
+        var other = _objects[destination];
+        comp._collision.Add(other);
+        other._collision.Add(comp);
+        _collision.Add(comp);
+        _collision.Add(other);
+    }
+
     public void Move(TilemapMotionComponent comp, Direction direction)
     {
+        
         var destination = comp.Pos.RelativeTo(direction);
+        _moving.Add(comp, destination);
         if (_objects.ContainsKey(destination))
         {
-            var other = _objects.GetValueOrDefault(destination);
-            if (other != null)
-            {
-                comp._collision.Add(other);
-                other._collision.Add(comp);
-            }
-            else throw new ArgumentException("There is not object associated with the position " + destination);
+            DoCollision(comp, destination);
         }
         else
         {
-            _objects.Remove(destination);
-            _objects.Add(destination, comp);
+            _free.Add(comp);
         }
     }
 
