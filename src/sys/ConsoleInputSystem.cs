@@ -2,20 +2,9 @@
 public class ConsoleInputComponent : Component
 {
 
-    public virtual bool OnKeyDown(char c)
-    {
-        return false;
-    }
-
-    public virtual bool OnKeyUp(char c)
-    {
-        return false;
-    }
-
-    public virtual bool OnKeyPressed(char c)
-    {
-        return false;
-    }
+    public Predicate<char>? OnKeyDown;
+    public Predicate<char>? OnKeyUp;
+    public Predicate<char>? OnKeyPressed;
 }
 
 public class ConsoleInputSystem : SubSystem
@@ -86,9 +75,9 @@ public class ConsoleInputSystem : SubSystem
             _update.Clear();
         }
 
-        Func<ConsoleInputComponent, char, bool> keyUpFunction = (obj, key) => obj.OnKeyUp(key);
-        Func<ConsoleInputComponent, char, bool> keyDownFunction = (obj, key) => obj.OnKeyDown(key);
-        Func<ConsoleInputComponent, char, bool> keyPressFunction = (obj, key) => obj.OnKeyPressed(key);
+        Func<ConsoleInputComponent, char, bool> keyUpFunction = (obj, key) => obj.OnKeyUp?.Invoke(key) ?? false;
+        Func<ConsoleInputComponent, char, bool> keyDownFunction = (obj, key) => obj.OnKeyDown?.Invoke(key) ?? false;
+        Func<ConsoleInputComponent, char, bool> keyPressFunction = (obj, key) => obj.OnKeyPressed?.Invoke(key) ?? false;
 
         FireEvents(upkeys, keyUpFunction);
         FireEvents(downkeys, keyDownFunction);

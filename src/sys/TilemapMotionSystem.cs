@@ -51,10 +51,25 @@ public class TilePosition
         return "<" + X + "," + Y + ">";
     }
 }
+/*
+public class TilemapMotionCompositeComponent : Component {
+
+    public void Move(Direction direction)
+    {
+        
+    }
+
+    public virtual void OnCollision(TilemapMotionComponent other) {
+
+        
+    }
+}*/
 
 public class TilemapMotionComponent : Component
 {
     public int UpdateTime;
+
+    public Action<TilemapMotionComponent>? OnCollision;
 
     protected internal TilePosition Pos;
 
@@ -90,8 +105,6 @@ public class TilemapMotionComponent : Component
     {
         GetSystem<TilemapMotionSystem>()?.Move(this, direction);
     }
-
-    public virtual void OnCollision(TilemapMotionComponent other) { }
 }
 
 public class TilemapMotionSystem : SubSystem
@@ -112,16 +125,17 @@ public class TilemapMotionSystem : SubSystem
 
     public override void Process()
     {
-        Console.WriteLine("Process");
         while (_free.Count() > 0)
         {
             var node = _free.First();
-            Console.WriteLine("Free" + node);
             _free.Remove(node);
             var dest = _moving[node];
-            if(_objects.ContainsKey(dest)){
+            if (_objects.ContainsKey(dest))
+            {
                 DoCollision(node, dest);
-            } else {
+            }
+            else
+            {
                 _objects.Remove(node.Pos);
                 _objects.Add(dest, node);
                 node.Pos = dest;
@@ -141,7 +155,7 @@ public class TilemapMotionSystem : SubSystem
         {
             foreach (var c in comp._collision)
             {
-                comp.OnCollision(c);
+                comp.OnCollision?.Invoke(c);
             }
         }
         _collision.Clear();
@@ -154,7 +168,8 @@ public class TilemapMotionSystem : SubSystem
         return !_objects.ContainsKey(destination);
     }
 
-    private void DoCollision(TilemapMotionComponent comp, TilePosition destination){
+    private void DoCollision(TilemapMotionComponent comp, TilePosition destination)
+    {
         var other = _objects[destination];
         other._collision.Add(comp);
         _collision.Add(comp);
@@ -163,7 +178,7 @@ public class TilemapMotionSystem : SubSystem
 
     public void Move(TilemapMotionComponent comp, Direction direction)
     {
-        
+
         var destination = comp.Pos.RelativeTo(direction);
         _moving.Add(comp, destination);
         if (_objects.ContainsKey(destination))
@@ -180,7 +195,13 @@ public class TilemapMotionSystem : SubSystem
     {
         base.Register(comp);
         if (comp is TilemapMotionComponent t)
+        {
+            if (_objects.ContainsKey(t.Pos))
+            {
+                throw new ArgumentException("The position is taken: " + t.Pos);
+            }
             _objects.Add(t.Pos, t);
+        }
     }
 
     public override void Deregister(Component comp)
