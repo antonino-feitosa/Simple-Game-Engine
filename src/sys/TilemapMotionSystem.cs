@@ -51,19 +51,6 @@ public class TilePosition
         return "<" + X + "," + Y + ">";
     }
 }
-/*
-public class TilemapMotionCompositeComponent : Component {
-
-    public void Move(Direction direction)
-    {
-        
-    }
-
-    public virtual void OnCollision(TilemapMotionComponent other) {
-
-        
-    }
-}*/
 
 public class TilemapMotionComponent : Component
 {
