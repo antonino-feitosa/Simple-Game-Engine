@@ -6,6 +6,7 @@ public class Program {
         //TestConsoleRenderSystem.Main();
 
         //TestConsoleInputSystem.Main();
-        TestTilemapMotionSystem.Main();
+        //TestTilemapMotionSystem.Main();
+        TestCollision2System.Main();
     }
 }

@@ -5,22 +5,33 @@ public class Vector2
     public double X;
     public double Y;
 
-    public Vector2(double x = 0, double y = 0)
+    public Vector2(double x = 0, double y = 0) { Set(x, y); }
+
+    public Vector2(Vector2 vet) { Set(vet); }
+
+    public void Set(Vector2 vet) { Set(vet.X, vet.Y); }
+
+    public void Set(double x, double y)
     {
         X = x;
         Y = y;
     }
 
-    public Vector2(Vector2 vet)
+    public void ToUnit()
     {
-        X = vet.X;
-        Y = vet.Y;
+        double i_mag = 1.0 / Magnitude();
+        Scale(i_mag);
     }
 
-    public void Copy(Vector2 vet)
+    public double Magnitude()
     {
-        X = vet.X;
-        Y = vet.Y;
+        return Math.Sqrt(X * X + Y * Y);
+    }
+
+    public void Scale(double c)
+    {
+        X *= c;
+        Y *= c;
     }
 
     public void Addition(Vector2 vet)
@@ -39,6 +50,19 @@ public class Vector2
     {
         return Math.Sqrt(Math.Pow(X - vet.X, 2) + Math.Pow(Y - vet.Y, 2));
     }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is Vector2 vet)
+        {
+            return X == vet.X && Y == vet.Y;
+        }
+        return base.Equals(obj);
+    }
+
+    public override int GetHashCode() { return HashCode.Combine(X, Y); }
+
+    public override string ToString() { return "(" + X + "," + Y + ")"; }
 }
 
 public class Collision2Component : Component
@@ -48,33 +72,41 @@ public class Collision2Component : Component
 
     protected internal List<Collision2Component> _collision;
 
+    protected internal double _speed;
     protected internal double _radius;
     protected internal Vector2 _position;
     protected internal Vector2 _velocity;
     protected internal Vector2 _destination;
 
-    public Collision2Component(Vector2 position, double radius)
+    public Collision2Component(Vector2 position, double radius, double speed = 1.0)
     {
         _radius = radius;
+        _speed = speed;
         _position = new Vector2(position);
-        _destination = _position;
+        _destination = new Vector2(position);
         _velocity = new Vector2();
         _collision = new List<Collision2Component>();
     }
 
+    public bool IsMoving()
+    {
+        return !_position.Equals(_destination);
+    }
+
     public void MoveTo(Vector2 destination)
     {
-        _velocity.Copy(_position);
-        _destination.Copy(destination);
-        _velocity.Subtract(destination);
+        _destination.Set(destination);
+        _velocity.Set(_destination);
+        _velocity.Subtract(_position);
+        _velocity.ToUnit();
+        _velocity.Scale(_speed);
         GetSystem<Collision2System>()?.StartMoving(this);
     }
 
     public void Stop()
     {
-        _velocity.X = 0;
-        _velocity.Y = 0;
-        _destination.Copy(_position);
+        _velocity.Set(0, 0);
+        _destination.Set(_position);
     }
 
     protected internal virtual void DoCollision()
@@ -120,7 +152,7 @@ public class Collision2System : SubSystem
             comp._position.Addition(comp._velocity);
             foreach (var other in components)
             {
-                if (InCollision(comp, other))
+                if (!comp.Equals(other) && InCollision(comp, other))
                 {
                     moved = false;
                     comp._collision.Add(other);
@@ -137,6 +169,7 @@ public class Collision2System : SubSystem
             }
             else
             {
+                comp._position.Set(old);
                 comp.Stop();
                 comp.DoEndMove();
                 comp.DoCollision();

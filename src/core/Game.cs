@@ -66,18 +66,15 @@ public class Game
 
     public void Run()
     {
+        foreach (var ent in _entities) { ent.Start(); }
         while (_running)
         {
             DateTime startTime = DateTime.Now;
-            foreach (var sys in _systems)
-            {
-                sys.Process();
-            }
 
-            foreach (var ent in _entities)
-            {
-                ent.Update();
-            }
+            foreach (var sys in _systems) { sys.Process(); }
+            
+            foreach (var ent in _entities) { ent.Update(); }
+
             foreach (var del in _entities_destroy)
             {
                 var node = _entities_reference[del];

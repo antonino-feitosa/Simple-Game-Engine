@@ -11,6 +11,10 @@
 
 ### In Progress
 
-- [] Criar sistema de colisão 2D baseado em cálculo vetorial ~1d 2023-04-04
+### Testing
 
 ### Done
+
+- [x] Criar sistema de colisão 2D baseado em cálculo vetorial ~1d 2023-04-04
+
+
