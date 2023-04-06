@@ -1,7 +1,7 @@
 
 public class TestConsoleInputSystem {
 
-    public static void Main(){
+    public static void Main1(){
         var console = new ConsoleInputSystem();
         var render = new SubSystem();
 

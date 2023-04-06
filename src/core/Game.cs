@@ -1,7 +1,6 @@
 
 public class Game
 {
-
     protected int _frame_rate_ticks = 1;
 
     protected SubSystem _render_system;

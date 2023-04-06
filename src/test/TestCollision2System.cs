@@ -1,7 +1,7 @@
 
 public class TestCollision2System {
 
-    public static void Main(){
+    public static void Main1(){
         var collision = new Collision2System();
         var render = new SubSystem();
 

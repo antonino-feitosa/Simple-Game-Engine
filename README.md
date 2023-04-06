@@ -47,3 +47,10 @@ class EchoComponent : ConsoleInputComponent {
 }
 
 ```
+
+
+### Dependency
+
+[Avalonia UI](https://avaloniaui.net)
+
+WindowsBase to Sound

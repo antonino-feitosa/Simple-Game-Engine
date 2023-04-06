@@ -29,7 +29,7 @@ public class EchoComp : TilemapMotionComponent
 public class TestTilemapMotionSystem
 {
 
-    public static void Main()
+    public static void Main1()
     {
         var sys = new TilemapMotionSystem();
         var a = new EchoComp("A", Direction.RIGHT, new TilePosition(0, 0));
