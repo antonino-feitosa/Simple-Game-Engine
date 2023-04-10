@@ -1,4 +1,6 @@
 
+namespace SGE;
+
 public class Entity {
 
     private Game _game;

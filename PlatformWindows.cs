@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Media;
 
-public class Sound
+public class SoundWindows
 {
     private static int _countId = 0;
     private readonly int _id;
@@ -13,9 +13,9 @@ public class Sound
     public readonly String Path;
 
     protected internal MediaPlayer _sound;
-    protected internal Platform _game;
+    protected internal PlatformWindows _game;
 
-    protected internal Sound(string path, MediaPlayer sound, Platform game)
+    protected internal SoundWindows(string path, MediaPlayer sound, PlatformWindows game)
     {
         _id = _countId++;
         Path = path;
@@ -23,9 +23,10 @@ public class Sound
         _game = game;
     }
 
-    public double Volume {
-        get {return _sound.Volume; }
-        set {if(value >= 0 && value <= 1.0) _sound.Volume = value;}
+    public double Volume
+    {
+        get { return _sound.Volume; }
+        set { if (value >= 0 && value <= 1.0) _sound.Volume = value; }
     }
 
     public void Play()
@@ -40,7 +41,8 @@ public class Sound
         _sound.Play();
     }
 
-    public void Pause(){
+    public void Pause()
+    {
         _sound.Pause();
     }
 
@@ -49,7 +51,7 @@ public class Sound
         _sound.Stop();
     }
 
-    public override bool Equals(object? obj) { return obj is Sound sound ? sound._id == _id : base.Equals(obj); }
+    public override bool Equals(object? obj) { return obj is SoundWindows sound ? sound._id == _id : base.Equals(obj); }
 
     public override int GetHashCode() { return HashCode.Combine(_id); }
 
@@ -57,7 +59,8 @@ public class Sound
 
     private static void DoLoop(object? sender, EventArgs e)
     {
-        if(sender != null){
+        if (sender != null)
+        {
             MediaPlayer mediaPlayer = (MediaPlayer)sender;
             mediaPlayer.Position = TimeSpan.Zero;
             mediaPlayer.Play();
@@ -65,7 +68,7 @@ public class Sound
     }
 }
 
-public class Image
+public class ImageWindows
 {
     private static int _countId = 0;
     private readonly int _id;
@@ -75,9 +78,9 @@ public class Image
     public readonly int Height;
 
     protected internal Bitmap _bitmap;
-    protected internal Platform _game;
+    protected internal PlatformWindows _game;
 
-    protected internal Image(string path, Bitmap bitmap, Platform game)
+    protected internal ImageWindows(string path, Bitmap bitmap, PlatformWindows game)
     {
         _id = _countId++;
         Path = path;
@@ -92,7 +95,7 @@ public class Image
         _game.Render(this, x, y);
     }
 
-    public override bool Equals(object? obj) { return obj is Image img ? img._id == _id : base.Equals(obj); }
+    public override bool Equals(object? obj) { return obj is ImageWindows img ? img._id == _id : base.Equals(obj); }
 
     public override int GetHashCode() { return HashCode.Combine(_id); }
 
@@ -110,10 +113,10 @@ internal class DrawCommand
     }
 }
 
-public partial class Platform : Form
+public partial class PlatformWindows : Form, Platform
 {
-    private Dictionary<string, Image> _images;
-    private Dictionary<string, Sound> _sounds;
+    private Dictionary<string, ImageWindows> _images;
+    private Dictionary<string, SoundWindows> _sounds;
 
     private LinkedList<DrawCommand> _drawCommands;
     private Dictionary<char, Action> _keyDownCommands;
@@ -123,14 +126,16 @@ public partial class Platform : Form
     private Action<int, int>? _onMouseMove;
     private Action<int, int, int>? _onMouseClick;
 
+    private Action _onLoop;
+
 
     private Timer timer;
     private const int FPS = 32;
 
-    public Platform()
+    public PlatformWindows()
     {
-        _images = new Dictionary<string, Image>();
-        _sounds = new Dictionary<string, Sound>();
+        _images = new Dictionary<string, ImageWindows>();
+        _sounds = new Dictionary<string, SoundWindows>();
         _drawCommands = new LinkedList<DrawCommand>();
         _keyDownCommands = new Dictionary<char, Action>();
         _keyUpCommands = new Dictionary<char, Action>();
@@ -141,9 +146,11 @@ public partial class Platform : Form
         // Set the form's properties
         this.Text = "Game";
         this.BackColor = System.Drawing.Color.Black;
+        this.WindowState = FormWindowState.Normal;
         this.FormBorderStyle = FormBorderStyle.None;
+        if (Screen.PrimaryScreen != null)
+            this.Bounds = Screen.PrimaryScreen.Bounds;
         this.DoubleBuffered = true;
-        this.ClientSize = new Size(640, 480);
 
         // Add event handlers
         this.KeyDown += DoKeyDown;
@@ -152,6 +159,7 @@ public partial class Platform : Form
         this.Paint += DoPaint;
         this.MouseClick += DoMouseClick;
         this.MouseMove += DoMouseMove;
+        this._onLoop += () => { };
 
         this.timer = new Timer();
         this.timer.Interval = (int)(1000 / FPS);
@@ -184,7 +192,7 @@ public partial class Platform : Form
         _onMouseClick += command;
     }
 
-    protected internal void Render(Image img, int x, int y)
+    protected internal void Render(ImageWindows img, int x, int y)
     {
         _drawCommands.AddLast(new DrawCommand(img._bitmap, new Point(x, y)));
     }
@@ -244,33 +252,48 @@ public partial class Platform : Form
         }
     }
 
+    public void Start()
+    {
+        this.timer.Start();
+    }
+
+    public void RegisterLoop(Action loop, int fps)
+    {
+        _onLoop += loop;
+        this.timer.Interval = (int)(1000 / fps);
+    }
+
     protected void DoLoop(object? sender, EventArgs e)
     {
-        Loop();
+        _onLoop?.Invoke();
         Invalidate();
         _drawCommands.Clear();
     }
 
-    public virtual void Loop(){}
+    public void Finish()
+    {
+        this.timer.Stop();
+        this.Close();
+    }
 
-    public Image LoadImage(string path)
+    public ImageWindows LoadImage(string path)
     {
         if (!_images.ContainsKey(path))
         {
             var bitmap = new Bitmap(path);
-            var image = new Image(path, bitmap, this);
+            var image = new ImageWindows(path, bitmap, this);
             _images.Add(path, image);
         }
         return _images[path];
     }
 
-    public Sound LoadSound(string path)
+    public SoundWindows LoadSound(string path)
     {
         if (!_sounds.ContainsKey(path))
         {
             var player = new MediaPlayer();
             player.Open(new Uri(path));
-            var sound = new Sound(path, player, this);
+            var sound = new SoundWindows(path, player, this);
             _sounds.Add(path, sound);
         }
         return _sounds[path];

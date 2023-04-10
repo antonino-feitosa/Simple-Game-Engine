@@ -1,12 +1,13 @@
 
+namespace SGE;
+
 public class TestCollision2System {
 
     public static void Main1(){
-        var collision = new Collision2System();
-        var render = new SubSystem();
+        
 
-        var game = new Game(render);
-        game.AttachSystem(collision);
+        var game = new Game(new PlatformAdapter());
+        var collision = new Collision2System(game);
 
         var a_comp = new Collision2Component(new Vector2(-10, 0), 0.5, 1.0);
         a_comp.OnStart += () => a_comp.MoveTo(new Vector2(0,0));
@@ -25,6 +26,6 @@ public class TestCollision2System {
         var b_entity = game.CreateEntity(b_comp);
 
         game.Start();
-        game.Run();
+        game.Loop();
     }
 }

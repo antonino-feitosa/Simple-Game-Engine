@@ -1,4 +1,6 @@
 
+namespace SGE;
+
 public class Vector2
 {
 
@@ -132,7 +134,7 @@ public class Collision2System : SubSystem
     private const double EPSILON = 0.01;
     protected HashSet<Collision2Component> _moving;
 
-    public Collision2System()
+    public Collision2System(Game game) : base(game)
     {
         _moving = new HashSet<Collision2Component>();
     }

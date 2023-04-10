@@ -1,6 +1,6 @@
 ﻿namespace SGE;
 
-partial class Platform
+partial class PlatformWindows
 {
     /// <summary>
     ///  Required designer variable.

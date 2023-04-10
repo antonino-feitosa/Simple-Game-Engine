@@ -1,12 +1,17 @@
 
+namespace SGE;
+
 public class SubSystem
 {
-
-    protected Game? _game;
+    protected Game _game;
+    protected internal int _priority;
     protected HashSet<Component> _components;
 
-    public SubSystem()
+    public SubSystem(Game game)
     {
+        _priority = 0;
+        _game = game;
+        _game.AttachSystem(this);
         _components = new HashSet<Component>();
     }
 

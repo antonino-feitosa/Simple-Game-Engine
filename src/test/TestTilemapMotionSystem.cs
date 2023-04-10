@@ -1,4 +1,6 @@
 
+namespace SGE;
+
 public class EchoComp : TilemapMotionComponent
 {
 
@@ -31,7 +33,8 @@ public class TestTilemapMotionSystem
 
     public static void Main1()
     {
-        var sys = new TilemapMotionSystem();
+        var game = new Game(new PlatformAdapter());
+        var sys = new TilemapMotionSystem(game);
         var a = new EchoComp("A", Direction.RIGHT, new TilePosition(0, 0));
         var b = new EchoComp("B", Direction.LEFT, new TilePosition(10, 0));
         var c = new EchoComp("C", Direction.RIGHT, new TilePosition(0, 2));
@@ -43,8 +46,6 @@ public class TestTilemapMotionSystem
         sys.Register(d);
         sys.Register(e);
 
-        var render = new SubSystem();
-        var game = new Game(render);
         var a_ent = game.CreateEntity(a);
         var b_ent = game.CreateEntity(b);
         var c_ent = game.CreateEntity(c);
@@ -52,6 +53,6 @@ public class TestTilemapMotionSystem
         var e_ent = game.CreateEntity(e);
         game.AttachSystem(sys);
         game.Start();
-        game.Run();
+        game.Loop();
     }
 }

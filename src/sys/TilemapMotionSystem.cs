@@ -1,4 +1,6 @@
 
+namespace SGE;
+
 public class Direction
 {
     public static Direction UP = new Direction(0, -1);
@@ -102,7 +104,7 @@ public class TilemapMotionSystem : SubSystem
     protected HashSet<TilemapMotionComponent> _free;
     protected HashSet<TilemapMotionComponent> _collision;
 
-    public TilemapMotionSystem()
+    public TilemapMotionSystem(Game game) : base(game)
     {
         _free = new HashSet<TilemapMotionComponent>();
         _collision = new HashSet<TilemapMotionComponent>();

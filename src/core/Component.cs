@@ -1,4 +1,6 @@
 
+namespace SGE;
+
 public class Component
 {
     private static int _countId = 0;

@@ -1,4 +1,6 @@
 
+namespace SGE;
+
 public class ConsoleInputComponent : Component
 {
 
@@ -17,7 +19,7 @@ public class ConsoleInputSystem : SubSystem
 
     private object Lock = new object();
 
-    public ConsoleInputSystem()
+    public ConsoleInputSystem(Game game) : base(game)
     {
         _update = new HashSet<char>();
         _pressed = new HashSet<char>();

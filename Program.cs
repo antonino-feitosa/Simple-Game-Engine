@@ -21,6 +21,6 @@ static class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         ApplicationConfiguration.Initialize();
-        Application.Run(new Platform());
+        Application.Run(new PlatformWindows());
     }
 }

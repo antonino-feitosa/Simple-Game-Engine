@@ -1,4 +1,6 @@
 
+namespace SGE;
+
 public class Color
 {
     public static readonly Color Black = new Color("000000");
@@ -119,7 +121,7 @@ public class ConsoleRenderSystem : SubSystem
 
     private string[,] _buffer;
 
-    public ConsoleRenderSystem(Dimension dimension)
+    public ConsoleRenderSystem(Game game, Dimension dimension) : base(game)
     {
         IsHideCursor = true;
         IsClearConsole = true;

@@ -1,12 +1,12 @@
 
+namespace SGE;
+
 public class TestConsoleInputSystem {
 
     public static void Main1(){
-        var console = new ConsoleInputSystem();
-        var render = new SubSystem();
-
-        var game = new Game(render);
-        game.AttachSystem(console);
+        
+        var game = new Game(new PlatformAdapter());
+        var console = new ConsoleInputSystem(game);
 
         var entity = game.CreateEntity();
         var echo = new ConsoleInputComponent();
@@ -17,6 +17,6 @@ public class TestConsoleInputSystem {
         console.Register(echo);
 
         game.Start();
-        game.Run();
+        game.Loop();
     }
 }

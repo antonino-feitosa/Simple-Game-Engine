@@ -1,8 +1,11 @@
 
+namespace SGE;
+
 public class TestConsoleRenderSystem {
 
     public static void Main1(){
-        var sys = new ConsoleRenderSystem(new Dimension(20, 10));
+        var game = new Game(new PlatformAdapter());
+        var sys = new ConsoleRenderSystem(game, new Dimension(20, 10));
         var comp = new ConsoleRenderComponent(new Position(2, 3), '@', Color.Yellow);
         sys.Register(comp);
 
