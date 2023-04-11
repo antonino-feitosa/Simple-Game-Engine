@@ -1,12 +1,18 @@
 
 namespace SGE;
 
+class SortSystem : IComparer<SubSystem>
+{
+    public int Compare(SubSystem? x, SubSystem? y)
+    {
+        return x != null && y != null ? x._priority - y._priority : -1;
+    }
+}
+
 public class Game
 {
     public Platform Device;
-    protected LinkedList<SubSystem> _systems;
-
-
+    protected SortedSet<SubSystem> _systems;
     protected LinkedList<Entity> _entities;
     protected LinkedList<Entity> _entities_destroy;
     protected Dictionary<Entity, LinkedListNode<Entity>> _entities_reference;
@@ -15,7 +21,7 @@ public class Game
     {
         Device = device;
         Device.RegisterLoop(Loop, fps);
-        _systems = new LinkedList<SubSystem>();
+        _systems = new SortedSet<SubSystem>(new SortSystem());
         _entities = new LinkedList<Entity>();
         _entities_destroy = new LinkedList<Entity>();
         _entities_reference = new Dictionary<Entity, LinkedListNode<Entity>>();
@@ -39,7 +45,7 @@ public class Game
     public void AttachSystem(SubSystem system)
     {
         system.SetGame(this);
-        _systems.AddLast(system);
+        _systems.Add(system);
     }
 
     public void Start()

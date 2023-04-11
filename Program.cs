@@ -21,6 +21,10 @@ static class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         ApplicationConfiguration.Initialize();
-        Application.Run(new PlatformWindows());
+        var platform = new PlatformWindows();
+        Application.Run(platform);
+
+        var game = new Game(platform);
+        game.Start();
     }
 }
