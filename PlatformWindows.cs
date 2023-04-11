@@ -5,6 +5,32 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Media;
 
+public class TextWindows : Text
+{
+    protected string _text;
+    protected int _size;
+    protected string _font;
+    protected string _color;
+
+    public string Text { get => _text; set => _text = value; }
+    public int Size { get => _size; set => _size = value; }
+    public string Font { get => _font; set => _font = value; }
+    public string Color { get => _color; set => _color = value; }
+
+    public TextWindows(string text, string font, int size)
+    {
+        _text = text;
+        _font = font;
+        _size = size;
+        _color = "white";
+    }
+
+    public void Render(int x, int y)
+    {
+        throw new NotImplementedException();
+    }
+}
+
 public class SoundWindows
 {
     private static int _countId = 0;
@@ -78,7 +104,7 @@ public class ImageWindows
     public readonly int Height;
 
     protected internal Bitmap _bitmap;
-    protected internal PlatformWindows _game;
+    protected internal PlatformWindows _device;
 
     protected internal ImageWindows(string path, Bitmap bitmap, PlatformWindows game)
     {
@@ -87,12 +113,12 @@ public class ImageWindows
         Width = bitmap.Width;
         Height = bitmap.Height;
         _bitmap = bitmap;
-        _game = game;
+        _device = game;
     }
 
     public void Render(int x, int y)
     {
-        _game.Render(this, x, y);
+        _device.Render(this, x, y);
     }
 
     public override bool Equals(object? obj) { return obj is ImageWindows img ? img._id == _id : base.Equals(obj); }
@@ -102,7 +128,12 @@ public class ImageWindows
     public override string ToString() { return "Image(" + Path + ", " + Width + "x" + Height + ")"; }
 }
 
-internal class DrawCommand
+internal interface Render
+{
+    public void Render(Graphics g);
+}
+
+internal class DrawCommand : Render
 {
     public Bitmap _bitmap;
     public Point _point;
@@ -111,6 +142,35 @@ internal class DrawCommand
         _bitmap = bitmap;
         _point = point;
     }
+
+    public void Render(Graphics g)
+    {
+        g.DrawImage(_bitmap, _point);
+    }
+}
+
+internal class TextCommand : Render
+{
+
+    public Text _text;
+    public Point _point;
+
+    public TextCommand(Text text, Point point)
+    {
+        _text = text;
+        _point = point;
+    }
+
+    public void Render(Graphics g)
+    { // TODO optimization point: shared references
+        System.Drawing.Font drawFont = new System.Drawing.Font(_text.Font, _text.Size);
+        System.Drawing.Color color = System.Drawing.Color.FromName(_text.Color);
+        System.Drawing.SolidBrush drawBrush = new System.Drawing.SolidBrush(color);
+        System.Drawing.StringFormat drawFormat = new System.Drawing.StringFormat();
+        g.DrawString(_text.Text, drawFont, drawBrush, _point.X, _point.Y, drawFormat);
+        drawFont.Dispose();
+        drawBrush.Dispose();
+    }
 }
 
 public partial class PlatformWindows : Form, Platform
@@ -118,7 +178,8 @@ public partial class PlatformWindows : Form, Platform
     private Dictionary<string, ImageWindows> _images;
     private Dictionary<string, SoundWindows> _sounds;
 
-    private LinkedList<DrawCommand> _drawCommands;
+    private LinkedList<Render> _renderCommands;
+
     private Dictionary<char, Action> _keyDownCommands;
     private Dictionary<char, Action> _keyUpCommands;
     private Dictionary<char, Action> _keyPressedCommands;
@@ -136,7 +197,7 @@ public partial class PlatformWindows : Form, Platform
     {
         _images = new Dictionary<string, ImageWindows>();
         _sounds = new Dictionary<string, SoundWindows>();
-        _drawCommands = new LinkedList<DrawCommand>();
+        _renderCommands = new LinkedList<Render>();
         _keyDownCommands = new Dictionary<char, Action>();
         _keyUpCommands = new Dictionary<char, Action>();
         _keyPressedCommands = new Dictionary<char, Action>();
@@ -192,11 +253,6 @@ public partial class PlatformWindows : Form, Platform
         _onMouseClick += command;
     }
 
-    protected internal void Render(ImageWindows img, int x, int y)
-    {
-        _drawCommands.AddLast(new DrawCommand(img._bitmap, new Point(x, y)));
-    }
-
     protected void DoKeyDown(object? sender, KeyEventArgs e)
     {
         char c = (char)e.KeyCode;
@@ -246,10 +302,7 @@ public partial class PlatformWindows : Form, Platform
     protected void DoPaint(object? sender, PaintEventArgs e)
     {
         Graphics g = e.Graphics;
-        foreach (var cmd in _drawCommands)
-        {
-            g.DrawImage(cmd._bitmap, cmd._point);
-        }
+        foreach (var cmd in _renderCommands) { cmd.Render(g); }
     }
 
     public void Start()
@@ -267,7 +320,7 @@ public partial class PlatformWindows : Form, Platform
     {
         _onLoop?.Invoke();
         Invalidate();
-        _drawCommands.Clear();
+        _renderCommands.Clear();
     }
 
     public void Finish()
@@ -276,7 +329,7 @@ public partial class PlatformWindows : Form, Platform
         this.Close();
     }
 
-    public ImageWindows LoadImage(string path)
+    public Image LoadImage(string path)
     {
         if (!_images.ContainsKey(path))
         {
@@ -284,10 +337,14 @@ public partial class PlatformWindows : Form, Platform
             var image = new ImageWindows(path, bitmap, this);
             _images.Add(path, image);
         }
-        return _images[path];
+        if (_images[path] is Image img)
+        {
+            return img;
+        }
+        throw new ArgumentException(String.Format("Image {} not found!", path));
     }
 
-    public SoundWindows LoadSound(string path)
+    public Sound LoadSound(string path)
     {
         if (!_sounds.ContainsKey(path))
         {
@@ -296,6 +353,25 @@ public partial class PlatformWindows : Form, Platform
             var sound = new SoundWindows(path, player, this);
             _sounds.Add(path, sound);
         }
-        return _sounds[path];
+        if (_sounds[path] is Sound snd)
+        {
+            return snd;
+        }
+        throw new ArgumentException(String.Format("Sound {} not found!", path));
+    }
+
+    public Text LoadText(string text, string font = "Arial", int size = 12)
+    {
+        return new TextWindows(text, font, size);
+    }
+
+    protected internal void Render(ImageWindows img, int x, int y)
+    {
+        _renderCommands.AddLast(new DrawCommand(img._bitmap, new Point(x, y)));
+    }
+
+    protected internal void Render(TextWindows text, int x, int y)
+    {
+        _renderCommands.AddLast(new TextCommand(text, new Point(x, y)));
     }
 }

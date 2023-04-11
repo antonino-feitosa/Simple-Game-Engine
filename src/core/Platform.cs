@@ -1,8 +1,17 @@
 
 namespace SGE;
+
+public interface Text
+{
+    public string Text { get; set; }
+    public int Size { get; set; }
+    public string Font { get; set; }
+    public string Color {get; set;}
+    public void Render(int x, int y);
+}
 public interface Sound
 {
-    public String Path { get; }
+    public string Path { get; }
     public double Volume { get; set; }
 
     public void Play();
@@ -13,7 +22,7 @@ public interface Sound
 
 public interface Image
 {
-    public String Path { get; }
+    public string Path { get; }
     public int Width { get; }
     public int Height { get; }
     public void Render(int x, int y);
@@ -38,7 +47,7 @@ public interface Platform
     public void Finish();
     public void RegisterLoop(Action loop, int fps);
 
-    public ImageWindows LoadImage(string path);
-
-    public SoundWindows LoadSound(string path);
+    public Image LoadImage(string path);
+    public Sound LoadSound(string path);
+    public Text LoadText(string text, string font = "Arial", int size = 12);
 }

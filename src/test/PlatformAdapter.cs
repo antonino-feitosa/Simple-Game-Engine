@@ -11,12 +11,17 @@ public class PlatformAdapter : Platform
     {
     }
 
-    public ImageWindows LoadImage(string path)
+    public Image LoadImage(string path)
     {
         throw new NotImplementedException();
     }
 
-    public SoundWindows LoadSound(string path)
+    public Sound LoadSound(string path)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Text LoadText(string text, string font = "Arial", int size = 12)
     {
         throw new NotImplementedException();
     }
