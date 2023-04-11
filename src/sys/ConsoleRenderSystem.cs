@@ -121,7 +121,7 @@ public class ConsoleRenderSystem : SubSystem
 
     private string[,] _buffer;
 
-    public ConsoleRenderSystem(Game game, Dimension dimension) : base(game)
+    public ConsoleRenderSystem(Dimension dimension)
     {
         IsHideCursor = true;
         IsClearConsole = true;

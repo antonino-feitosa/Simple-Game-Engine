@@ -7,7 +7,8 @@ public class TestCollision2System {
         
 
         var game = new Game(new PlatformAdapter());
-        var collision = new Collision2System(game);
+        var collision = new Collision2System();
+        game.AttachSystem(collision);
 
         var a_comp = new Collision2Component(new Vector2(-10, 0), 0.5, 1.0);
         a_comp.OnStart += () => a_comp.MoveTo(new Vector2(0,0));

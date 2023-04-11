@@ -27,13 +27,14 @@ public class Game
         _entities_reference = new Dictionary<Entity, LinkedListNode<Entity>>();
     }
 
-    public Entity CreateEntity(params Component[] components)
+    public Entity CreateEntity(params Component [] components)
     {
         Entity e = new Entity(this);
         var node = _entities.AddLast(e);
         _entities_reference.Add(e, node);
-        foreach (var c in components)
-            e.AttachComponent(c);
+        foreach(var comp in components){
+            e.AttachComponent(comp);
+        }
         return e;
     }
 
@@ -42,9 +43,9 @@ public class Game
         _entities_destroy.AddLast(e);
     }
 
-    public void AttachSystem(SubSystem system)
+    protected internal void AttachSystem(SubSystem system)
     {
-        system.SetGame(this);
+        system._game = this;
         _systems.Add(system);
     }
 

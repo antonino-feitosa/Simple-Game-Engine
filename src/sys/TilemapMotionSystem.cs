@@ -104,7 +104,7 @@ public class TilemapMotionSystem : SubSystem
     protected HashSet<TilemapMotionComponent> _free;
     protected HashSet<TilemapMotionComponent> _collision;
 
-    public TilemapMotionSystem(Game game) : base(game)
+    public TilemapMotionSystem()
     {
         _free = new HashSet<TilemapMotionComponent>();
         _collision = new HashSet<TilemapMotionComponent>();

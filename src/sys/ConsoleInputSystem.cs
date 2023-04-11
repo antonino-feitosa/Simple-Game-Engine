@@ -19,7 +19,7 @@ public class ConsoleInputSystem : SubSystem
 
     private object Lock = new object();
 
-    public ConsoleInputSystem(Game game) : base(game)
+    public ConsoleInputSystem()
     {
         _update = new HashSet<char>();
         _pressed = new HashSet<char>();

@@ -3,15 +3,13 @@ namespace SGE;
 
 public class SubSystem
 {
-    protected Game _game;
+    protected internal Game? _game;
     protected internal int _priority;
     protected HashSet<Component> _components;
 
-    public SubSystem(Game game)
+    public SubSystem()
     {
         _priority = 0;
-        _game = game;
-        _game.AttachSystem(this);
         _components = new HashSet<Component>();
     }
 
@@ -28,11 +26,6 @@ public class SubSystem
     public virtual void Deregister(Component comp)
     {
         _components.Remove(comp);
-    }
-
-    public virtual void SetGame(Game game)
-    {
-        _game = game;
     }
 
     public virtual void Start() { }

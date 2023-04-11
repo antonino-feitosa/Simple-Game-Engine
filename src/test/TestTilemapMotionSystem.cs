@@ -34,7 +34,8 @@ public class TestTilemapMotionSystem
     public static void Main1()
     {
         var game = new Game(new PlatformAdapter());
-        var sys = new TilemapMotionSystem(game);
+        var sys = new TilemapMotionSystem();
+        game.AttachSystem(sys);
         var a = new EchoComp("A", Direction.RIGHT, new TilePosition(0, 0));
         var b = new EchoComp("B", Direction.LEFT, new TilePosition(10, 0));
         var c = new EchoComp("C", Direction.RIGHT, new TilePosition(0, 2));

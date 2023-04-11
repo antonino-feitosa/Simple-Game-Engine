@@ -6,11 +6,9 @@ public class Entity {
     private Game _game;
     protected HashSet<Component> _components;
 
-    public Entity(Game game, params Component [] components){
+    public Entity(Game game){
         _game = game;
         _components = new HashSet<Component>();
-        foreach(var c in components)
-            AttachComponent(c);
     }
 
     public T? GetComponent<T>() where T: Component {
@@ -37,6 +35,7 @@ public class Entity {
     }
 
     public void AttachComponent(Component comp){
+        comp._entity = this;
         _components.Add(comp);
     }
 
