@@ -5,7 +5,7 @@ public class PlatformAdapter : Platform
 {
     public int Width => throw new NotImplementedException();
     public int Height => throw new NotImplementedException();
-    public (int,int) MousePosition => throw new NotImplementedException();
+    public (int, int) MousePosition => throw new NotImplementedException();
 
     public bool FullScreen { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -19,6 +19,11 @@ public class PlatformAdapter : Platform
     }
 
     public Sound LoadSound(string path)
+    {
+        throw new NotImplementedException();
+    }
+
+    public SpriteSheet LoadSpriteSheet(string path, int width, int height)
     {
         throw new NotImplementedException();
     }

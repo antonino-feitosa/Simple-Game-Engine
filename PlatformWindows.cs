@@ -55,7 +55,7 @@ public class SoundWindows : Sound
     public double Volume
     {
         get { return 100; }
-        set {}
+        set { }
     }
 
     public string Path
@@ -75,7 +75,7 @@ public class SoundWindows : Sound
 
     public void Pause()
     {
-        
+
     }
 
     public void Stop()
@@ -98,6 +98,69 @@ public class SoundWindows : Sound
             mediaPlayer.Play();
         }
     }
+}
+
+public class SpriteSheetWindows : SpriteSheet
+{
+    private static int _countId = 0;
+    private readonly int _id;
+    private string _path;
+    private int _width;
+    private int _height;
+
+    protected internal List<Bitmap> _sheet;
+    protected internal Bitmap _bitmap;
+    protected internal PlatformWindows _device;
+
+    protected internal SpriteSheetWindows(string path, Bitmap bitmap, PlatformWindows device)
+    {
+        _id = _countId++;
+        _path = path;
+        _bitmap = bitmap;
+        _width = 0;
+        _height = 0;
+        _device = device;
+        _sheet = new List<Bitmap>();
+    }
+
+    public string Path { get { return _path; } }
+    public int Width { get { return _width; } }
+    public int Height { get { return _height; } }
+
+    protected internal void Split(int width, int height)
+    {
+        _width = width;
+        _height = height;
+        int x_count = (int)(_bitmap.Width / width);
+        int y_count = (int)(_bitmap.Height / height);
+        var rect = new Rectangle(0, 0, width, height);
+        for (int i = 0; i < x_count; i++)
+        {
+            for (int j = 0; j < y_count; j++)
+            {
+                var index = i * x_count + j;
+                var splitted = new Bitmap(width, height);
+                var graphics = Graphics.FromImage(splitted);
+                var dest = new Rectangle(i * width, j * height, width, height);
+                _sheet.Add(splitted);
+                graphics.DrawImage(_bitmap, rect, dest, GraphicsUnit.Pixel);
+                graphics.Dispose();
+            }
+        }
+    }
+
+    public void Render(int index, int x, int y)
+    {
+        if (index < 0 || index >= _sheet.Count)
+            throw new ArgumentException(String.Format("The index {0} does not exist!", index));
+        _device.Render(_sheet[index], x, y);
+    }
+
+    public override bool Equals(object? obj) { return obj is SpriteSheetWindows ss ? ss._id == _id : base.Equals(obj); }
+
+    public override int GetHashCode() { return HashCode.Combine(_id); }
+
+    public override string ToString() { return "Image(" + Path + ", " + Width + "x" + Height + ")"; }
 }
 
 public class ImageWindows : Image
@@ -123,7 +186,7 @@ public class ImageWindows : Image
 
     public void Render(int x, int y)
     {
-        _device.Render(this, x, y);
+        _device.Render(_bitmap, x, y);
     }
 
     public override bool Equals(object? obj) { return obj is ImageWindows img ? img._id == _id : base.Equals(obj); }
@@ -180,6 +243,7 @@ internal class TextCommand : Render
 
 public partial class PlatformWindows : Form, Platform
 {
+    private Dictionary<string, SpriteSheetWindows> _spriteSheets;
     private Dictionary<string, ImageWindows> _images;
     private Dictionary<string, SoundWindows> _sounds;
 
@@ -204,6 +268,7 @@ public partial class PlatformWindows : Form, Platform
     {
         _images = new Dictionary<string, ImageWindows>();
         _sounds = new Dictionary<string, SoundWindows>();
+        _spriteSheets = new Dictionary<string, SpriteSheetWindows>();
         _renderCommands = new LinkedList<Render>();
         _bufferCommands = new LinkedList<Render>();
         _keyDownCommands = new Dictionary<char, Action<int>>();
@@ -344,7 +409,7 @@ public partial class PlatformWindows : Form, Platform
     protected void DoPaint(object? sender, PaintEventArgs e)
     {
         Graphics g = e.Graphics;
-        foreach (var cmd in _renderCommands) { cmd.Render(g);}
+        foreach (var cmd in _renderCommands) { cmd.Render(g); }
     }
 
     public void Start()
@@ -389,6 +454,23 @@ public partial class PlatformWindows : Form, Platform
         throw new ArgumentException(String.Format("Image {0} not found!", path));
     }
 
+    public SpriteSheet LoadSpriteSheet(string path, int width, int height)
+    {
+        if (!_spriteSheets.ContainsKey(path))
+        {
+            var img = (ImageWindows)LoadImage(path);
+            var bitmap = img._bitmap;
+            var sheet = new SpriteSheetWindows(path, bitmap, this);
+            sheet.Split(width, height);
+            _spriteSheets.Add(path, sheet);
+        }
+        if (_spriteSheets[path] is SpriteSheetWindows ss)
+        {
+            return ss;
+        }
+        throw new ArgumentException(String.Format("Image {0} not found!", path));
+    }
+
     public Sound LoadSound(string path)
     {
         if (!_sounds.ContainsKey(path))
@@ -409,9 +491,9 @@ public partial class PlatformWindows : Form, Platform
         return new TextWindows(text, font, this);
     }
 
-    protected internal void Render(ImageWindows img, int x, int y)
+    protected internal void Render(Bitmap img, int x, int y)
     {
-        _bufferCommands.AddLast(new DrawCommand(img._bitmap, new Point(x, y)));
+        _bufferCommands.AddLast(new DrawCommand(img, new Point(x, y)));
     }
 
     protected internal void Render(TextWindows text, int x, int y)

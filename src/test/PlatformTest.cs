@@ -18,15 +18,16 @@ public class PlatformTest {
 
         var sound = device.LoadSound("./art/leap-motiv-113893.wav");
         var image = device.LoadImage("./art/Doors.png");
+        var sheet = device.LoadSpriteSheet("./art/BallRed.png", 32, 32);
         var text = device.LoadText("Text");
 
         device.Start();
         sound.Play();
-        
-            image.Render(100, 100);
+
         device.RegisterLoop(()=>{
             text.Render(0, 0);
             image.Render(100, 100);
+            sheet.Render(0, 300, 300);
             Console.WriteLine("Loop");
         }, 1);
     }

@@ -6,7 +6,7 @@ public interface Text
     public string Text { get; set; }
     public int Size { get; set; }
     public string Font { get; set; }
-    public string Color {get; set;}
+    public string Color { get; set; }
     public void Render(int x, int y);
 }
 public interface Sound
@@ -18,6 +18,14 @@ public interface Sound
     public void Loop();
     public void Pause();
     public void Stop();
+}
+
+public interface SpriteSheet
+{
+    public string Path { get; }
+    public int Width { get; }
+    public int Height { get; }
+    public void Render(int index, int x, int y);
 }
 
 public interface Image
@@ -32,13 +40,13 @@ public interface Platform
 {
     public int Width { get; }
     public int Height { get; }
-    public (int,int) MousePosition { get; }
+    public (int, int) MousePosition { get; }
     public bool FullScreen { get; set; }
 
     // bits: alt, shift, ctrl
     public void RegisterKeyUp(char c, Action<int> command);
     public void RegisterKeyDown(char c, Action<int> command);
-    
+
     // -1, 0, +1
     public void RegisterMouseWheel(Action<int> command);
 
@@ -53,4 +61,5 @@ public interface Platform
     public Image LoadImage(string path);
     public Sound LoadSound(string path);
     public Text LoadText(string text, string font = "Arial");
+    public SpriteSheet LoadSpriteSheet(string path, int width, int height);
 }
