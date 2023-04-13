@@ -4,8 +4,10 @@ namespace SGE;
 public class PlatformAdapter : Platform
 {
     public int Width => throw new NotImplementedException();
-
     public int Height => throw new NotImplementedException();
+    public (int,int) MousePosition => throw new NotImplementedException();
+
+    public bool FullScreen { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public void Finish()
     {
@@ -21,17 +23,17 @@ public class PlatformAdapter : Platform
         throw new NotImplementedException();
     }
 
-    public Text LoadText(string text, string font = "Arial", int size = 12)
+    public Text LoadText(string text, string font = "Arial")
     {
         throw new NotImplementedException();
     }
 
-    public void RegisterKeyDown(char c, Action command)
+    public void RegisterKeyDown(char c, Action<int> command)
     {
         throw new NotImplementedException();
     }
 
-    public void RegisterKeyUp(char c, Action command)
+    public void RegisterKeyUp(char c, Action<int> command)
     {
         throw new NotImplementedException();
     }
@@ -41,7 +43,17 @@ public class PlatformAdapter : Platform
         throw new NotImplementedException();
     }
 
-    public void RegisterMouseClick(Action<int, int, int> command)
+    public void RegisterMouseClick(char button, Action<int, int> command)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RegisterMouseDown(char button, Action<int, int> command)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RegisterMouseUp(char button, Action<int, int> command)
     {
         throw new NotImplementedException();
     }
@@ -51,7 +63,12 @@ public class PlatformAdapter : Platform
         throw new NotImplementedException();
     }
 
-    public void RegisterPressed(char c, Action command)
+    public void RegisterMouseWheel(Action<int> command)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RegisterKeyPressed(char c, Action command)
     {
         throw new NotImplementedException();
     }

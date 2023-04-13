@@ -2,6 +2,8 @@
 namespace SGE;
 
 using System.Drawing;
+using System.IO;
+using System.Media;
 using System.Windows.Forms;
 using System.Windows.Media;
 
@@ -11,65 +13,69 @@ public class TextWindows : Text
     protected int _size;
     protected string _font;
     protected string _color;
+    protected internal PlatformWindows _device;
 
     public string Text { get => _text; set => _text = value; }
     public int Size { get => _size; set => _size = value; }
     public string Font { get => _font; set => _font = value; }
     public string Color { get => _color; set => _color = value; }
 
-    public TextWindows(string text, string font, int size)
+    public TextWindows(string text, string font, PlatformWindows device)
     {
         _text = text;
         _font = font;
-        _size = size;
+        _size = 12;
         _color = "white";
+        _device = device;
     }
 
     public void Render(int x, int y)
     {
-        throw new NotImplementedException();
+        _device.Render(this, x, y);
     }
 }
 
-public class SoundWindows
+public class SoundWindows : Sound
 {
     private static int _countId = 0;
     private readonly int _id;
 
-    public readonly String Path;
-
-    protected internal MediaPlayer _sound;
+    private string _path;
+    protected internal SoundPlayer _sound;
     protected internal PlatformWindows _game;
 
-    protected internal SoundWindows(string path, MediaPlayer sound, PlatformWindows game)
+    protected internal SoundWindows(string path, SoundPlayer sound, PlatformWindows game)
     {
         _id = _countId++;
-        Path = path;
+        _path = path;
         _sound = sound;
         _game = game;
     }
 
     public double Volume
     {
-        get { return _sound.Volume; }
-        set { if (value >= 0 && value <= 1.0) _sound.Volume = value; }
+        get { return 100; }
+        set {}
+    }
+
+    public string Path
+    {
+        get { return Path; }
     }
 
     public void Play()
     {
-        _sound.MediaEnded -= DoLoop;
         _sound.Play();
     }
 
     public void Loop()
     {
-        _sound.MediaEnded += DoLoop;
-        _sound.Play();
+        _sound.PlayLooping();
     }
 
     public void Pause()
     {
-        _sound.Pause();
+        
     }
 
     public void Stop()
@@ -94,27 +100,26 @@ public class SoundWindows
     }
 }
 
-public class ImageWindows
+public class ImageWindows : Image
 {
     private static int _countId = 0;
     private readonly int _id;
-
-    public readonly String Path;
-    public readonly int Width;
-    public readonly int Height;
+    private string _path;
 
     protected internal Bitmap _bitmap;
     protected internal PlatformWindows _device;
 
-    protected internal ImageWindows(string path, Bitmap bitmap, PlatformWindows game)
+    protected internal ImageWindows(string path, Bitmap bitmap, PlatformWindows device)
     {
         _id = _countId++;
-        Path = path;
-        Width = bitmap.Width;
-        Height = bitmap.Height;
+        _path = path;
         _bitmap = bitmap;
-        _device = game;
+        _device = device;
     }
+
+    public string Path { get { return _path; } }
+    public int Width { get { return _bitmap.Width; } }
+    public int Height { get { return _bitmap.Height; } }
 
     public void Render(int x, int y)
     {
@@ -179,15 +184,17 @@ public partial class PlatformWindows : Form, Platform
     private Dictionary<string, SoundWindows> _sounds;
 
     private LinkedList<Render> _renderCommands;
+    private LinkedList<Render> _bufferCommands;
 
-    private Dictionary<char, Action> _keyDownCommands;
-    private Dictionary<char, Action> _keyUpCommands;
-    private Dictionary<char, Action> _keyPressedCommands;
+    private Dictionary<char, Action<int>> _keyDownCommands;
+    private Dictionary<char, Action<int>> _keyUpCommands;
 
-    private Action<int, int>? _onMouseMove;
-    private Action<int, int, int>? _onMouseClick;
+    private Action<int>? _onMouseWheel;
+    private Dictionary<char, Action<int, int>> _onMouseDown;
+    private Dictionary<char, Action<int, int>> _onMouseUp;
 
     private Action _onLoop;
+    private bool _fullScreen;
 
 
     private Timer timer;
@@ -198,9 +205,11 @@ public partial class PlatformWindows : Form, Platform
         _images = new Dictionary<string, ImageWindows>();
         _sounds = new Dictionary<string, SoundWindows>();
         _renderCommands = new LinkedList<Render>();
-        _keyDownCommands = new Dictionary<char, Action>();
-        _keyUpCommands = new Dictionary<char, Action>();
-        _keyPressedCommands = new Dictionary<char, Action>();
+        _bufferCommands = new LinkedList<Render>();
+        _keyDownCommands = new Dictionary<char, Action<int>>();
+        _keyUpCommands = new Dictionary<char, Action<int>>();
+        _onMouseDown = new Dictionary<char, Action<int, int>>();
+        _onMouseUp = new Dictionary<char, Action<int, int>>();
 
         InitializeComponent();
 
@@ -209,17 +218,17 @@ public partial class PlatformWindows : Form, Platform
         this.BackColor = System.Drawing.Color.Black;
         this.WindowState = FormWindowState.Normal;
         this.FormBorderStyle = FormBorderStyle.None;
-        if (Screen.PrimaryScreen != null)
-            this.Bounds = Screen.PrimaryScreen.Bounds;
         this.DoubleBuffered = true;
+        FullScreen = false;
 
         // Add event handlers
         this.KeyDown += DoKeyDown;
         this.KeyUp += DoKeyUp;
-        this.KeyPress += DoKeyPressed;
         this.Paint += DoPaint;
-        this.MouseClick += DoMouseClick;
-        this.MouseMove += DoMouseMove;
+        this.MouseDown += DoMouseDown;
+        this.MouseUp += DoMouseUp;
+        this.MouseWheel += DoMouseWheel;
+        this.Load += (sender, e) => this.Location = new Point(500, 0);
         this._onLoop += () => { };
 
         this.timer = new Timer();
@@ -228,81 +237,114 @@ public partial class PlatformWindows : Form, Platform
         this.timer.Start();
     }
 
-    public void RegisterKeyUp(char c, Action command)
+    public bool FullScreen
     {
+        get { return _fullScreen; }
+        set
+        {
+            _fullScreen = value;
+            if (_fullScreen && Screen.PrimaryScreen != null)
+            {
+                this.WindowState = FormWindowState.Normal;
+                this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+                this.Bounds = Screen.PrimaryScreen.Bounds;
+            }
+            else
+            {
+                this.ClientSize = new Size(800, 600);
+                this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            }
+        }
+    }
+
+    public new (int, int) MousePosition
+    {
+        get { Point p = PointToClient(Control.MousePosition); return (p.X, p.Y); }
+    }
+
+    public void RegisterKeyUp(char c, Action<int> command)
+    {
+        c = Char.ToUpper(c);
         _keyUpCommands.Add(c, command);
     }
 
-    public void RegisterKeyDown(char c, Action command)
+    public void RegisterKeyDown(char c, Action<int> command)
     {
+        c = Char.ToUpper(c);
         _keyDownCommands.Add(c, command);
     }
 
-    public void RegisterPressed(char c, Action command)
+    public void RegisterMouseWheel(Action<int> command)
     {
-        _keyPressedCommands.Add(c, command);
+        _onMouseWheel += command;
     }
 
-    public void RegisterMouseMove(Action<int, int> command)
+    // L, R, M
+    public void RegisterMouseDown(char button, Action<int, int> command)
     {
-        _onMouseMove += command;
+        if (button == 'L' || button == 'R' || button == 'M')
+            _onMouseDown.Add(button, command);
+    }
+    public void RegisterMouseUp(char button, Action<int, int> command)
+    {
+        if (button == 'L' || button == 'R' || button == 'M')
+            _onMouseUp.Add(button, command);
     }
 
-    public void RegisterMouseClick(Action<int, int, int> command)
+    private void DoKey(KeyEventArgs e, Dictionary<char, Action<int>> events)
     {
-        _onMouseClick += command;
+        char c = (char)e.KeyCode;
+        int mask = 0;
+        mask += e.Alt ? 1 : 0;
+        mask += e.Shift ? 10 : 0;
+        mask += e.Control ? 100 : 0;
+        if (events.ContainsKey(c))
+            events[c].Invoke(mask);
     }
 
     protected void DoKeyDown(object? sender, KeyEventArgs e)
     {
-        char c = (char)e.KeyCode;
-        if (_keyDownCommands.ContainsKey(c))
-        {
-            _keyDownCommands[c].Invoke();
-        }
-    }
-
-    protected void DoKeyPressed(object? sender, KeyPressEventArgs e)
-    {
-        char c = e.KeyChar;
-        if (_keyPressedCommands.ContainsKey(c))
-        {
-            _keyPressedCommands[c].Invoke();
-        }
+        Console.WriteLine((char)e.KeyCode);
+        DoKey(e, _keyDownCommands);
     }
 
     protected void DoKeyUp(object? sender, KeyEventArgs e)
     {
-        char c = (char)e.KeyCode;
-        if (_keyUpCommands.ContainsKey(c))
-        {
-            _keyUpCommands[c].Invoke();
-        }
+        DoKey(e, _keyUpCommands);
     }
 
-    protected void DoMouseMove(object? sender, MouseEventArgs e)
+    protected void DoMouseWheel(object? sender, MouseEventArgs e)
     {
-        Point clientPosition = this.PointToClient(e.Location);
-        _onMouseMove?.Invoke(clientPosition.X, clientPosition.Y);
+        _onMouseWheel?.Invoke(Math.Sign(e.Delta));
     }
 
-    protected void DoMouseClick(object? sender, MouseEventArgs e)
+    private void DoMouse(MouseEventArgs e, Dictionary<char, Action<int, int>> events)
     {
-        int button = -1;
+        char button = ' ';
         switch (e.Button)
         {
-            case MouseButtons.Left: button = 0; break;
-            case MouseButtons.Right: button = 1; break;
-            case MouseButtons.Middle: button = 3; break;
+            case MouseButtons.Left: button = 'L'; break;
+            case MouseButtons.Right: button = 'R'; break;
+            case MouseButtons.Middle: button = 'M'; break;
         }
-        Point clientPosition = this.PointToClient(e.Location);
-        _onMouseClick?.Invoke(button, clientPosition.X, clientPosition.Y);
+        Point clientPosition = e.Location;
+        if (events.ContainsKey(button))
+            events[button]?.Invoke(clientPosition.X, clientPosition.Y);
+    }
+
+    protected void DoMouseDown(object? sender, MouseEventArgs e)
+    {
+        DoMouse(e, _onMouseDown);
+    }
+    protected void DoMouseUp(object? sender, MouseEventArgs e)
+    {
+        DoMouse(e, _onMouseUp);
     }
 
     protected void DoPaint(object? sender, PaintEventArgs e)
     {
         Graphics g = e.Graphics;
-        foreach (var cmd in _renderCommands) { cmd.Render(g); }
+        foreach (var cmd in _renderCommands) { cmd.Render(g);}
     }
 
     public void Start()
@@ -310,7 +352,7 @@ public partial class PlatformWindows : Form, Platform
         this.timer.Start();
     }
 
-    public void RegisterLoop(Action loop, int fps)
+    public void RegisterLoop(Action loop, int fps = 32)
     {
         _onLoop += loop;
         this.timer.Interval = (int)(1000 / fps);
@@ -318,9 +360,12 @@ public partial class PlatformWindows : Form, Platform
 
     protected void DoLoop(object? sender, EventArgs e)
     {
+        var aux = _bufferCommands;
+        _bufferCommands = _renderCommands;
+        _renderCommands = aux;
+        _bufferCommands.Clear();
         _onLoop?.Invoke();
         Invalidate();
-        _renderCommands.Clear();
     }
 
     public void Finish()
@@ -341,15 +386,14 @@ public partial class PlatformWindows : Form, Platform
         {
             return img;
         }
-        throw new ArgumentException(String.Format("Image {} not found!", path));
+        throw new ArgumentException(String.Format("Image {0} not found!", path));
     }
 
     public Sound LoadSound(string path)
     {
         if (!_sounds.ContainsKey(path))
         {
-            var player = new MediaPlayer();
-            player.Open(new Uri(path));
+            var player = new SoundPlayer(path);
             var sound = new SoundWindows(path, player, this);
             _sounds.Add(path, sound);
         }
@@ -357,21 +401,21 @@ public partial class PlatformWindows : Form, Platform
         {
             return snd;
         }
-        throw new ArgumentException(String.Format("Sound {} not found!", path));
+        throw new ArgumentException(String.Format("Sound {0} not found!", path));
     }
 
-    public Text LoadText(string text, string font = "Arial", int size = 12)
+    public Text LoadText(string text, string font = "Arial")
     {
-        return new TextWindows(text, font, size);
+        return new TextWindows(text, font, this);
     }
 
     protected internal void Render(ImageWindows img, int x, int y)
     {
-        _renderCommands.AddLast(new DrawCommand(img._bitmap, new Point(x, y)));
+        _bufferCommands.AddLast(new DrawCommand(img._bitmap, new Point(x, y)));
     }
 
     protected internal void Render(TextWindows text, int x, int y)
     {
-        _renderCommands.AddLast(new TextCommand(text, new Point(x, y)));
+        _bufferCommands.AddLast(new TextCommand(text, new Point(x, y)));
     }
 }

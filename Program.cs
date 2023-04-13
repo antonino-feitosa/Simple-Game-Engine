@@ -22,6 +22,7 @@ static class Program
         Application.SetCompatibleTextRenderingDefault(false);
         ApplicationConfiguration.Initialize();
         var platform = new PlatformWindows();
+        PlatformTest.Test(platform);
         Application.Run(platform);
 
         var game = new Game(platform);

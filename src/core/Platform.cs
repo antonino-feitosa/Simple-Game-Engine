@@ -32,22 +32,25 @@ public interface Platform
 {
     public int Width { get; }
     public int Height { get; }
+    public (int,int) MousePosition { get; }
+    public bool FullScreen { get; set; }
 
-    public void RegisterKeyUp(char c, Action command);
+    // bits: alt, shift, ctrl
+    public void RegisterKeyUp(char c, Action<int> command);
+    public void RegisterKeyDown(char c, Action<int> command);
+    
+    // -1, 0, +1
+    public void RegisterMouseWheel(Action<int> command);
 
-    public void RegisterKeyDown(char c, Action command);
-
-    public void RegisterPressed(char c, Action command);
-
-    public void RegisterMouseMove(Action<int, int> command);
-
-    public void RegisterMouseClick(Action<int, int, int> command);
+    // L, R, M
+    public void RegisterMouseDown(char button, Action<int, int> command);
+    public void RegisterMouseUp(char button, Action<int, int> command);
 
     public void Start();
     public void Finish();
-    public void RegisterLoop(Action loop, int fps);
+    public void RegisterLoop(Action loop, int fps = 32);
 
     public Image LoadImage(string path);
     public Sound LoadSound(string path);
-    public Text LoadText(string text, string font = "Arial", int size = 12);
+    public Text LoadText(string text, string font = "Arial");
 }

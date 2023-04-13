@@ -4,12 +4,9 @@ namespace SGE;
 public class SubSystem
 {
     protected internal Game? _game;
-    protected internal int _priority;
     protected HashSet<Component> _components;
-
     public SubSystem()
     {
-        _priority = 0;
         _components = new HashSet<Component>();
     }
 
@@ -19,7 +16,6 @@ public class SubSystem
 
     public virtual void Register(Component comp)
     {
-        comp._system = this;
         _components.Add(comp);
     }
 
