@@ -37,7 +37,6 @@ public class Game
 
     protected internal void AttachSystem(SubSystem system)
     {
-        system._game = this;
         _systems.AddLast(system);
     }
 
