@@ -58,6 +58,7 @@ public class PositionSystem : SubSystem
     public void Process()
     {
         foreach (var pair in _outOfBounds) { pair.Key.OnOutOfBounds?.Invoke(pair.Value); };
+        _outOfBounds.Clear();
 
         var collision = new HashSet<PositionComponent>();
         while (_free.Count > 0)
@@ -73,13 +74,21 @@ public class PositionSystem : SubSystem
             else
             {
                 DoMove(comp, dest);
-                var next = comp._dependency.First();
-                _free.Add(next);
-                comp._dependency.Remove(next);
-                foreach (var d in comp._dependency) { d.OnCollision?.Invoke(next); }
-                comp._dependency.Clear();
+                _moving.Remove(comp);
+                if(comp._dependency.Count > 0){
+                    var next = comp._dependency.First();
+                    _free.Add(next);
+                    comp._dependency.Remove(next);
+                    foreach (var d in comp._dependency) { d.OnCollision?.Invoke(next); }
+                    comp._dependency.Clear();
+                }
             }
         }
+
+        foreach (var pair in _moving) {
+            var other = _components[pair.Value];
+            pair.Key.OnCollision?.Invoke(other);
+        };
         _moving.Clear();
     }
 
@@ -145,7 +154,7 @@ public class PositionSystem : SubSystem
 
         public override string ToString()
         {
-            return "PositionComponent" + _position.ToString();
+            return base.ToString() + _position.ToString();
         }
     }
 }

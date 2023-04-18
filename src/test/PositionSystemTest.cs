@@ -20,15 +20,25 @@ public class PositionSystemTest
 
         var sys = new PositionSystem(ground);
         var a = sys.CreateComponent(1, 1);
-        a.OnCollision += (other) => Console.WriteLine("Collision with " + other);
-        a.OnMove += (source, dest) => Console.WriteLine("Moved from " + source + " to " + dest);
-        a.OnOutOfBounds += (pos) => Console.WriteLine("Out of Bounds" + pos);
+        a.Name = "A";
+        a.OnCollision += (other) => Console.WriteLine("A:Collision with " + other);
+        a.OnMove += (source, dest) => Console.WriteLine("A:Moved from " + source + " to " + dest);
+        a.OnOutOfBounds += (pos) => Console.WriteLine("A:Out of Bounds" + pos);
+
+        var b = sys.CreateComponent(7, 1);
+        b.Name = "B";
+        b.OnCollision += (other) => Console.WriteLine("B:Collision with " + other);
+        b.OnMove += (source, dest) => Console.WriteLine("B:Moved from " + source + " to " + dest);
+        b.OnOutOfBounds += (pos) => Console.WriteLine("B:Out of Bounds" + pos);
 
         sys.Start();
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 10; i++)
         {
             a.Move(sys.RIGHT);
+            b.Move(sys.LEFT);
+            sys.Process();
             Console.WriteLine("\tPosition " + a);
+            Console.WriteLine("\tPosition " + b);
         }
     }
 }
