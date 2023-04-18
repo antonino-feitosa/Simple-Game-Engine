@@ -24,9 +24,9 @@ public class PositionSystem : SubSystem
         _free = new HashSet<PositionComponent>();
     }
 
-    public PositionComponent CreateComponent(int x, int y)
+    public PositionComponent CreateComponent(Entity entity, int x, int y)
     {
-        return new PositionComponent(new Position(x, y), this);
+        return new PositionComponent(entity, new Position(x, y), this);
     }
 
     protected internal void Move(PositionComponent comp, Direction dir)
@@ -140,7 +140,7 @@ public class PositionSystem : SubSystem
         public Action<PositionComponent>? OnCollision; // collision with another component
         public Action<Position>? OnOutOfBounds; // move to out of the ground
 
-        protected internal PositionComponent(Position position, PositionSystem system)
+        protected internal PositionComponent(Entity entity, Position position, PositionSystem system) : base(entity)
         {
             _system = system;
             _position = position;
@@ -154,7 +154,7 @@ public class PositionSystem : SubSystem
 
         public override string ToString()
         {
-            return base.ToString() + _position.ToString();
+            return "PositionComponent:" + base.ToString() + _position.ToString();
         }
     }
 }

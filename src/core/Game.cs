@@ -19,14 +19,11 @@ public class Game
         _entities_reference = new Dictionary<Entity, LinkedListNode<Entity>>();
     }
 
-    public Entity CreateEntity(params Component [] components)
+    public Entity CreateEntity()
     {
         Entity e = new Entity(this);
         var node = _entities.AddLast(e);
         _entities_reference.Add(e, node);
-        foreach(var comp in components){
-            e.AttachComponent(comp);
-        }
         return e;
     }
 

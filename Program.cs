@@ -23,11 +23,11 @@ static class Program
         ApplicationConfiguration.Initialize();
         var platform = new PlatformWindows();
         
-        //PlatformTest.Test(platform);
-        PositionSystemTest.Test();
-        
         Application.Run(platform);
         var game = new Game(platform);
         game.Start();
+
+        //PlatformTest.Test(platform);
+        PositionSystemTest.Test(game);
     }
 }

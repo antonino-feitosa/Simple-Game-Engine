@@ -45,16 +45,14 @@ public class Entity
         _game.DestroyEntity(this);
     }
 
-    public void AttachComponent(Component comp)
+    protected internal void AttachComponent(Component comp)
     {
-        comp._entity = this;
         _components.Add(comp);
     }
 
     public void DetachComponent(Component comp)
     {
         _components.Remove(comp);
-        comp._entity = null;
     }
 
     public override bool Equals(object? obj)

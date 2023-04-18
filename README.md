@@ -8,6 +8,7 @@ Desse modo, cada componente pode estar associado a um ou mais sistemas represent
 
 As classes SubSystem e Component devem ser especializadas dando origem a novos sistemas aumentando as capacidades da máquina do jogo. Atualmente, somente o sistema de entrada de dados através do console está implementado. O trecho de código abaixo exemplifica o uso do arquitetura:
 
+
 ---
 
 
@@ -61,5 +62,3 @@ Simple ARPG with rogue like game elements:
 [^28]: [IA - path](https://news.ycombinator.com/item?id=22848888)
 [^29]: [Dijkstra map](http://www.roguebasin.com/index.php?title=The_Incredible_Power_of_Dijkstra_Maps)
 [^30]: [Dijkstra map - Rogue Basin](http://www.roguebasin.com/index.php/Dijkstra_Maps_Visualized)
-
-### Dependency
