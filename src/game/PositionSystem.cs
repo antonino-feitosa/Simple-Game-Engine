@@ -4,13 +4,18 @@ namespace SGE;
 
 public class PositionSystem : SubSystem
 {
+    public readonly Direction UP = new Direction(0, -1);
+    public readonly Direction DOWN = new Direction(0, +1);
+    public readonly Direction LEFT = new Direction(-1, 0);
+    public readonly Direction RIGHT = new Direction(+1, -0);
+
     protected HashSet<Position> _ground;
     protected Dictionary<Position, PositionComponent> _components;
     protected Dictionary<PositionComponent, Position> _moving;
     protected Dictionary<PositionComponent, Position> _outOfBounds;
     protected HashSet<PositionComponent> _free;
 
-    public PositionSystem(Game game, HashSet<Position> ground)
+    public PositionSystem(HashSet<Position> ground)
     {
         _ground = ground;
         _components = new Dictionary<Position, PositionComponent>();
@@ -46,6 +51,10 @@ public class PositionSystem : SubSystem
         }
     }
 
+    public void Start() { }
+
+    public void Finish() { }
+
     public void Process()
     {
         foreach (var pair in _outOfBounds) { pair.Key.OnOutOfBounds?.Invoke(pair.Value); };
@@ -71,6 +80,7 @@ public class PositionSystem : SubSystem
                 comp._dependency.Clear();
             }
         }
+        _moving.Clear();
     }
 
     private void DoMove(PositionComponent comp, Position dest)
@@ -80,6 +90,7 @@ public class PositionSystem : SubSystem
         comp.OnMove?.Invoke(comp._position, dest);
         comp._position = dest;
     }
+
 
     public class Direction
     {
@@ -113,11 +124,6 @@ public class PositionSystem : SubSystem
 
     public class PositionComponent : Component
     {
-        public readonly Direction UP = new Direction(0, -1);
-        public readonly Direction DOWN = new Direction(0, +1);
-        public readonly Direction LEFT = new Direction(-1, 0);
-        public readonly Direction RIGHT = new Direction(+1, -0);
-
         protected PositionSystem _system;
         protected internal Position _position;
         protected internal HashSet<PositionComponent> _dependency;
@@ -135,6 +141,11 @@ public class PositionSystem : SubSystem
         public void Move(Direction dir)
         {
             _system.Move(this, dir);
+        }
+
+        public override string ToString()
+        {
+            return "PositionComponent" + _position.ToString();
         }
     }
 }

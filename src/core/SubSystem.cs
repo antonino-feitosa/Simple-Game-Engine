@@ -3,9 +3,9 @@ namespace SGE;
 
 public interface SubSystem
 {
-    public void Start() { }
+    public void Start();
 
-    public void Process() { }
+    public void Process();
 
-    public void Finish() { }
+    public void Finish();
 }
