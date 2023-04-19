@@ -13,7 +13,7 @@ public class PositionSystemTest
         {
             for (int j = 0; j < dim; j++)
             {
-                var pos = new PositionSystem.Position(i * 10, j);
+                var pos = new PositionSystem.Position(i, j);
                 ground.Add(pos);
             }
         }

@@ -22,12 +22,13 @@ static class Program
         Application.SetCompatibleTextRenderingDefault(false);
         ApplicationConfiguration.Initialize();
         var platform = new PlatformWindows();
+        var game = new Game(platform);
+        
+        //PlatformTest.Test(platform);
+        //PositionSystemTest.Test(game);
+        MotionSystemTest.Test(game);
         
         Application.Run(platform);
-        var game = new Game(platform);
         game.Start();
-
-        //PlatformTest.Test(platform);
-        PositionSystemTest.Test(game);
     }
 }

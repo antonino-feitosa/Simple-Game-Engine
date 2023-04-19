@@ -38,7 +38,7 @@ public class MotionSystem : SubSystem
         }
     }
 
-    public MotionComponent CreateComponent(PositionSystem.PositionComponent comp, double framesToMove)
+    public MotionComponent CreateComponent(PositionSystem.PositionComponent comp, double framesToMove = 32)
     {
         var mc = new MotionComponent(comp, framesToMove);
         _components.Add(mc);
@@ -94,10 +94,10 @@ public class MotionSystem : SubSystem
         protected internal Vector2 _velocity;
         protected double _framesToMove;
         protected PositionSystem.PositionComponent _positionComponent;
-        public Action<Vector2>? OnStartMove; // successful move
-        public Action<Vector2>? OnEndMove; // successful move
-        public Action<Vector2>? OnMoving; // successful move
-        public Action<Vector2>? OnIdle; // successful move
+        public Action<Vector2>? OnStartMove;
+        public Action<Vector2>? OnEndMove;
+        public Action<Vector2>? OnMoving;
+        public Action<Vector2>? OnIdle;
 
         protected internal MotionComponent(PositionSystem.PositionComponent comp, double framesToMove) : base(comp._entity)
         {

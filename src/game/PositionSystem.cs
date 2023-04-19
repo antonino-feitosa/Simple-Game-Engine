@@ -5,7 +5,11 @@ namespace SGE;
 public class PositionSystem : SubSystem
 {
     public readonly Direction UP = new Direction(0, -1);
+    public readonly Direction UP_LEFT = new Direction(-1, -1);
+    public readonly Direction UP_RIGHT = new Direction(+1, -1);
     public readonly Direction DOWN = new Direction(0, +1);
+    public readonly Direction DOWN_LEFT = new Direction(-1, +1);
+    public readonly Direction DOWN_RIGHT = new Direction(+1, +1);
     public readonly Direction LEFT = new Direction(-1, 0);
     public readonly Direction RIGHT = new Direction(+1, -0);
 
@@ -32,7 +36,7 @@ public class PositionSystem : SubSystem
     protected internal void Move(PositionComponent comp, Direction dir)
     {
         var destination = dir.Next(comp._position);
-        if (!_ground.Contains(destination))
+        if (_ground.Contains(destination))
         {
             _moving.Add(comp, destination);
             if (_components.ContainsKey(destination))
