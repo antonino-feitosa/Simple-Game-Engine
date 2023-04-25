@@ -3,7 +3,6 @@ namespace SGE;
 
 public class MotionSystem : SubSystem
 {
-    private const double CLOSE_ENOUGH = 0.01;
     protected List<MotionComponent> _components;
 
     public MotionSystem()
@@ -46,45 +45,6 @@ public class MotionSystem : SubSystem
         return mc;
     }
 
-    public class Vector2
-    {
-        public double X;
-        public double Y;
-
-        public Vector2(double x = 0, double y = 0)
-        {
-            Set(x, y);
-        }
-        public void Set(double x, double y){
-            X = x;
-            Y = y;
-        }
-        public void Sum(Vector2 vet)
-        {
-            X += vet.X;
-            Y += vet.Y;
-        }
-        protected internal bool IsCloseEnough(Vector2 vet)
-        {
-            return Math.Abs(X - vet.X) + Math.Abs(Y - vet.Y) <= CLOSE_ENOUGH;
-        }
-        protected internal bool IsZero(){
-            return X + Y == 0;
-        }
-        public override bool Equals(object? obj)
-        {
-            return obj is Vector2 vet ? vet.X == X && vet.Y == Y : base.Equals(obj);
-        }
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(X, Y);
-        }
-        public override string ToString()
-        {
-            return String.Format("Vector2({0}, {1})", X, Y);
-        }
-    }
-
     public class MotionComponent : Component
     {
         protected internal bool _fired;
@@ -111,7 +71,7 @@ public class MotionSystem : SubSystem
             _fired = false;
         }
 
-        private void DoMove(PositionSystem.Position source, PositionSystem.Position dest)
+        private void DoMove(Position source, Position dest)
         {
             _position = new Vector2(source.X, source.Y);
             _destination = new Vector2(dest.X, dest.Y);

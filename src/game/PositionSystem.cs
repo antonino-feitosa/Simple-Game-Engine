@@ -104,37 +104,6 @@ public class PositionSystem : SubSystem
         comp._position = dest;
     }
 
-
-    public class Direction
-    {
-        public readonly int X;
-        public readonly int Y;
-        protected internal Direction(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-        public Position Next(Position p)
-        {
-            return new Position(p.X + X, p.Y + Y);
-        }
-    }
-
-    public class Position
-    {
-        public int X;
-        public int Y;
-
-        public Position(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-        public override bool Equals(object? obj) { return obj is Position p ? p.X == X && p.Y == Y : base.Equals(obj); }
-        public override int GetHashCode() { return HashCode.Combine(X, Y); }
-        public override string ToString() { return String.Format("({0},{1})", X, Y); }
-    }
-
     public class PositionComponent : Component
     {
         protected PositionSystem _system;

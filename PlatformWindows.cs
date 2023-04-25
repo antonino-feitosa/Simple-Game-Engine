@@ -156,6 +156,13 @@ public class SpriteSheetWindows : SpriteSheet
         _device.Render(_sheet[index], x, y);
     }
 
+    public Image GetImage(int index)
+    {
+        if (index < 0 || index >= _sheet.Count)
+            throw new ArgumentException(String.Format("The index {0} does not exist!", index));
+        return new ImageWindows("", _sheet[index], _device); // TODO optimization point
+    }
+
     public override bool Equals(object? obj) { return obj is SpriteSheetWindows ss ? ss._id == _id : base.Equals(obj); }
 
     public override int GetHashCode() { return HashCode.Combine(_id); }

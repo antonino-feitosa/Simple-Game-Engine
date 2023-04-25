@@ -6,14 +6,14 @@ public class PositionSystemTest
 
     public static void Test(Game game)
     {
-        var ground = new HashSet<PositionSystem.Position>();
+        var ground = new HashSet<Position>();
 
         var dim = 10;
         for (int i = 0; i < dim; i++)
         {
             for (int j = 0; j < dim; j++)
             {
-                var pos = new PositionSystem.Position(i, j);
+                var pos = new Position(i, j);
                 ground.Add(pos);
             }
         }

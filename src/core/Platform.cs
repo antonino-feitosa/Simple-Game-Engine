@@ -26,6 +26,7 @@ public interface SpriteSheet
     public int Width { get; }
     public int Height { get; }
     public void Render(int index, int x, int y);
+    public Image GetImage(int index);
 }
 
 public interface Image

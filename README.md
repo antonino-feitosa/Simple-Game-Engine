@@ -14,6 +14,8 @@ As classes SubSystem e Component devem ser especializadas dando origem a novos s
 
 # Game Powers
 
+Jogo de exploração de masmorras com foco no desenvolvimento de habilidades. As masmorras apresentarão alta dificuldade sendo a morte do personagem permanente, no entanto, armas, raças e habilidades serão liberadas para novos personagens à medida que objetivos da masmorra forem alcançados. Será oferecido um sistema de desenvolvimento de habilidades de modo que o usuário possa customizar o seu personagem e por esse motivo não serão fornecidas classes. 
+
 Simple ARPG with rogue like game elements:
 - [ ] Turn Based (Strategy)
 - [ ] Procedural Map Generation;
@@ -26,7 +28,9 @@ Simple ARPG with rogue like game elements:
 - [ ] Dialog and Conversation Strategies;
 - [ ] Environment Interaction (like Brogue[^14], Pokemon[^13] and Metroid[^15]);
 - [ ] Weapons Strategy (like Brogue[^12]);
-- [ ] Strange and Hostil Environment (like Roadside Picnic[^7] and Annihilation[^8] with elements of Debris[^9], Doctor Who[^10] and Darker than Black[^19]).
+- [ ] Strange and Hostil Environment (like Roadside Picnic[^7] and Annihilation[^8] with elements of Debris[^9], Doctor Who[^10] and Darker than Black[^19]);
+- [ ] Tower Defense Elements (like traps and defenses in Clash of Clans[^11]);
+- [ ] Monster Capture (like Pokemon[^4]).
 
 
 [^1]: [Daemon Powers](https://wiki.daemon.com.br/index.php?title=Supers_RPG)
@@ -47,9 +51,10 @@ Simple ARPG with rogue like game elements:
 [^17]: [ANSI Escape Codes](https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797)
 [^18]: [Rogue Like with Rust](https://bfnightly.bracketproductions.com/chapter_0.html)
 [^19]: [Darker than Black](https://en.wikipedia.org/wiki/Darker_than_Black)
+[^11]: [Clash of Clans](https://en.wikipedia.org/wiki/Clash_of_Clans)
 
 
-[^11]: [Solarus ](https://www.solarus-games.org/)
+
 [^31]: [Configure Key GIT](https://roelofjanelsinga.com/articles/how-to-setup-gpg-signing-keys-in-github/#:~:text=How%20to%20get%20the%20verified%20flag%20on%20your,use%20your%20GPG%20key%20to%20sign%20commits%20)
 [^20]: [triangle rasterization](http://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html)
 [^21]: [line rasterization](https://www.javatpoint.com/computer-graphics-bresenhams-line-algorithm)
