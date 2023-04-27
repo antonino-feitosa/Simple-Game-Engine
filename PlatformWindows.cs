@@ -108,7 +108,7 @@ public class SpriteSheetWindows : SpriteSheet
     private int _width;
     private int _height;
 
-    protected internal List<Bitmap> _sheet;
+    protected internal List<Image> _sheet;
     protected internal Bitmap _bitmap;
     protected internal PlatformWindows _device;
 
@@ -120,12 +120,13 @@ public class SpriteSheetWindows : SpriteSheet
         _width = 0;
         _height = 0;
         _device = device;
-        _sheet = new List<Bitmap>();
+        _sheet = new List<Image>();
     }
 
     public string Path { get { return _path; } }
     public int Width { get { return _width; } }
     public int Height { get { return _height; } }
+    public int Length { get { return _sheet.Count; } }
 
     protected internal void Split(int width, int height)
     {
@@ -142,25 +143,19 @@ public class SpriteSheetWindows : SpriteSheet
                 var splitted = new Bitmap(width, height);
                 var graphics = Graphics.FromImage(splitted);
                 var dest = new Rectangle(i * width, j * height, width, height);
-                _sheet.Add(splitted);
+                var img = new ImageWindows("", splitted, _device);
+                _sheet.Add(img);
                 graphics.DrawImage(_bitmap, rect, dest, GraphicsUnit.Pixel);
                 graphics.Dispose();
             }
         }
     }
 
-    public void Render(int index, int x, int y)
-    {
-        if (index < 0 || index >= _sheet.Count)
-            throw new ArgumentException(String.Format("The index {0} does not exist!", index));
-        _device.Render(_sheet[index], x, y);
-    }
-
     public Image GetImage(int index)
     {
         if (index < 0 || index >= _sheet.Count)
             throw new ArgumentException(String.Format("The index {0} does not exist!", index));
-        return new ImageWindows("", _sheet[index], _device); // TODO optimization point
+        return _sheet[index];
     }
 
     public override bool Equals(object? obj) { return obj is SpriteSheetWindows ss ? ss._id == _id : base.Equals(obj); }

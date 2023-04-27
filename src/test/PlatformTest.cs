@@ -27,7 +27,7 @@ public class PlatformTest {
         device.RegisterLoop(()=>{
             text.Render(0, 0);
             image.Render(100, 100);
-            sheet.Render(0, 300, 300);
+            sheet.GetImage(0).Render(300, 300);
             Console.WriteLine("Loop");
         }, 1);
     }

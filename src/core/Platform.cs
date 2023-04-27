@@ -25,7 +25,7 @@ public interface SpriteSheet
     public string Path { get; }
     public int Width { get; }
     public int Height { get; }
-    public void Render(int index, int x, int y);
+    public int Length { get; }
     public Image GetImage(int index);
 }
 

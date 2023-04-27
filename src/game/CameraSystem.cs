@@ -54,12 +54,14 @@ public class CameraSystem : SubSystem
         public Vector2 Position;
         public int ZIndex;
         public Image Image;
+        public bool Visible;
 
         public RenderComponent(Entity entity, Image image, Vector2 position) : base(entity)
         {
             Image = image;
             ZIndex = 0;
             Position = position;
+            Visible = true;
         }
     }
 }
