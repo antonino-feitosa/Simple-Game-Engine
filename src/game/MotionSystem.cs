@@ -9,9 +9,7 @@ public class MotionSystem : SubSystem
     {
         _components = new List<MotionComponent>();
     }
-
-    public void Start() { }
-    public void Finish() { }
+    
     public void Process()
     {
         foreach (var comp in _components)

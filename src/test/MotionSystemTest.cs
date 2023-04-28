@@ -30,9 +30,6 @@ public class MotionSystemTest
         mon_comp.OnMoving += (pos) => {Console.WriteLine("Moving at " + pos);};
         mon_comp.OnStartMove += (pos) => {Console.WriteLine("Start Move at " + pos);};
 
-        
-        pos_sys.Start();
-        mon_sys.Start();
         for (int i = 0; i < 40; i++)
         {
             pos_sys.Process();

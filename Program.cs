@@ -27,7 +27,8 @@ static class Program
         //PlatformTest.Test(platform);
         //PositionSystemTest.Test(game);
         //MotionSystemTest.Test(game);
-        CameraSystemTest.Test(game);
+        //CameraSystemTest.Test(game);
+        AnimationSystemTest.Test(game);
         
         Application.Run(platform);
         game.Start();

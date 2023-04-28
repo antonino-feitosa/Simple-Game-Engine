@@ -33,7 +33,6 @@ public class PositionSystemTest
         b.OnMove += (source, dest) => Console.WriteLine("B:Moved from " + source + " to " + dest);
         b.OnOutOfBounds += (pos) => Console.WriteLine("B:Out of Bounds" + pos);
 
-        sys.Start();
         for (int i = 0; i < 10; i++)
         {
             a.Move(sys.RIGHT);

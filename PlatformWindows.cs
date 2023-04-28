@@ -135,14 +135,14 @@ public class SpriteSheetWindows : SpriteSheet
         int x_count = (int)(_bitmap.Width / width);
         int y_count = (int)(_bitmap.Height / height);
         var rect = new Rectangle(0, 0, width, height);
-        for (int i = 0; i < x_count; i++)
+        for (int y = 0; y < y_count; y++)
         {
-            for (int j = 0; j < y_count; j++)
+            for (int x = 0; x < x_count; x++)
             {
-                var index = i * x_count + j;
+                var index = y * x_count + x;
                 var splitted = new Bitmap(width, height);
                 var graphics = Graphics.FromImage(splitted);
-                var dest = new Rectangle(i * width, j * height, width, height);
+                var dest = new Rectangle(x * width, y * height, width, height);
                 var img = new ImageWindows("", splitted, _device);
                 _sheet.Add(img);
                 graphics.DrawImage(_bitmap, rect, dest, GraphicsUnit.Pixel);

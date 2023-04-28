@@ -55,10 +55,6 @@ public class PositionSystem : SubSystem
         }
     }
 
-    public void Start() { }
-
-    public void Finish() { }
-
     public void Process()
     {
         foreach (var pair in _outOfBounds) { pair.Key.OnOutOfBounds?.Invoke(pair.Value); };

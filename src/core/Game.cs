@@ -40,13 +40,11 @@ public class Game
     public void Start()
     {
         Device.Start();
-        foreach (var sys in _systems) { sys.Start(); }
         foreach (var ent in _entities) { ent.Start(); }
     }
 
     public void Stop()
     {
-        foreach (var sys in _systems) { sys.Finish(); }
         Device.Finish();
     }
 

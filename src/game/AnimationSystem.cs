@@ -12,22 +12,23 @@ public class AnimationSystem : SubSystem
         _components = new HashSet<AnimationComponent>();
     }
 
-    public void Start()
-    {
-    }
-
-    public void Finish()
-    {
-    }
-
     public void Process()
     {
         foreach (var comp in _components)
         {
             if (comp.Running)
             {
-                comp.RenderComponent.Image = comp.Sheet.GetImage(comp._current);
-                comp._current = (comp._current + 1) % comp.Sequence.Count;
+                if (comp._count >= comp.UpdatesByFrames)
+                {
+                    comp.RenderComponent.Image = comp.Sheet.GetImage(comp._current);
+                    comp._current = (comp._current + 1) % comp.Sequence.Count;
+                    comp._count = 0;
+                }
+                else
+                {
+                    comp._count++;
+                }
+
             }
         }
     }
@@ -46,7 +47,9 @@ public class AnimationSystem : SubSystem
         public SpriteSheet Sheet;
         public RenderComponent RenderComponent;
         public bool Running;
+        public int UpdatesByFrames;
         protected internal int _current;
+        protected internal int _count;
         public AnimationComponent(RenderComponent comp, SpriteSheet sheet, params int[] sequence) : base(comp._entity)
         {
             Sheet = sheet;
@@ -54,6 +57,8 @@ public class AnimationSystem : SubSystem
             Running = true;
             Sequence = sequence.ToList<int>();
             _current = 0;
+            _count = 0;
+            UpdatesByFrames = 1;
         }
     }
 }

@@ -17,10 +17,6 @@ public class CameraSystem : SubSystem
         _components = new List<RenderComponent>(); // TODO optimization on delete
     }
 
-    public void Start() { }
-
-    public void Finish() { }
-
     public void Process()
     {
         _components.Sort((a, b) => a.ZIndex - b.ZIndex);
