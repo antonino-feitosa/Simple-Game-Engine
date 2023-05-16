@@ -23,7 +23,7 @@ public class PlatformAdapter : Platform
         throw new NotImplementedException();
     }
 
-    public SpriteSheet LoadSpriteSheet(string path, int width, int height)
+    public SpriteSheet LoadSpriteSheet(Image img, int width, int height)
     {
         throw new NotImplementedException();
     }

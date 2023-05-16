@@ -191,6 +191,22 @@ public class ImageWindows : Image
         _device.Render(_bitmap, x, y);
     }
 
+    public Image Resize(int width, int height)
+    {
+        var bmp = new Bitmap(width, height);
+        var graphics = Graphics.FromImage(bmp);
+        graphics.DrawImage(_bitmap, new Rectangle(0, 0, bmp.Width, bmp.Height));
+        return new ImageWindows(Path + "_resized(" + width + "," + height + ")", bmp, _device);
+    }
+
+    public Image Crop(int x, int y, int width, int height)
+    {
+        var bmp = new Bitmap(width, height);
+        var graphics = Graphics.FromImage(bmp);
+        graphics.DrawImageUnscaledAndClipped(_bitmap, new Rectangle(x, y, bmp.Width, bmp.Height));
+        return new ImageWindows(Path + "_cropped(" + width + "," + height + ")", bmp, _device);
+    }
+
     public override bool Equals(object? obj) { return obj is ImageWindows img ? img._id == _id : base.Equals(obj); }
 
     public override int GetHashCode() { return HashCode.Combine(_id); }
@@ -456,21 +472,20 @@ public partial class PlatformWindows : Form, Platform
         throw new ArgumentException(String.Format("Image {0} not found!", path));
     }
 
-    public SpriteSheet LoadSpriteSheet(string path, int width, int height)
+    public SpriteSheet LoadSpriteSheet(Image img, int width, int height)
     {
-        if (!_spriteSheets.ContainsKey(path))
+        if (img is ImageWindows win)
         {
-            var img = (ImageWindows)LoadImage(path);
-            var bitmap = img._bitmap;
-            var sheet = new SpriteSheetWindows(path, bitmap, this);
+            var bitmap = win._bitmap;
+            var sheet = new SpriteSheetWindows(img.Path, bitmap, this);
             sheet.Split(width, height);
-            _spriteSheets.Add(path, sheet);
+            _spriteSheets.Add(img.Path, sheet);
+            if (_spriteSheets[img.Path] is SpriteSheetWindows ss)
+            {
+                return ss;
+            }
         }
-        if (_spriteSheets[path] is SpriteSheetWindows ss)
-        {
-            return ss;
-        }
-        throw new ArgumentException(String.Format("Image {0} not found!", path));
+        throw new ArgumentException(String.Format("Image {0} not found!", img));
     }
 
     public Sound LoadSound(string path)

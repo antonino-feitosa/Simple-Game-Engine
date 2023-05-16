@@ -3,21 +3,29 @@
 
 ### Todo
 
-- [] Criar sistema gráfico para carregamento e animação de sprites ~1d 2023-04-07
-- [] Combinar sistema gráfico com sistema de colisão 2D movimentando os sprites com a movimentação ~1d 2023-04-08
-- [] Modificar sistema de colisão adicionando QuadTree ~1d 2023-04-10
-- [] Integrar sistema gráfico, entrada e sons como o framework  ~1d 2023-04-12
+- [ ] Fixar dimensão mínima 640x360.
+- [ ] Tela inicial com opções.
+- [ ] Tela de carregamento. Deve ser lançada no início de aplicação exibindo uma barra de progresso enquanto os recursos são carregados.
+- [ ] Sistema de interface de usuário.
+- [ ] Redimensionamento da tela de desenho.
+- [ ] Atualização do sistema sonoro para habilitar a reprodução em diferentes volumes.
 
 ### In Progress
 
 ### Testing
 
-- [] Criar sistema de janelas para desenho de sprites ~1d 2023-04-05
-- [] Criar sistema de entrada de dados combinado com o sistema de janelas ~1d 2023-04-06
-- [] Criar sistema de reprodução de sons ~1d 2023-04-11
-
 ### Done
 
-- [x] Criar sistema de colisão 2D baseado em cálculo vetorial ~1d 2023-04-04
+- [x] Plataforma abstraindo detalhes de carregamento de imagens, som, janela gráfica, entre outros.
+- [x] Sistema para posicionamento discreto.
+- [x] Sistema para desenho de sprites e animações.
+- [x] Sistema para movimentações baseado nas movimentações discretas.
+- [x] SIstema de câmera efetuando o recorte da área de desenho.
+
+### Comments
+
+Monitor displays ranging from 1024×768 to 1920×1080,
+Smartphone displays ranging from 360×640 to 414×896,
+Tablet displays ranging from 601×962 to 1280×800.
 
 

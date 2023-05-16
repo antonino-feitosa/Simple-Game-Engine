@@ -1,7 +1,6 @@
-
 namespace SGE;
 
-public class CameraSystemTest
+public class ResizeTest
 {
 
     public static void Test(Game game)
@@ -13,8 +12,10 @@ public class CameraSystemTest
         game.AttachSystem(sys);
 
         var img = device.LoadImage("./art/BallRed.png");
-        var sheet = device.LoadSpriteSheet(img, 32, 32);
-        var a_comp = sys.CreateComponent(entity, sheet.GetImage(0), new Vector2(-0.5, -0.5));
-        var b_comp = sys.CreateComponent(entity, sheet.GetImage(1), new Vector2(2,1));
+        var cropped = img.Crop(0, 0, 32, 32);
+        var resized = cropped.Resize(64, 64);
+
+        var a_comp = sys.CreateComponent(entity, cropped, new Vector2(1, 1));
+        var b_comp = sys.CreateComponent(entity, resized, new Vector2(3, 3));
     }
 }

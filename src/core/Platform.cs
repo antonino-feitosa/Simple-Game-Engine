@@ -35,6 +35,9 @@ public interface Image
     public int Width { get; }
     public int Height { get; }
     public void Render(int x, int y);
+    public Image Resize(int width, int height);
+    public Image Crop(int x, int y, int width, int height);
+    
 }
 
 public interface Platform
@@ -62,5 +65,5 @@ public interface Platform
     public Image LoadImage(string path);
     public Sound LoadSound(string path);
     public Text LoadText(string text, string font = "Arial");
-    public SpriteSheet LoadSpriteSheet(string path, int width, int height);
+    public SpriteSheet LoadSpriteSheet(Image img, int width, int height);
 }
