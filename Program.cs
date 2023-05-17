@@ -22,8 +22,7 @@ static class Program
         Application.SetCompatibleTextRenderingDefault(false);
         ApplicationConfiguration.Initialize();
         var platform = new PlatformWindows();
-        var game = new Game(platform);
-
+        
         
         //PlatformTest.Test(platform);
         //PositionSystemTest.Test(game);
@@ -31,14 +30,12 @@ static class Program
         //CameraSystemTest.Test(game);
         //AnimationSystemTest.Test(game);
         //ResizeTest.Test(game);
+
+        var game = new Game(platform);
+        var loading = new LoadingSystem(game);
+        game.AttachSystem(loading);
         
         Application.Run(platform);
-
-        var loading = new Loading(game);
-        loading.Run();
-        
-        Thread.Sleep(2000);
-
         game.Start();
     }
 }

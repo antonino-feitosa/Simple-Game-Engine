@@ -1,7 +1,7 @@
 
 namespace SGE;
 
-public class Loading
+public class LoadingSystem : SubSystem
 {
 
     public const string TITLE_FILE = "./art/GUI/Title.png";
@@ -19,7 +19,7 @@ public class Loading
     public Game _game;
     private int _loaded;
 
-    public Loading(Game game)
+    public LoadingSystem(Game game)
     {
         _game = game;
         _loaded = 0;
@@ -47,8 +47,13 @@ public class Loading
 
     }
 
-    public void Run()
+    public void Process()
     {
+        _background.Render(0,0);
         _title.Render(200, 20);
+
+        _border.Render(215, 180);
+        _fill.Render(215, 180);
+        _loading.Render(265, 175);
     }
 }
