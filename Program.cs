@@ -23,15 +23,22 @@ static class Program
         ApplicationConfiguration.Initialize();
         var platform = new PlatformWindows();
         var game = new Game(platform);
+
         
         //PlatformTest.Test(platform);
         //PositionSystemTest.Test(game);
         //MotionSystemTest.Test(game);
         //CameraSystemTest.Test(game);
         //AnimationSystemTest.Test(game);
-        ResizeTest.Test(game);
+        //ResizeTest.Test(game);
         
         Application.Run(platform);
+
+        var loading = new Loading(game);
+        loading.Run();
+        
+        Thread.Sleep(2000);
+
         game.Start();
     }
 }

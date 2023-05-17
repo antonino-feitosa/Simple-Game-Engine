@@ -461,9 +461,14 @@ public partial class PlatformWindows : Form, Platform
     {
         if (!_images.ContainsKey(path))
         {
-            var bitmap = new Bitmap(path);
-            var image = new ImageWindows(path, bitmap, this);
-            _images.Add(path, image);
+            try {
+                var bitmap = new Bitmap(path);
+                var image = new ImageWindows(path, bitmap, this);
+                _images.Add(path, image);
+            } catch(ArgumentException e){
+                Console.WriteLine(String.Format("Image {0} not found!", path));
+                throw e;
+            }
         }
         if (_images[path] is Image img)
         {
