@@ -1,14 +1,11 @@
 
 namespace SGE;
 
-public class Entity
+public class Entity : Identifiable
 {
     public Action? OnStart;
     public Action? OnUpdate;
     public Action? OnDestroy;
-
-    private static int _countId = 0;
-    private readonly int _id;
 
     private Game _game;
     protected HashSet<Component> _components;
@@ -16,7 +13,6 @@ public class Entity
     public Entity(Game game)
     {
         _game = game;
-        _id = _countId++;
         _components = new HashSet<Component>();
     }
 
@@ -35,14 +31,14 @@ public class Entity
         OnUpdate?.Invoke();
     }
 
-    public void Finish()
-    {
-        OnDestroy?.Invoke();
-    }
-
     public void Destroy()
     {
         _game.DestroyEntity(this);
+    }
+
+    protected internal void Dispose()
+    {
+        OnDestroy?.Invoke();
     }
 
     protected internal void AttachComponent(Component comp)
@@ -55,18 +51,8 @@ public class Entity
         _components.Remove(comp);
     }
 
-    public override bool Equals(object? obj)
-    {
-        return obj is Entity e ? _id == e._id : base.Equals(obj);
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(_id);
-    }
-
     public override string ToString()
     {
-        return "Entity(" + _id + ")";
+        return "Entity(" + base.ID + ")";
     }
 }

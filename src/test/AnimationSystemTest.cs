@@ -4,11 +4,10 @@ namespace SGE;
 public class AnimationSystemTest
 {
 
-    public static void Test(Game game)
+    public static void Test(Device device, Game game)
     {
 
         var entity = game.CreateEntity();
-        var device = game.Device;
         var cam_sys = new CameraSystem(new Vector2(), new Dimension(device.Width, device.Height));
         var ani_sys = new AnimationSystem();
         game.AttachSystem(cam_sys);

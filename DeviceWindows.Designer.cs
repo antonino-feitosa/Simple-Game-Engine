@@ -1,11 +1,11 @@
 ﻿namespace SGE;
 
-partial class PlatformWindows
+partial class WindowsAdapter
 {
     /// <summary>
     ///  Required designer variable.
     /// </summary>
-    private System.ComponentModel.IContainer components = null;
+    private global::System.ComponentModel.IContainer components = null;
 
     /// <summary>
     ///  Clean up any resources being used.
@@ -28,9 +28,9 @@ partial class PlatformWindows
     /// </summary>
     private void InitializeComponent()
     {
-        this.components = new System.ComponentModel.Container();
-        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        this.ClientSize = new System.Drawing.Size(800, 450);
+        this.components = new global::System.ComponentModel.Container();
+        this.AutoScaleMode = global::System.Windows.Forms.AutoScaleMode.Font;
+        this.ClientSize = new global::System.Drawing.Size(800, 450);
         this.Text = "Form1";
     }
 

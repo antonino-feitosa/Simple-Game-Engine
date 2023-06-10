@@ -1,13 +1,13 @@
 
 namespace SGE;
 
-public class MotionSystem : SubSystem
+public class MotionSystem : System
 {
-    protected List<MotionComponent> _components;
+    protected List<Motion> _components;
 
     public MotionSystem()
     {
-        _components = new List<MotionComponent>();
+        _components = new List<Motion>();
     }
     
     public void Process()
@@ -35,15 +35,15 @@ public class MotionSystem : SubSystem
         }
     }
 
-    public MotionComponent CreateComponent(PositionSystem.PositionComponent comp, double framesToMove = 32)
+    public Motion CreateComponent(PositionSystem.Position comp, double framesToMove = 32)
     {
-        var mc = new MotionComponent(comp, framesToMove);
+        var mc = new Motion(comp, framesToMove);
         _components.Add(mc);
         mc._entity.OnDestroy += () => { _components.Remove(mc); };
         return mc;
     }
 
-    public class MotionComponent : Component
+    public class Motion : Component
     {
         protected internal bool _fired;
         protected internal bool _moving;
@@ -51,13 +51,13 @@ public class MotionSystem : SubSystem
         protected internal Vector2 _destination;
         protected internal Vector2 _velocity;
         protected double _framesToMove;
-        protected PositionSystem.PositionComponent _positionComponent;
+        protected PositionSystem.Position _positionComponent;
         public Action<Vector2>? OnStartMove;
         public Action<Vector2>? OnEndMove;
         public Action<Vector2>? OnMoving;
         public Action<Vector2>? OnIdle;
 
-        protected internal MotionComponent(PositionSystem.PositionComponent comp, double framesToMove) : base(comp._entity)
+        protected internal Motion(PositionSystem.Position comp, double framesToMove) : base(comp._entity)
         {
             _position = new Vector2();
             _destination = new Vector2();

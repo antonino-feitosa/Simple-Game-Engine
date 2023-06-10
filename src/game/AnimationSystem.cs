@@ -3,13 +3,13 @@ namespace SGE;
 
 using static CameraSystem;
 
-public class AnimationSystem : SubSystem
+public class AnimationSystem : System
 {
-    protected HashSet<AnimationComponent> _components;
+    protected HashSet<Animation> _components;
 
     public AnimationSystem()
     {
-        _components = new HashSet<AnimationComponent>();
+        _components = new HashSet<Animation>();
     }
 
     public void Process()
@@ -33,24 +33,24 @@ public class AnimationSystem : SubSystem
         }
     }
 
-    public AnimationComponent CreateComponent(RenderComponent comp, SpriteSheet sheet, params int[] sequence)
+    public Animation CreateComponent(CameraSystem.Render comp, SpriteSheet sheet, params int[] sequence)
     {
-        var anim = new AnimationComponent(comp, sheet, sequence);
+        var anim = new Animation(comp, sheet, sequence);
         _components.Add(anim);
         anim._entity.OnDestroy += () => _components.Remove(anim);
         return anim;
     }
 
-    public class AnimationComponent : Component
+    public class Animation : Component
     {
         public List<int> Sequence;
         public SpriteSheet Sheet;
-        public RenderComponent RenderComponent;
+        public CameraSystem.Render RenderComponent;
         public bool Running;
         public int UpdatesByFrames;
         protected internal int _current;
         protected internal int _count;
-        public AnimationComponent(RenderComponent comp, SpriteSheet sheet, params int[] sequence) : base(comp._entity)
+        public Animation(CameraSystem.Render comp, SpriteSheet sheet, params int[] sequence) : base(comp._entity)
         {
             Sheet = sheet;
             RenderComponent = comp;

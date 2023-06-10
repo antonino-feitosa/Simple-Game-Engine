@@ -64,11 +64,12 @@ public class Position
     public int X;
     public int Y;
 
-    public Position(int x, int y)
+    public Position(int x = 0, int y = 0)
     {
         X = x;
         Y = y;
     }
+    public void Copy(Position point) { X = point.X; Y = point.Y; }
     public override bool Equals(object? obj) { return obj is Position p ? p.X == X && p.Y == Y : base.Equals(obj); }
     public override int GetHashCode() { return HashCode.Combine(X, Y); }
     public override string ToString() { return String.Format("({0},{1})", X, Y); }
@@ -87,4 +88,18 @@ public class Dimension
     public override bool Equals(object? obj) { return obj is Dimension d ? d.Width == Width && d.Height == Height : base.Equals(obj); }
     public override int GetHashCode() { return HashCode.Combine(Width, Height); }
     public override string ToString() { return String.Format("({0},{1})", Width, Height); }
+}
+
+public class Identifiable
+{
+    private static int _countId = 0;
+    private readonly int _id;
+    protected int ID { get { return _id; } }
+    public Identifiable() { _id = _countId++; }
+
+    public override bool Equals(object? obj) { return obj is Identifiable e ? _id == e._id : base.Equals(obj); }
+
+    public override int GetHashCode() { return HashCode.Combine(_id); }
+
+    public override string ToString() { return "ID(" + _id + ")"; }
 }

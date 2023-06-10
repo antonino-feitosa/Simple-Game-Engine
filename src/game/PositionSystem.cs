@@ -2,7 +2,7 @@
 
 namespace SGE;
 
-public class PositionSystem : SubSystem
+public class PositionSystem : System
 {
     public readonly Direction UP = new Direction(0, -1);
     public readonly Direction UP_LEFT = new Direction(-1, -1);
@@ -13,27 +13,27 @@ public class PositionSystem : SubSystem
     public readonly Direction LEFT = new Direction(-1, 0);
     public readonly Direction RIGHT = new Direction(+1, -0);
 
-    protected HashSet<Position> _ground;
-    protected Dictionary<Position, PositionComponent> _components;
-    protected Dictionary<PositionComponent, Position> _moving;
-    protected Dictionary<PositionComponent, Position> _outOfBounds;
-    protected HashSet<PositionComponent> _free;
+    protected HashSet<SGE.Position> _ground;
+    protected Dictionary<SGE.Position, Position> _components;
+    protected Dictionary<Position, SGE.Position> _moving;
+    protected Dictionary<Position, SGE.Position> _outOfBounds;
+    protected HashSet<Position> _free;
 
-    public PositionSystem(HashSet<Position> ground)
+    public PositionSystem(HashSet<SGE.Position> ground)
     {
         _ground = ground;
-        _components = new Dictionary<Position, PositionComponent>();
-        _moving = new Dictionary<PositionComponent, Position>();
-        _outOfBounds = new Dictionary<PositionComponent, Position>();
-        _free = new HashSet<PositionComponent>();
+        _components = new Dictionary<SGE.Position, Position>();
+        _moving = new Dictionary<Position, SGE.Position>();
+        _outOfBounds = new Dictionary<Position, SGE.Position>();
+        _free = new HashSet<Position>();
     }
 
-    public PositionComponent CreateComponent(Entity entity, int x, int y)
+    public Position CreateComponent(Entity entity, int x, int y)
     {
-        return new PositionComponent(entity, new Position(x, y), this);
+        return new Position(entity, new SGE.Position(x, y), this);
     }
 
-    protected internal void Move(PositionComponent comp, Direction dir)
+    protected internal void Move(Position comp, Direction dir)
     {
         var destination = dir.Next(comp._position);
         if (_ground.Contains(destination))
@@ -60,7 +60,7 @@ public class PositionSystem : SubSystem
         foreach (var pair in _outOfBounds) { pair.Key.OnOutOfBounds?.Invoke(pair.Value); };
         _outOfBounds.Clear();
 
-        var collision = new HashSet<PositionComponent>();
+        var collision = new HashSet<Position>();
         while (_free.Count > 0)
         {
             var comp = _free.First();
@@ -92,7 +92,7 @@ public class PositionSystem : SubSystem
         _moving.Clear();
     }
 
-    private void DoMove(PositionComponent comp, Position dest)
+    private void DoMove(Position comp, SGE.Position dest)
     {
         _components.Remove(comp._position);
         _components.Add(dest, comp);
@@ -100,20 +100,20 @@ public class PositionSystem : SubSystem
         comp._position = dest;
     }
 
-    public class PositionComponent : Component
+    public class Position : Component
     {
         protected PositionSystem _system;
-        protected internal Position _position;
-        protected internal HashSet<PositionComponent> _dependency;
-        public Action<Position, Position>? OnMove; // successful move
-        public Action<PositionComponent>? OnCollision; // collision with another component
-        public Action<Position>? OnOutOfBounds; // move to out of the ground
+        protected internal SGE.Position _position;
+        protected internal HashSet<Position> _dependency;
+        public Action<SGE.Position, SGE.Position>? OnMove; // successful move
+        public Action<Position>? OnCollision; // collision with another component
+        public Action<SGE.Position>? OnOutOfBounds; // move to out of the ground
 
-        protected internal PositionComponent(Entity entity, Position position, PositionSystem system) : base(entity)
+        protected internal Position(Entity entity, SGE.Position position, PositionSystem system) : base(entity)
         {
             _system = system;
             _position = position;
-            _dependency = new HashSet<PositionComponent>();
+            _dependency = new HashSet<Position>();
         }
 
         public void Move(Direction dir)

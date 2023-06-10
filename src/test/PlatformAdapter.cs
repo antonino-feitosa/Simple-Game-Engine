@@ -1,15 +1,18 @@
 
 namespace SGE;
 
-public class PlatformAdapter : Platform
+public class DeviceAdapter : Device
 {
     public int Width => throw new NotImplementedException();
     public int Height => throw new NotImplementedException();
     public (int, int) MousePosition => throw new NotImplementedException();
 
     public bool FullScreen { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public int FramesPerSecond { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-    public void Finish()
+    public Game Game { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+    public void Dispose()
     {
     }
 

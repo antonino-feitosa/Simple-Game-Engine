@@ -3,17 +3,14 @@ namespace SGE;
 
 public class Game
 {
-    public Platform Device;
-    protected LinkedList<SubSystem> _systems;
+    protected LinkedList<System> _systems;
     protected LinkedList<Entity> _entities;
     protected LinkedList<Entity> _entities_destroy;
     protected Dictionary<Entity, LinkedListNode<Entity>> _entities_reference;
 
-    public Game(Platform device, int fps = 32)
+    public Game()
     {
-        Device = device;
-        Device.RegisterLoop(Loop, fps);
-        _systems = new LinkedList<SubSystem>();
+        _systems = new LinkedList<System>();
         _entities = new LinkedList<Entity>();
         _entities_destroy = new LinkedList<Entity>();
         _entities_reference = new Dictionary<Entity, LinkedListNode<Entity>>();
@@ -32,20 +29,20 @@ public class Game
         _entities_destroy.AddLast(e);
     }
 
-    protected internal void AttachSystem(SubSystem system)
+    protected internal void AttachSystem(System system)
     {
         _systems.AddLast(system);
     }
 
     public void Start()
     {
-        Device.Start();
         foreach (var ent in _entities) { ent.Start(); }
     }
 
     public void Stop()
     {
-        Device.Finish();
+        foreach (var ent in _entities) { ent.Dispose(); }
+        _entities.Clear();
     }
 
     public void Loop()
@@ -57,7 +54,7 @@ public class Game
         foreach (var del in _entities_destroy)
         {
             var node = _entities_reference[del];
-            del.Finish();
+            del.Dispose();
             _entities.Remove(node);
         }
         _entities_destroy.Clear();

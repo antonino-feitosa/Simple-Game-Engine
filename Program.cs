@@ -1,6 +1,6 @@
 namespace SGE;
 
-using System.Runtime.InteropServices;
+using global::System.Runtime.InteropServices;
 
 static class Program
 {
@@ -21,8 +21,10 @@ static class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         ApplicationConfiguration.Initialize();
-        var platform = new PlatformWindows();
-        
+
+        var game = new Game();
+        var device = new DeviceWindows(game);
+        var loading = new LoadingSystem(device, game);
         
         //PlatformTest.Test(platform);
         //PositionSystemTest.Test(game);
@@ -30,12 +32,9 @@ static class Program
         //CameraSystemTest.Test(game);
         //AnimationSystemTest.Test(game);
         //ResizeTest.Test(game);
-
-        var game = new Game(platform);
-        var loading = new LoadingSystem(game);
-        game.AttachSystem(loading);
         
-        Application.Run(platform);
+        game.AttachSystem(loading);
+        Application.Run(device);
         game.Start();
     }
 }

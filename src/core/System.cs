@@ -1,7 +1,7 @@
 
 namespace SGE;
 
-public interface SubSystem
+public interface System
 {
     public void Process();
 }

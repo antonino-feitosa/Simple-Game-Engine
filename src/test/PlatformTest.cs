@@ -2,9 +2,9 @@ using System.IO;
 
 namespace SGE;
 
-public class PlatformTest {
+public class DeviceTest {
 
-    public static void Test(Platform device){
+    public static void Test(Device device){
 
         device.RegisterKeyDown('a',  (mask) => Console.WriteLine("Key Down! " + mask));
         device.RegisterKeyUp('a',  (mask) => Console.WriteLine("Key Up! " + mask));

@@ -4,11 +4,10 @@ namespace SGE;
 public class CameraSystemTest
 {
 
-    public static void Test(Game game)
+    public static void Test(Device device, Game game)
     {
 
         var entity = game.CreateEntity();
-        var device = game.Device;
         var sys = new CameraSystem(new Vector2(), new Dimension(device.Width, device.Height));
         game.AttachSystem(sys);
 

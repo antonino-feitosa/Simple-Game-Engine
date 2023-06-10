@@ -1,7 +1,7 @@
 
 namespace SGE;
 
-public class LoadingSystem : SubSystem
+public class LoadingSystem : System
 {
 
     public const string TITLE_FILE = "./art/GUI/Title.png";
@@ -19,11 +19,10 @@ public class LoadingSystem : SubSystem
     public Game _game;
     private int _loaded;
 
-    public LoadingSystem(Game game)
+    public LoadingSystem(Device device, Game game)
     {
         _game = game;
         _loaded = 0;
-        var device = _game.Device;
         _title = device.LoadImage(TITLE_FILE);
         _loading = device.LoadImage(LOADING_FILE);
         _background = device.LoadImage(BACKGROUND_FILE);
@@ -44,6 +43,9 @@ public class LoadingSystem : SubSystem
 
     protected void Changed()
     {
+
+    }
+    public void Load(){
 
     }
 

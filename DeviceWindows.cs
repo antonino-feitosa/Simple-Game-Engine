@@ -1,11 +1,276 @@
 
+using Timer = System.Windows.Forms.Timer;
+
 namespace SGE;
 
-using System.Drawing;
-using System.IO;
-using System.Media;
-using System.Windows.Forms;
-using System.Windows.Media;
+public class DeviceWindows : Device
+{
+    private WindowsAdapter _windows;
+    private Position _mousePosition;
+    public DeviceWindows(Game game) : base(game)
+    {
+        _mousePosition = new Position();
+        _windows = new WindowsAdapter();
+        _windows.RegisterMouseMove += (Position point) => { _mousePosition.Copy(point); };
+        _windows.RegisterMouseDown += FireMouseDown;
+        _windows.RegisterMouseUp += FireMouseUp;
+        _windows.RegisterMouseScroll += FireMouseWheel;
+        _windows.RegisterKeyDown += FireKeyDown;
+        _windows.RegisterKeyUp += FireKeyUp;
+        _windows.RegisterLoop += Loop;
+    }
+
+    public override Dimension Dimension => _windows.Dimension;
+    public override Position MousePosition { get { return _mousePosition; } }
+
+    public override void Start()
+    {
+        _windows.Start();
+    }
+
+    public override void Dispose()
+    {
+        _windows.Stop();
+    }
+    public override Color MakeColorFromName(string colorName)
+    {
+        return _windows.MakeColorFromName(colorName);
+    }
+
+    public override Color MakeColorFrom32Bits(int red, int green, int blue)
+    {
+        return _windows.MakeColorFrom32Bits(red, green, blue);
+    }
+
+    public override SpriteSheet MakeSpriteSheet(Image img, Dimension dimension)
+    {
+    }
+
+    public override Text MakeText(string text, Font font)
+    {
+    }
+
+    protected override Font LoadFontImpl(string path)
+    {
+        return _windows.LoadFont(path);
+    }
+
+    protected override Image LoadImageImpl(string path)
+    {
+        return _windows.LoadImage(path);
+    }
+
+    protected override Sound LoadSoundImpl(string path)
+    {
+        return _windows.LoadSound(path);
+    }
+}
+
+
+public partial class WindowsAdapter : Form
+{
+    public Action<int, Device.KeyboardModifier>? RegisterKeyDown;
+    public Action<int, Device.KeyboardModifier>? RegisterKeyUp;
+    public Action<Position>? RegisterMouseMove;
+    public Action<Device.MouseButton>? RegisterMouseDown;
+    public Action<Device.MouseButton>? RegisterMouseUp;
+    public Action<Device.MouseWheelDirection>? RegisterMouseScroll;
+    public Action? RegisterLoop;
+
+    private Timer _timer;
+    private Size _dimension;
+
+    public WindowsAdapter(string title = "Game", int framesPerSecond = 32)
+    {
+        _dimension = new Size(800, 600);
+
+        InitializeComponent();
+
+        // Set the form's properties
+        this.Text = title;
+        this.BackColor = global::System.Drawing.Color.Black;
+        this.WindowState = FormWindowState.Normal;
+        this.FormBorderStyle = FormBorderStyle.None;
+        this.DoubleBuffered = true;
+        FullScreen = false;
+
+        // Add event handlers
+        this.KeyDown += FireKeyDown;
+        this.KeyUp += FireKeyUp;
+        this.Paint += FirePaint;
+        this.MouseDown += FireMouseDown;
+        this.MouseUp += FireMouseUp;
+        this.MouseWheel += FireMouseWheelScroll;
+        this.MouseMove += FireMouseMove;
+        this.Load += (sender, e) => this.Location = new Point(500, 0);
+
+        this._timer = new Timer();
+        this._timer.Interval = (int)(1000.0 / framesPerSecond);
+        this._timer.Tick += FireLoop;
+    }
+
+    public void Start()
+    {
+        this._timer.Start();
+    }
+
+    public void Stop()
+    {
+        this._timer.Stop();
+        this.Close();
+    }
+
+    public bool FullScreen
+    {
+        set
+        {
+            if (value && Screen.PrimaryScreen != null)
+            {
+                this.WindowState = FormWindowState.Normal;
+                this.FormBorderStyle = global::System.Windows.Forms.FormBorderStyle.None;
+                this.Bounds = Screen.PrimaryScreen.Bounds;
+            }
+            else
+            {
+                this.ClientSize = _dimension;
+                this.FormBorderStyle = global::System.Windows.Forms.FormBorderStyle.Sizable;
+            }
+        }
+    }
+
+    public Dimension Dimension
+    {
+        get
+        {
+            return new Dimension(_dimension.Width, _dimension.Height);
+        }
+        set
+        {
+            _dimension.Width = value.Width;
+            _dimension.Height = value.Height;
+        }
+    }
+
+    public int FramesPerSecond
+    {
+        set
+        {
+            this._timer.Interval = (int)(1000.0 / value);
+        }
+    }
+
+    private (int, Device.KeyboardModifier) GetKeyboardMask(KeyEventArgs e)
+    {
+        int mask = 0;
+        mask += e.Alt ? (int)Device.KeyboardModifier.Alt : 0;
+        mask += e.Shift ? (int)Device.KeyboardModifier.Shift : 0;
+        mask += e.Control ? (int)Device.KeyboardModifier.Ctrl : 0;
+        return (e.KeyValue, (Device.KeyboardModifier)mask);
+    }
+
+    protected void FireKeyDown(object? sender, KeyEventArgs e)
+    {
+        (int key, Device.KeyboardModifier mask) = GetKeyboardMask(e);
+        RegisterKeyDown?.Invoke(key, mask);
+    }
+
+    protected void FireKeyUp(object? sender, KeyEventArgs e)
+    {
+        (int key, Device.KeyboardModifier mask) = GetKeyboardMask(e);
+        RegisterKeyUp?.Invoke(key, mask);
+    }
+
+    protected void FireMouseWheelScroll(object? sender, MouseEventArgs e)
+    {
+        Device.MouseWheelDirection direction = Device.MouseWheelDirection.Neutral;
+        if (e.Delta > 0) direction = Device.MouseWheelDirection.Forward;
+        if (e.Delta < 0) direction = Device.MouseWheelDirection.Backward;
+        RegisterMouseScroll?.Invoke(direction);
+    }
+
+    protected void FireMouseMove(object? sender, MouseEventArgs e)
+    {
+        RegisterMouseMove?.Invoke(new Position(e.X, e.Y));
+    }
+
+    private Device.MouseButton GetMouseButton(MouseEventArgs e)
+    {
+        Device.MouseButton button = Device.MouseButton.None;
+        switch (e.Button)
+        {
+            case MouseButtons.Left: button = Device.MouseButton.Left; break;
+            case MouseButtons.Right: button = Device.MouseButton.Right; break;
+            case MouseButtons.Middle: button = Device.MouseButton.Middle; break;
+        }
+        return button;
+    }
+
+    protected void FireMouseDown(object? sender, MouseEventArgs e)
+    {
+        Device.MouseButton button = GetMouseButton(e);
+        RegisterMouseDown?.Invoke(button);
+    }
+    protected void FireMouseUp(object? sender, MouseEventArgs e)
+    {
+        Device.MouseButton button = GetMouseButton(e);
+        RegisterMouseUp?.Invoke(button);
+    }
+
+    protected void FirePaint(object? sender, PaintEventArgs e)
+    {
+        //TODO draw images and text
+        
+    }
+
+    protected void FireLoop(object? sender, EventArgs e)
+    {
+        RegisterLoop?.Invoke();
+        Invalidate();
+    }
+
+    public Font LoadFont(string path)
+    {
+    }
+
+    public Image LoadImage(string path)
+    {
+    }
+
+    public Sound LoadSound(string path)
+    {
+    }
+
+    public Color MakeColorFrom32Bits(int red, int green, int blue)
+    {
+        return new ColorWindows(red, green, blue);
+    }
+
+    public Color MakeColorFromName(string name)
+    {
+        return new ColorWindows(name);
+    }
+}
+
+internal class ColorWindows : Color
+{
+
+    global::System.Drawing.Color _color;
+
+    public ColorWindows(string name)
+    {
+        _color = global::System.Drawing.Color.FromName(name);
+    }
+
+    public ColorWindows(int red, int green, int blue)
+    {
+        _color = global::System.Drawing.Color.FromArgb(red, green, blue);
+    }
+}
+
+
+//--------------------------------------
+/// REFACTOR
+
 
 public class TextWindows : Text
 {
@@ -13,14 +278,14 @@ public class TextWindows : Text
     protected int _size;
     protected string _font;
     protected string _color;
-    protected internal PlatformWindows _device;
+    protected internal DeviceWindows _device;
 
     public string Text { get => _text; set => _text = value; }
     public int Size { get => _size; set => _size = value; }
     public string Font { get => _font; set => _font = value; }
     public string Color { get => _color; set => _color = value; }
 
-    public TextWindows(string text, string font, PlatformWindows device)
+    public TextWindows(string text, string font, DeviceWindows device)
     {
         _text = text;
         _font = font;
@@ -42,9 +307,9 @@ public class SoundWindows : Sound
 
     private string _path;
     protected internal SoundPlayer _sound;
-    protected internal PlatformWindows _game;
+    protected internal DeviceWindows _game;
 
-    protected internal SoundWindows(string path, SoundPlayer sound, PlatformWindows game)
+    protected internal SoundWindows(string path, SoundPlayer sound, DeviceWindows game)
     {
         _id = _countId++;
         _path = path;
@@ -75,7 +340,6 @@ public class SoundWindows : Sound
 
     public void Pause()
     {
-
     }
 
     public void Stop()
@@ -110,9 +374,9 @@ public class SpriteSheetWindows : SpriteSheet
 
     protected internal List<Image> _sheet;
     protected internal Bitmap _bitmap;
-    protected internal PlatformWindows _device;
+    protected internal DeviceWindows _device;
 
-    protected internal SpriteSheetWindows(string path, Bitmap bitmap, PlatformWindows device)
+    protected internal SpriteSheetWindows(string path, Bitmap bitmap, DeviceWindows device)
     {
         _id = _countId++;
         _path = path;
@@ -172,9 +436,9 @@ public class ImageWindows : Image
     private string _path;
 
     protected internal Bitmap _bitmap;
-    protected internal PlatformWindows _device;
+    protected internal DeviceWindows _device;
 
-    protected internal ImageWindows(string path, Bitmap bitmap, PlatformWindows device)
+    protected internal ImageWindows(string path, Bitmap bitmap, DeviceWindows device)
     {
         _id = _countId++;
         _path = path;
@@ -249,41 +513,38 @@ internal class TextCommand : Render
 
     public void Render(Graphics g)
     { // TODO optimization point: shared references
-        System.Drawing.Font drawFont = new System.Drawing.Font(_text.Font, _text.Size);
-        System.Drawing.Color color = System.Drawing.Color.FromName(_text.Color);
-        System.Drawing.SolidBrush drawBrush = new System.Drawing.SolidBrush(color);
-        System.Drawing.StringFormat drawFormat = new System.Drawing.StringFormat();
+        global::System.Drawing.Font drawFont = new global::System.Drawing.Font(_text.Font, _text.Size);
+        global::System.Drawing.Color color = global::System.Drawing.Color.FromName(_text.Color);
+        global::System.Drawing.SolidBrush drawBrush = new global::System.Drawing.SolidBrush(color);
+        global::System.Drawing.StringFormat drawFormat = new global::System.Drawing.StringFormat();
         g.DrawString(_text.Text, drawFont, drawBrush, _point.X, _point.Y, drawFormat);
         drawFont.Dispose();
         drawBrush.Dispose();
     }
 }
 
-public partial class PlatformWindows : Form, Platform
+
+
+public partial class DeviceWindows1 : Form, Device
 {
-    private Dictionary<string, SpriteSheetWindows> _spriteSheets;
-    private Dictionary<string, ImageWindows> _images;
-    private Dictionary<string, SoundWindows> _sounds;
 
     private LinkedList<Render> _renderCommands;
     private LinkedList<Render> _bufferCommands;
 
-    private Dictionary<char, Action<int>> _keyDownCommands;
-    private Dictionary<char, Action<int>> _keyUpCommands;
-
-    private Action<int>? _onMouseWheel;
-    private Dictionary<char, Action<int, int>> _onMouseDown;
-    private Dictionary<char, Action<int, int>> _onMouseUp;
-
-    private Action _onLoop;
-    private bool _fullScreen;
-
+    public override int FramesPerSecond
+    {
+        set
+        {
+            _framesPerSeconds = value;
+            this.timer.Interval = (int)(1000 / _framesPerSeconds);
+        }
+    }
 
     private Timer timer;
-    private const int FPS = 32;
 
-    public PlatformWindows()
+    public DeviceWindows(Game game)
     {
+        _current = game;
         _images = new Dictionary<string, ImageWindows>();
         _sounds = new Dictionary<string, SoundWindows>();
         _spriteSheets = new Dictionary<string, SpriteSheetWindows>();
@@ -298,7 +559,7 @@ public partial class PlatformWindows : Form, Platform
 
         // Set the form's properties
         this.Text = "Game";
-        this.BackColor = System.Drawing.Color.Black;
+        this.BackColor = global::System.Drawing.Color.Black;
         this.WindowState = FormWindowState.Normal;
         this.FormBorderStyle = FormBorderStyle.None;
         this.DoubleBuffered = true;
@@ -315,7 +576,7 @@ public partial class PlatformWindows : Form, Platform
         this._onLoop += () => { };
 
         this.timer = new Timer();
-        this.timer.Interval = (int)(1000 / FPS);
+        this.timer.Interval = (int)(1000 / _framesPerSeconds);
         this.timer.Tick += DoLoop;
         this.timer.Start();
     }
@@ -329,13 +590,13 @@ public partial class PlatformWindows : Form, Platform
             if (_fullScreen && Screen.PrimaryScreen != null)
             {
                 this.WindowState = FormWindowState.Normal;
-                this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+                this.FormBorderStyle = global::System.Windows.Forms.FormBorderStyle.None;
                 this.Bounds = Screen.PrimaryScreen.Bounds;
             }
             else
             {
                 this.ClientSize = new Size(800, 600);
-                this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+                this.FormBorderStyle = global::System.Windows.Forms.FormBorderStyle.Sizable;
             }
         }
     }
@@ -451,7 +712,7 @@ public partial class PlatformWindows : Form, Platform
         Invalidate();
     }
 
-    public void Finish()
+    public void Dispose()
     {
         this.timer.Stop();
         this.Close();
@@ -461,11 +722,14 @@ public partial class PlatformWindows : Form, Platform
     {
         if (!_images.ContainsKey(path))
         {
-            try {
+            try
+            {
                 var bitmap = new Bitmap(path);
                 var image = new ImageWindows(path, bitmap, this);
                 _images.Add(path, image);
-            } catch(ArgumentException e){
+            }
+            catch (ArgumentException e)
+            {
                 Console.WriteLine(String.Format("Image {0} not found!", path));
                 throw e;
             }

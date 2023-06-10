@@ -1,20 +1,20 @@
 
 namespace SGE;
 
-public class CameraSystem : SubSystem
+public class CameraSystem : System
 {
     public Vector2 Position; // TODO double position
     public Dimension Dimension;
     public int PixelsUnit;
 
-    protected List<RenderComponent> _components;
+    protected List<Render> _components;
 
     public CameraSystem(Vector2 position, Dimension dimension, int pixelsUnit = 32)
     {
         Position = position;
         Dimension = dimension;
         PixelsUnit = pixelsUnit;
-        _components = new List<RenderComponent>(); // TODO optimization on delete
+        _components = new List<Render>(); // TODO optimization on delete
     }
 
     public void Process()
@@ -37,22 +37,22 @@ public class CameraSystem : SubSystem
         }
     }
 
-    public RenderComponent CreateComponent(Entity entity, Image image, Vector2 position)
+    public Render CreateComponent(Entity entity, Image image, Vector2 position)
     {
-        var comp = new RenderComponent(entity, image, position);
+        var comp = new Render(entity, image, position);
         _components.Add(comp);
         entity.OnDestroy += () => _components.Remove(comp);
         return comp;
     }
 
-    public class RenderComponent : Component
+    public class Render : Component
     {
         public Vector2 Position;
         public int ZIndex;
         public Image Image;
         public bool Visible;
 
-        public RenderComponent(Entity entity, Image image, Vector2 position) : base(entity)
+        public Render(Entity entity, Image image, Vector2 position) : base(entity)
         {
             Image = image;
             ZIndex = 0;
