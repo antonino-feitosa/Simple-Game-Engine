@@ -87,37 +87,37 @@ public partial class WindowsAdapter : Form
         InitializeComponent();
 
         // Set the form's properties
-        this.Text = title;
-        this.BackColor = global::System.Drawing.Color.Black;
-        this.WindowState = FormWindowState.Normal;
-        this.FormBorderStyle = FormBorderStyle.None;
-        this.DoubleBuffered = true;
+        Text = title;
+        BackColor = global::System.Drawing.Color.Black;
+        WindowState = FormWindowState.Normal;
+        FormBorderStyle = FormBorderStyle.None;
+        DoubleBuffered = true;
         FullScreen = false;
 
         // Add event handlers
-        this.KeyDown += FireKeyDown;
-        this.KeyUp += FireKeyUp;
-        this.Paint += FirePaint;
-        this.MouseDown += FireMouseDown;
-        this.MouseUp += FireMouseUp;
-        this.MouseWheel += FireMouseWheelScroll;
-        this.MouseMove += FireMouseMove;
-        this.Load += (sender, e) => this.Location = new Point(500, 0);
+        KeyDown += FireKeyDown;
+        KeyUp += FireKeyUp;
+        Paint += FirePaint;
+        MouseDown += FireMouseDown;
+        MouseUp += FireMouseUp;
+        MouseWheel += FireMouseWheelScroll;
+        MouseMove += FireMouseMove;
+        Load += (sender, e) => Location = new Point(500, 0);
 
-        this._timer = new Timer();
-        this._timer.Interval = (int)(1000.0 / framesPerSecond);
-        this._timer.Tick += FireLoop;
+        _timer = new Timer();
+        _timer.Interval = (int)(1000.0 / framesPerSecond);
+        _timer.Tick += FireLoop;
     }
 
     public void Start()
     {
-        this._timer.Start();
+        _timer.Start();
     }
 
     public void Stop()
     {
-        this._timer.Stop();
-        this.Close();
+        _timer.Stop();
+        Close();
     }
 
     public bool FullScreen
@@ -126,14 +126,14 @@ public partial class WindowsAdapter : Form
         {
             if (value && Screen.PrimaryScreen != null)
             {
-                this.WindowState = FormWindowState.Normal;
-                this.FormBorderStyle = global::System.Windows.Forms.FormBorderStyle.None;
-                this.Bounds = Screen.PrimaryScreen.Bounds;
+                WindowState = FormWindowState.Normal;
+                FormBorderStyle = global::System.Windows.Forms.FormBorderStyle.None;
+                Bounds = Screen.PrimaryScreen.Bounds;
             }
             else
             {
-                this.ClientSize = _dimension;
-                this.FormBorderStyle = global::System.Windows.Forms.FormBorderStyle.Sizable;
+                ClientSize = _dimension;
+                FormBorderStyle = global::System.Windows.Forms.FormBorderStyle.Sizable;
             }
         }
     }
@@ -267,6 +267,21 @@ internal class ColorWindows : Color
     }
 }
 
+internal class FontWindows : Font
+{
+    private string _path;
+    public FontWindows(string path){
+        _path = path;
+    }
+    public int Size { get => _path }
+
+    public string Path => throw new NotImplementedException();
+
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
 
 //--------------------------------------
 /// REFACTOR
