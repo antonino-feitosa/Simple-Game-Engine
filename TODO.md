@@ -8,7 +8,7 @@
 - [ ] Tela de carregamento. Deve ser lançada no início de aplicação exibindo uma barra de progresso enquanto os recursos são carregados.
 - [ ] Sistema de interface de usuário.
 - [ ] Redimensionamento da tela de desenho.
-- [ ] Atualização do sistema sonoro para habilitar a reprodução em diferentes volumes.
+- [x] Atualização do sistema sonoro para habilitar a reprodução em diferentes volumes.
 
 ### In Progress
 

@@ -9,27 +9,35 @@ public class MotionSystem : System
     {
         _components = new List<Motion>();
     }
-    
+
     public void Process()
     {
         foreach (var comp in _components)
         {
-            if(comp._fired){
+            if (comp._fired)
+            {
                 comp._fired = false;
-                if(!comp._moving){
+                if (!comp._moving)
+                {
                     comp._moving = true;
                     comp.OnStartMove?.Invoke(comp._position);
                 }
             }
-            if(comp._moving){
-                if(comp._position.IsCloseEnough(comp._destination)){
+            if (comp._moving)
+            {
+                if (comp._position.IsCloseEnough(comp._destination))
+                {
                     comp._moving = false;
                     comp.OnEndMove?.Invoke(comp._position);
-                } else {
+                }
+                else
+                {
                     comp._position.Sum(comp._velocity);
                     comp.OnMoving?.Invoke(comp._position);
                 }
-            } else {
+            }
+            else
+            {
                 comp.OnIdle?.Invoke(comp._position);
             }
         }
@@ -73,9 +81,7 @@ public class MotionSystem : System
         {
             _position = new Vector2(source.X, source.Y);
             _destination = new Vector2(dest.X, dest.Y);
-            _velocity = new Vector2();
-            _velocity.X = (dest.X - source.X) / (double)_framesToMove;
-            _velocity.Y = (dest.Y - source.Y) / (double)_framesToMove;
+            _velocity = new Vector2((dest.X - source.X) / _framesToMove, (dest.Y - source.Y) / _framesToMove);
             _fired = true;
         }
 

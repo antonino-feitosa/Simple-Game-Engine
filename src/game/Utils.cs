@@ -85,6 +85,7 @@ public class Dimension
         Width = width;
         Height = height;
     }
+    public void Copy(Dimension dimension) { Width = dimension.Width; Height = dimension.Height; }
     public override bool Equals(object? obj) { return obj is Dimension d ? d.Width == Width && d.Height == Height : base.Equals(obj); }
     public override int GetHashCode() { return HashCode.Combine(Width, Height); }
     public override string ToString() { return String.Format("({0},{1})", Width, Height); }

@@ -4,18 +4,16 @@ namespace SGE;
 public class DeviceWindows : Device
 {
     private readonly Form _form;
-    private readonly Position _mousePosition;
     private readonly global::System.Windows.Forms.Timer _timer;
-    private Size _dimension;
     private readonly List<Action<Graphics>> _drawQueue;
+    private readonly DeviceHelper _device;
     private bool _disposed;
 
-    public DeviceWindows(Form form, Game game) : base(game)
+    public DeviceWindows(Form form, DeviceHelper device)
     {
+        _device = device;
         _disposed = false;
-        _mousePosition = new Position();
         _drawQueue = new List<Action<Graphics>>();
-        _dimension = new Size(800, 600);
 
         _form = form;
         _form.Text = "Simple Game";
@@ -37,25 +35,27 @@ public class DeviceWindows : Device
         _timer = new global::System.Windows.Forms.Timer();
         _timer.Tick += OnLoop;
 
-        FullScreen = false;
+        IsFullScreen = false;
         FramesPerSecond = 32;
     }
     ~DeviceWindows() { Dispose(false); }
 
-    public override Position MousePosition { get { return _mousePosition; } }
-    public override Dimension Dimension { get => new(_dimension.Width, _dimension.Height); }
-
-    public override int FramesPerSecond
+    public Game Game { get => _device.Game; set => _device.Game = value; }
+    public Position MousePosition { get => _device.MousePosition; }
+    public Dimension Dimension { get => _device.Dimesion; set => _device.Dimesion = value; }
+    public int FramesPerSecond
     {
+        get => _device.FramesPerSecond;
         set
         {
-            base.FramesPerSecond = value;
             _timer.Interval = (int)(1000.0 / value);
+            _device.FramesPerSecond = value;
         }
     }
 
-    public override bool FullScreen
+    public bool IsFullScreen
     {
+        get => _device.IsFullScreen;
         set
         {
             if (value && Screen.PrimaryScreen != null)
@@ -66,13 +66,14 @@ public class DeviceWindows : Device
             }
             else
             {
-                _form.ClientSize = _dimension;
+                _form.ClientSize = new Size(_device.Dimesion.Width, _device.Dimesion.Height);
                 _form.FormBorderStyle = global::System.Windows.Forms.FormBorderStyle.Sizable;
             }
+            _device.IsFullScreen = value;
         }
     }
 
-    public override void Start()
+    public void Start()
     {
         _timer.Start();
         Game.Start();
@@ -91,68 +92,67 @@ public class DeviceWindows : Device
         }
     }
 
-    public override void Dispose()
+    public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
-    private static (int, KeyboardModifier) GetKeyboardMask(KeyEventArgs e)
+    private static (int, Device.KeyboardModifier) GetKeyboardMask(KeyEventArgs e)
     {
         int mask = 0;
-        mask += e.Alt ? (int)KeyboardModifier.Alt : 0;
-        mask += e.Shift ? (int)KeyboardModifier.Shift : 0;
-        mask += e.Control ? (int)KeyboardModifier.Ctrl : 0;
-        return (e.KeyValue, (KeyboardModifier)mask);
+        mask += e.Alt ? (int)Device.KeyboardModifier.Alt : 0;
+        mask += e.Shift ? (int)Device.KeyboardModifier.Shift : 0;
+        mask += e.Control ? (int)Device.KeyboardModifier.Ctrl : 0;
+        return (e.KeyValue, (Device.KeyboardModifier)mask);
     }
 
     protected void OnKeyDown(object? sender, KeyEventArgs e)
     {
-        (int key, KeyboardModifier mask) = GetKeyboardMask(e);
-        FireKeyDown(key, mask);
+        (int key, Device.KeyboardModifier mask) = GetKeyboardMask(e);
+        _device.FireKeyDown(key, mask);
     }
 
     protected void OnKeyUp(object? sender, KeyEventArgs e)
     {
-        (int key, KeyboardModifier mask) = GetKeyboardMask(e);
-        FireKeyUp(key, mask);
+        (int key, Device.KeyboardModifier mask) = GetKeyboardMask(e);
+        _device.FireKeyUp(key, mask);
     }
 
     protected void OnMouseWheelScroll(object? sender, MouseEventArgs e)
     {
-        MouseWheelDirection direction = MouseWheelDirection.Neutral;
-        if (e.Delta > 0) direction = MouseWheelDirection.Forward;
-        if (e.Delta < 0) direction = MouseWheelDirection.Backward;
-        FireMouseWheel(direction);
+        Device.MouseWheelDirection direction = Device.MouseWheelDirection.Neutral;
+        if (e.Delta > 0) direction = Device.MouseWheelDirection.Forward;
+        if (e.Delta < 0) direction = Device.MouseWheelDirection.Backward;
+        _device.FireMouseWheel(direction);
     }
 
     protected void OnMouseMove(object? sender, MouseEventArgs e)
     {
-        _mousePosition.X = e.X;
-        _mousePosition.Y = e.Y;
+        _device.MousePosition = new Position(e.X, e.Y);
     }
 
-    private static MouseButton GetMouseButton(MouseEventArgs e)
+    private static Device.MouseButton GetMouseButton(MouseEventArgs e)
     {
-        MouseButton button = MouseButton.None;
+        Device.MouseButton button = Device.MouseButton.None;
         switch (e.Button)
         {
-            case MouseButtons.Left: button = MouseButton.Left; break;
-            case MouseButtons.Right: button = MouseButton.Right; break;
-            case MouseButtons.Middle: button = MouseButton.Middle; break;
+            case MouseButtons.Left: button = Device.MouseButton.Left; break;
+            case MouseButtons.Right: button = Device.MouseButton.Right; break;
+            case MouseButtons.Middle: button = Device.MouseButton.Middle; break;
         }
         return button;
     }
 
     protected void OnMouseDown(object? sender, MouseEventArgs e)
     {
-        MouseButton button = GetMouseButton(e);
-        FireMouseDown(button);
+        Device.MouseButton button = GetMouseButton(e);
+        _device.FireMouseDown(button);
     }
     protected void OnMouseUp(object? sender, MouseEventArgs e)
     {
-        MouseButton button = GetMouseButton(e);
-        FireMouseUp(button);
+        Device.MouseButton button = GetMouseButton(e);
+        _device.FireMouseUp(button);
     }
 
     protected void OnPaint(object? sender, PaintEventArgs e)
@@ -165,11 +165,11 @@ public class DeviceWindows : Device
     protected void OnLoop(object? sender, EventArgs e)
     {
         _drawQueue.Clear();
-        FireLoop();
+        _device.Game.Loop();
         _form.Invalidate();
     }
 
-    protected override Font LoadFontImpl(string path)
+    public Font MakeFont(string path)
     {
         //FontFamily fontFamily = new FontFamily(@"C:\Projects\MyProj\#free3of9");
         //The font name without the file extension, and keep the '#' symbol.
@@ -183,7 +183,7 @@ public class DeviceWindows : Device
         }
     }
 
-    protected override Image LoadImageImpl(string path)
+    public Image MakeImage(string path)
     {
         try
         {
@@ -195,7 +195,7 @@ public class DeviceWindows : Device
         }
     }
 
-    protected override Sound LoadSoundImpl(string path)
+    public Sound MakeSound(string path)
     {
         try
         {
@@ -207,24 +207,24 @@ public class DeviceWindows : Device
         }
     }
 
-    public override Color MakeColorFrom32Bits(int red, int green, int blue)
+    public Color MakeColorFrom32Bits(int red, int green, int blue)
     {
         return ColorWindows.FromRGB(red, green, blue);
     }
 
-    public override Color MakeColorFromName(string name)
+    public Color MakeColorFromName(string name)
     {
         return ColorWindows.FromName(name);
     }
 
-    public override SpriteSheet MakeSpriteSheet(Image image, Dimension dimension)
+    public SpriteSheet MakeSpriteSheet(Image image, Dimension dimension)
     {
         if (image is ImageWindows imageWindows)
             return new SpriteSheetWindows(this, imageWindows._bitmap, dimension);
         else throw new ResourceNotFoundException("Can not load the image in the windows plataform!");
     }
 
-    public override Text MakeText(string text, Font font)
+    public Text MakeText(string text, Font font)
     {
         if (font is FontWindows fontWindows)
         {
@@ -238,6 +238,13 @@ public class DeviceWindows : Device
     {
         _drawQueue.Add(render);
     }
+
+    public void RegisterKeyUp(int charInUTF16, Action<Device.KeyboardModifier> command) { _device.RegisterKeyUp(charInUTF16, command); }
+    public void RegisterKeyDown(int charInUTF16, Action<Device.KeyboardModifier> command) { _device.RegisterKeyDown(charInUTF16, command); }
+    public void RegisterMouseWheelScroll(Action<Device.MouseWheelDirection> command) { _device.RegisterMouseWheelScroll(command); }
+    public void RegisterMouseDown(Device.MouseButton button, Action<Position> command) { _device.RegisterMouseDown(button, command); }
+    public void RegisterMouseUp(Device.MouseButton button, Action<Position> command) { _device.RegisterMouseUp(button, command); }
+
 }
 
 internal class ColorWindows : Color

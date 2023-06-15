@@ -7,7 +7,7 @@ public class Entity : Identifiable
     public Action? OnUpdate;
     public Action? OnDestroy;
 
-    private Game _game;
+    private readonly Game _game;
     protected HashSet<Component> _components;
 
     public Entity(Game game)
@@ -21,24 +21,9 @@ public class Entity : Identifiable
         return _components.Where<Component>(c => c is T).First<Component>() as T;
     }
 
-    public void Start()
-    {
-        OnStart?.Invoke();
-    }
-
-    public void Update()
-    {
-        OnUpdate?.Invoke();
-    }
-
     public void Destroy()
     {
         _game.DestroyEntity(this);
-    }
-
-    protected internal void Dispose()
-    {
-        OnDestroy?.Invoke();
     }
 
     protected internal void AttachComponent(Component comp)

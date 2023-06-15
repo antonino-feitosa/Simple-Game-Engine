@@ -1,8 +1,6 @@
 
 namespace SGE;
 
-using static CameraSystem;
-
 public class AnimationSystem : System
 {
     protected HashSet<Animation> _components;
@@ -28,7 +26,6 @@ public class AnimationSystem : System
                 {
                     comp._count++;
                 }
-
             }
         }
     }

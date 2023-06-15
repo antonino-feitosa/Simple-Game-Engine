@@ -4,14 +4,14 @@ namespace SGE;
 
 public class PositionSystem : System
 {
-    public readonly Direction UP = new Direction(0, -1);
-    public readonly Direction UP_LEFT = new Direction(-1, -1);
-    public readonly Direction UP_RIGHT = new Direction(+1, -1);
-    public readonly Direction DOWN = new Direction(0, +1);
-    public readonly Direction DOWN_LEFT = new Direction(-1, +1);
-    public readonly Direction DOWN_RIGHT = new Direction(+1, +1);
-    public readonly Direction LEFT = new Direction(-1, 0);
-    public readonly Direction RIGHT = new Direction(+1, -0);
+    public readonly Direction UP = new(0, -1);
+    public readonly Direction UP_LEFT = new(-1, -1);
+    public readonly Direction UP_RIGHT = new(+1, -1);
+    public readonly Direction DOWN = new(0, +1);
+    public readonly Direction DOWN_LEFT = new(-1, +1);
+    public readonly Direction DOWN_RIGHT = new(+1, +1);
+    public readonly Direction LEFT = new(-1, 0);
+    public readonly Direction RIGHT = new(+1, -0);
 
     protected HashSet<SGE.Position> _ground;
     protected Dictionary<SGE.Position, Position> _components;
@@ -39,9 +39,9 @@ public class PositionSystem : System
         if (_ground.Contains(destination))
         {
             _moving.Add(comp, destination);
-            if (_components.ContainsKey(destination))
+            if (_components.TryGetValue(destination, out Position? value))
             {
-                var other = _components[destination];
+                var other = value;
                 other._dependency.Add(comp);
             }
             else
@@ -66,16 +66,17 @@ public class PositionSystem : System
             var comp = _free.First();
             _free.Remove(comp);
             var dest = _moving[comp];
-            if (_components.ContainsKey(dest))
+            if (_components.TryGetValue(dest, out Position? value))
             {
-                var other = _components[dest];
+                var other = value;
                 other._dependency.Add(comp);
             }
             else
             {
                 DoMove(comp, dest);
                 _moving.Remove(comp);
-                if(comp._dependency.Count > 0){
+                if (comp._dependency.Count > 0)
+                {
                     var next = comp._dependency.First();
                     _free.Add(next);
                     comp._dependency.Remove(next);
@@ -85,7 +86,8 @@ public class PositionSystem : System
             }
         }
 
-        foreach (var pair in _moving) {
+        foreach (var pair in _moving)
+        {
             var other = _components[pair.Value];
             pair.Key.OnCollision?.Invoke(other);
         };

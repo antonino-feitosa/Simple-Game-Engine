@@ -51,39 +51,69 @@ public interface Image : Resource
     public Image Crop(Position position, Dimension dimension);
 }
 
-public abstract class Device : IDisposable
+public interface Device : IDisposable
 {
     public enum MouseButton { None = 100, Left = -1, Middle = 0, Right = 1 };
     public enum MouseWheelDirection { Backward = -1, Neutral = 0, Forward = 1 };
     public enum KeyboardModifier { None = 0, Shift = 0b001, Alt = 0b010, Ctrl = 0b100 };
 
+    public Game Game { get; set; }
+    public Dimension Dimension { get; }
+    public Position MousePosition { get; }
+    public bool IsFullScreen { get; set; }
+    public int FramesPerSecond { get; set; }
+
+    public void Start();
+
+    public Image MakeImage(string path);
+    public Sound MakeSound(string path);
+    public Font MakeFont(string path);
+    public Color MakeColorFromName(string colorName);
+    public Color MakeColorFrom32Bits(int red, int green, int blue);
+    public Text MakeText(string text, Font font);
+    public SpriteSheet MakeSpriteSheet(Image img, Dimension dimension);
+
+    public void RegisterKeyUp(int charInUTF16, Action<KeyboardModifier> command);
+    public void RegisterKeyDown(int charInUTF16, Action<KeyboardModifier> command);
+    public void RegisterMouseWheelScroll(Action<MouseWheelDirection> command);
+    public void RegisterMouseDown(MouseButton button, Action<Position> command);
+    public void RegisterMouseUp(MouseButton button, Action<Position> command);
+}
+
+
+public class DeviceHelper
+{
     private Game _game;
+    private bool _isFullScreen;
     private int _framesPerSecond;
-    private bool _fullScreen;
+    private readonly Dimension _dimension;
+    private readonly Position _mousePosition;
 
     private readonly Dictionary<string, Resource> _resources;
-    private readonly Dictionary<int, Action<KeyboardModifier>> _onKeyDown;
-    private readonly Dictionary<int, Action<KeyboardModifier>> _onKeyUp;
-    private readonly Dictionary<MouseButton, Action<Position>> _onMouseDown;
-    private Action<MouseWheelDirection>? _onMouseWheel;
-    private readonly Dictionary<MouseButton, Action<Position>> _onMouseUp;
+    private readonly Dictionary<int, Action<Device.KeyboardModifier>> _onKeyDown;
+    private readonly Dictionary<int, Action<Device.KeyboardModifier>> _onKeyUp;
+    private readonly Dictionary<Device.MouseButton, Action<Position>> _onMouseDown;
+    private Action<Device.MouseWheelDirection>? _onMouseWheel;
+    private readonly Dictionary<Device.MouseButton, Action<Position>> _onMouseUp;
 
-    public Device(Game game)
+    public DeviceHelper(Game game)
     {
         _game = game;
+        _isFullScreen = false;
         _framesPerSecond = 32;
-        _fullScreen = false;
+        _dimension = new Dimension(800, 600);
+        _mousePosition = new Position();
         _resources = new Dictionary<string, Resource>();
-        _onKeyDown = new Dictionary<int, Action<KeyboardModifier>>();
-        _onKeyUp = new Dictionary<int, Action<KeyboardModifier>>();
-        _onMouseDown = new Dictionary<MouseButton, Action<Position>>();
-        _onMouseUp = new Dictionary<MouseButton, Action<Position>>();
+        _onKeyDown = new Dictionary<int, Action<Device.KeyboardModifier>>();
+        _onKeyUp = new Dictionary<int, Action<Device.KeyboardModifier>>();
+        _onMouseDown = new Dictionary<Device.MouseButton, Action<Position>>();
+        _onMouseUp = new Dictionary<Device.MouseButton, Action<Position>>();
     }
 
-    public abstract Dimension Dimension { get; }
-    public abstract Position MousePosition { get; }
-    public virtual bool FullScreen { get { return _fullScreen; } set { _fullScreen = value; } }
-    public virtual int FramesPerSecond { get { return _framesPerSecond; } set { _framesPerSecond = value; } }
+    public bool IsFullScreen { get => _isFullScreen; set => _isFullScreen = value; }
+    public int FramesPerSecond { get => _framesPerSecond; set => _framesPerSecond = value; }
+    public Dimension Dimesion { get => new(_dimension.Width, _dimension.Height); set => _dimension.Copy(value); }
+    public Position MousePosition { get => new(_mousePosition.X, _mousePosition.Y); set => _mousePosition.Copy(value); }
 
     public Game Game
     {
@@ -99,15 +129,7 @@ public abstract class Device : IDisposable
         }
     }
 
-    public abstract void Start();
-    public abstract void Dispose();
-    protected void FireLoop() { _game.Loop(); }
-
-    protected abstract Image LoadImageImpl(string path);
-    protected abstract Sound LoadSoundImpl(string path);
-    protected abstract Font LoadFontImpl(string path);
-
-    protected T LoadResource<T>(string path, Func<string, Resource> loader)
+    public T LoadResource<T>(string path, Func<string, Resource> loader)
     {
         if (!_resources.ContainsKey(path))
         {
@@ -120,34 +142,26 @@ public abstract class Device : IDisposable
             throw new ResourceNotFoundException(path);
     }
 
-    public Image LoadImage(string path) { return LoadResource<Image>(path, LoadImageImpl); }
-    public Sound LoadSound(string path) { return LoadResource<Sound>(path, LoadSoundImpl); }
-    public Font LoadFont(string path) { return LoadResource<Font>(path, LoadFontImpl); }
-
-    public abstract Color MakeColorFromName(string colorName);
-    public abstract Color MakeColorFrom32Bits(int red, int green, int blue);
-    public abstract Text MakeText(string text, Font font);
-    public abstract SpriteSheet MakeSpriteSheet(Image img, Dimension dimension);
-
-    private static void FireKey(int charInUTF16, KeyboardModifier modifiers, Dictionary<int, Action<KeyboardModifier>> events)
+    private static void FireKey(int charInUTF16, Device.KeyboardModifier modifiers, Dictionary<int, Action<Device.KeyboardModifier>> events)
     {
-        if (events.TryGetValue(charInUTF16, out Action<KeyboardModifier>? value))
+        if (events.TryGetValue(charInUTF16, out Action<Device.KeyboardModifier>? value))
             value.Invoke(modifiers);
     }
-    protected void FireKeyUp(int charInUTF16, KeyboardModifier modifiers) { FireKey(charInUTF16, modifiers, _onKeyUp); }
-    protected void FireKeyDown(int charInUTF16, KeyboardModifier modifiers) { FireKey(charInUTF16, modifiers, _onKeyDown); }
-    private void FireMouse(MouseButton button, Dictionary<MouseButton, Action<Position>> events)
+    public void FireKeyUp(int charInUTF16, Device.KeyboardModifier modifiers) { FireKey(charInUTF16, modifiers, _onKeyUp); }
+    public void FireKeyDown(int charInUTF16, Device.KeyboardModifier modifiers) { FireKey(charInUTF16, modifiers, _onKeyDown); }
+    private void FireMouse(Device.MouseButton button, Dictionary<Device.MouseButton, Action<Position>> events)
     {
         if (events.TryGetValue(button, out Action<Position>? value))
             value.Invoke(MousePosition);
     }
-    protected void FireMouseUp(MouseButton button) { FireMouse(button, _onMouseUp); }
-    protected void FireMouseDown(MouseButton button) { FireMouse(button, _onMouseDown); }
-    protected void FireMouseWheel(MouseWheelDirection direction) { _onMouseWheel?.Invoke(direction); }
+    public void FireMouseUp(Device.MouseButton button) { FireMouse(button, _onMouseUp); }
+    public void FireMouseDown(Device.MouseButton button) { FireMouse(button, _onMouseDown); }
+    public void FireMouseWheel(Device.MouseWheelDirection direction) { _onMouseWheel?.Invoke(direction); }
 
-    public void RegisterKeyUp(int charInUTF16, Action<KeyboardModifier> command) { _onKeyUp.Add(charInUTF16, command); }
-    public void RegisterKeyDown(int charInUTF16, Action<KeyboardModifier> command) { _onKeyDown.Add(charInUTF16, command); }
-    public void RegisterMouseWheelScroll(Action<MouseWheelDirection> command) { _onMouseWheel = command; }
-    public void RegisterMouseDown(MouseButton button, Action<Position> command) { _onMouseDown.Add(button, command); }
-    public void RegisterMouseUp(MouseButton button, Action<Position> command) { _onMouseUp.Add(button, command); }
+    public void RegisterKeyUp(int charInUTF16, Action<Device.KeyboardModifier> command) { _onKeyUp.Add(charInUTF16, command); }
+    public void RegisterKeyDown(int charInUTF16, Action<Device.KeyboardModifier> command) { _onKeyDown.Add(charInUTF16, command); }
+    public void RegisterMouseWheelScroll(Action<Device.MouseWheelDirection> command) { _onMouseWheel = command; }
+    public void RegisterMouseDown(Device.MouseButton button, Action<Position> command) { _onMouseDown.Add(button, command); }
+    public void RegisterMouseUp(Device.MouseButton button, Action<Position> command) { _onMouseUp.Add(button, command); }
+
 }

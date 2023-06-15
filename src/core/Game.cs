@@ -16,9 +16,9 @@ public class Game
         _entities_reference = new Dictionary<Entity, LinkedListNode<Entity>>();
     }
 
-    public Entity CreateEntity()
+    public Entity MakeEntity()
     {
-        Entity e = new Entity(this);
+        var e = new Entity(this);
         var node = _entities.AddLast(e);
         _entities_reference.Add(e, node);
         return e;
@@ -36,12 +36,12 @@ public class Game
 
     public void Start()
     {
-        foreach (var ent in _entities) { ent.Start(); }
+        foreach (var ent in _entities) { ent.OnStart?.Invoke(); }
     }
 
     public void Stop()
     {
-        foreach (var ent in _entities) { ent.Dispose(); }
+        foreach (var ent in _entities) { ent.OnDestroy?.Invoke(); }
         _entities.Clear();
     }
 
@@ -49,12 +49,12 @@ public class Game
     {
         foreach (var sys in _systems) { sys.Process(); }
 
-        foreach (var ent in _entities) { ent.Update(); }
+        foreach (var ent in _entities) { ent.OnUpdate?.Invoke(); }
 
         foreach (var del in _entities_destroy)
         {
             var node = _entities_reference[del];
-            del.Dispose();
+            del.OnDestroy?.Invoke();
             _entities.Remove(node);
         }
         _entities_destroy.Clear();

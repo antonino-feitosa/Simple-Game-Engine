@@ -23,11 +23,11 @@ public class LoadingSystem : System
     {
         _game = game;
         _loaded = 0;
-        _title = device.LoadImage(TITLE_FILE);
-        _loading = device.LoadImage(LOADING_FILE);
-        _background = device.LoadImage(BACKGROUND_FILE);
-        _border = device.LoadImage(BORDER_PROGRESS_BAR);
-        _fill = device.LoadImage(FILL_PROGRESS_BAR);
+        _title = device.MakeImage(TITLE_FILE);
+        _loading = device.MakeImage(LOADING_FILE);
+        _background = device.MakeImage(BACKGROUND_FILE);
+        _border = device.MakeImage(BORDER_PROGRESS_BAR);
+        _fill = device.MakeImage(FILL_PROGRESS_BAR);
     }
 
     public int Loaded
@@ -43,10 +43,10 @@ public class LoadingSystem : System
 
     protected void Changed()
     {
-
+        //TODO
     }
     public void Load(){
-
+        //TODO
     }
 
     public void Process()

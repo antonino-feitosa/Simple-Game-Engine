@@ -3,25 +3,25 @@ namespace SGE;
 
 public class CameraSystem : System
 {
-    public Vector2 Position; // TODO double position
+    public Position Position;
     public Dimension Dimension;
     public int PixelsUnit;
 
     protected List<Render> _components;
 
-    public CameraSystem(Vector2 position, Dimension dimension, int pixelsUnit = 32)
+    public CameraSystem(Position position, Dimension dimension)
     {
         Position = position;
         Dimension = dimension;
-        PixelsUnit = pixelsUnit;
+        PixelsUnit = 32;
         _components = new List<Render>(); // TODO optimization on delete
     }
 
     public void Process()
     {
         _components.Sort((a, b) => a.ZIndex - b.ZIndex);
-        int cx = (int)(Position.X * PixelsUnit);
-        int cy = (int)(Position.Y * PixelsUnit);
+        int cx = Position.X * PixelsUnit;
+        int cy = Position.Y * PixelsUnit;
         int cWidth = cx + Dimension.Width;
         int cHeight = cy + Dimension.Height;
         foreach (var comp in _components)
