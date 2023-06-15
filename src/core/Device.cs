@@ -51,7 +51,7 @@ public interface Image : Resource
     public Image Crop(Position position, Dimension dimension);
 }
 
-public abstract class Device
+public abstract class Device : IDisposable
 {
     public enum MouseButton { None = 100, Left = -1, Middle = 0, Right = 1 };
     public enum MouseWheelDirection { Backward = -1, Neutral = 0, Forward = 1 };
@@ -61,13 +61,12 @@ public abstract class Device
     private int _framesPerSecond;
     private bool _fullScreen;
 
-    private Dictionary<string, Resource> _resources;
-
-    private Dictionary<int, Action<KeyboardModifier>> _onKeyDown;
-    private Dictionary<int, Action<KeyboardModifier>> _onKeyUp;
-    private Dictionary<MouseButton, Action<Position>> _onMouseDown;
+    private readonly Dictionary<string, Resource> _resources;
+    private readonly Dictionary<int, Action<KeyboardModifier>> _onKeyDown;
+    private readonly Dictionary<int, Action<KeyboardModifier>> _onKeyUp;
+    private readonly Dictionary<MouseButton, Action<Position>> _onMouseDown;
     private Action<MouseWheelDirection>? _onMouseWheel;
-    private Dictionary<MouseButton, Action<Position>> _onMouseUp;
+    private readonly Dictionary<MouseButton, Action<Position>> _onMouseUp;
 
     public Device(Game game)
     {
@@ -83,6 +82,8 @@ public abstract class Device
 
     public abstract Dimension Dimension { get; }
     public abstract Position MousePosition { get; }
+    public virtual bool FullScreen { get { return _fullScreen; } set { _fullScreen = value; } }
+    public virtual int FramesPerSecond { get { return _framesPerSecond; } set { _framesPerSecond = value; } }
 
     public Game Game
     {
@@ -97,12 +98,10 @@ public abstract class Device
             _game = value;
         }
     }
-    public bool FullScreen { get { return _fullScreen; } set { _fullScreen = value; } }
-    public int FramesPerSecond { get { return _framesPerSecond; } set { _framesPerSecond = value; } }
 
     public abstract void Start();
     public abstract void Dispose();
-    public void Loop() { _game.Loop(); }
+    protected void FireLoop() { _game.Loop(); }
 
     protected abstract Image LoadImageImpl(string path);
     protected abstract Sound LoadSoundImpl(string path);

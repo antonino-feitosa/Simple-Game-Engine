@@ -2,6 +2,12 @@ namespace SGE;
 
 using global::System.Runtime.InteropServices;
 
+public class DoubleBufferedForm : Form {
+    public DoubleBufferedForm() {
+        DoubleBuffered = true;
+    }
+}
+
 static class Program
 {
     [DllImport("kernel32.dll")]
@@ -22,19 +28,11 @@ static class Program
         Application.SetCompatibleTextRenderingDefault(false);
         ApplicationConfiguration.Initialize();
 
+        var form = new DoubleBufferedForm();
         var game = new Game();
-        var device = new DeviceWindows(game);
-        var loading = new LoadingSystem(device, game);
+        var device = new DeviceWindows(form, game);
         
-        //PlatformTest.Test(platform);
-        //PositionSystemTest.Test(game);
-        //MotionSystemTest.Test(game);
-        //CameraSystemTest.Test(game);
-        //AnimationSystemTest.Test(game);
-        //ResizeTest.Test(game);
-        
-        game.AttachSystem(loading);
-        Application.Run(device._windows);
-        game.Start();
+        Application.Run(form);
+        device.Start();
     }
 }

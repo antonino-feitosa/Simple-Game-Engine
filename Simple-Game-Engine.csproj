@@ -8,6 +8,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>True</UseWPF>
+    <NoWarn>IDE1006</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
