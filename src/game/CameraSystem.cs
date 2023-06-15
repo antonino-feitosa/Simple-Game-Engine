@@ -28,11 +28,11 @@ public class CameraSystem : System
         { // TODO correct truncation location
             int x = (int)(comp.Position.X * PixelsUnit);
             int y = (int)(comp.Position.Y * PixelsUnit);
-            int width = x + comp.Image.Width;
-            int height = y + comp.Image.Height;
+            int width = x + comp.Image.Dimension.Width;
+            int height = y + comp.Image.Dimension.Height;
             if (!(width < cx || x > cWidth || height < cy || y > cHeight))
             {
-                comp.Image.Render(x, y);
+                comp.Image.Render(new Position(x, y));
             }
         }
     }

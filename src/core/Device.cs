@@ -1,15 +1,9 @@
 
 namespace SGE;
 
-public interface Resource
+public interface Resource : IDisposable
 {
     public string Path { get; }
-    public void Dispose();
-}
-
-public interface Font : Resource
-{
-    public int Size { get; set; }
 }
 
 public class ResourceNotFoundException : Exception
@@ -19,30 +13,34 @@ public class ResourceNotFoundException : Exception
     public ResourceNotFoundException(string message, Exception inner) : base(message, inner) { }
 }
 
-public interface Color { }
+public interface Font : Resource { }
 
-public interface Text
+public interface Color : IDisposable { }
+
+public interface Text : IDisposable
 {
+    public int Size { get; set; }
     public Font Font { get; set; }
     public Color Color { get; set; }
     public string Text { get; set; }
-    public void Render(Point point);
+    public void Render(Position position);
 }
 
 public interface Sound : Resource
 {
-    public double Volume { get; set; }
+    public float Volume { get; set; }
+    public bool IsPlaying { get; }
+    public bool IsLoop { get; set; }
     public void Play();
     public void Pause();
     public void Stop();
-    public void Loop();
 }
 
 public interface SpriteSheet
 {
     public int Length { get; }
     public Image GetSprite(int index);
-    public Dimension SpriteDimension { get; set; }
+    public Dimension SpriteDimension { get; }
 }
 
 public interface Image : Resource
@@ -125,24 +123,24 @@ public abstract class Device
 
     public Image LoadImage(string path) { return LoadResource<Image>(path, LoadImageImpl); }
     public Sound LoadSound(string path) { return LoadResource<Sound>(path, LoadSoundImpl); }
-    public Font LoadFont(string path, int size) { return LoadResource<Font>(path, LoadFontImpl); }
+    public Font LoadFont(string path) { return LoadResource<Font>(path, LoadFontImpl); }
 
     public abstract Color MakeColorFromName(string colorName);
     public abstract Color MakeColorFrom32Bits(int red, int green, int blue);
     public abstract Text MakeText(string text, Font font);
     public abstract SpriteSheet MakeSpriteSheet(Image img, Dimension dimension);
 
-    private void FireKey(int charInUTF16, KeyboardModifier modifiers, Dictionary<int, Action<KeyboardModifier>> events)
+    private static void FireKey(int charInUTF16, KeyboardModifier modifiers, Dictionary<int, Action<KeyboardModifier>> events)
     {
-        if (events.ContainsKey(charInUTF16))
-            events[charInUTF16].Invoke(modifiers);
+        if (events.TryGetValue(charInUTF16, out Action<KeyboardModifier>? value))
+            value.Invoke(modifiers);
     }
     protected void FireKeyUp(int charInUTF16, KeyboardModifier modifiers) { FireKey(charInUTF16, modifiers, _onKeyUp); }
     protected void FireKeyDown(int charInUTF16, KeyboardModifier modifiers) { FireKey(charInUTF16, modifiers, _onKeyDown); }
     private void FireMouse(MouseButton button, Dictionary<MouseButton, Action<Position>> events)
     {
-        if (events.ContainsKey(button))
-            events[button].Invoke(MousePosition);
+        if (events.TryGetValue(button, out Action<Position>? value))
+            value.Invoke(MousePosition);
     }
     protected void FireMouseUp(MouseButton button) { FireMouse(button, _onMouseUp); }
     protected void FireMouseDown(MouseButton button) { FireMouse(button, _onMouseDown); }

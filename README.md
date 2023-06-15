@@ -67,3 +67,7 @@ Simple ARPG with rogue like game elements:
 [^28]: [IA - path](https://news.ycombinator.com/item?id=22848888)
 [^29]: [Dijkstra map](http://www.roguebasin.com/index.php?title=The_Incredible_Power_of_Dijkstra_Maps)
 [^30]: [Dijkstra map - Rogue Basin](http://www.roguebasin.com/index.php/Dijkstra_Maps_Visualized)
+
+# Dependências
+
+dotnet add . package naudio

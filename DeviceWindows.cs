@@ -1,12 +1,10 @@
 
-using Timer = System.Windows.Forms.Timer;
-
 namespace SGE;
 
 public class DeviceWindows : Device
 {
-    private WindowsAdapter _windows;
-    private Position _mousePosition;
+    public readonly WindowsAdapter _windows;
+    private readonly Position _mousePosition;
     public DeviceWindows(Game game) : base(game)
     {
         _mousePosition = new Position();
@@ -44,10 +42,12 @@ public class DeviceWindows : Device
 
     public override SpriteSheet MakeSpriteSheet(Image img, Dimension dimension)
     {
+        return _windows.MakeSpriteSheet(img, dimension);
     }
 
     public override Text MakeText(string text, Font font)
     {
+        return _windows.MakeText(text, font);
     }
 
     protected override Font LoadFontImpl(string path)
@@ -77,11 +77,13 @@ public partial class WindowsAdapter : Form
     public Action<Device.MouseWheelDirection>? RegisterMouseScroll;
     public Action? RegisterLoop;
 
-    private Timer _timer;
+    private readonly global::System.Windows.Forms.Timer _timer;
     private Size _dimension;
+    private readonly List<Action<Graphics>> _drawQueue;
 
     public WindowsAdapter(string title = "Game", int framesPerSecond = 32)
     {
+        _drawQueue = new List<Action<Graphics>>();
         _dimension = new Size(800, 600);
 
         InitializeComponent();
@@ -104,20 +106,20 @@ public partial class WindowsAdapter : Form
         MouseMove += FireMouseMove;
         Load += (sender, e) => Location = new Point(500, 0);
 
-        _timer = new Timer();
-        _timer.Interval = (int)(1000.0 / framesPerSecond);
+        _timer = new global::System.Windows.Forms.Timer { Interval = (int)(1000.0 / framesPerSecond) };
         _timer.Tick += FireLoop;
     }
 
-    public void Start()
-    {
-        _timer.Start();
-    }
+    public int FramesPerSecond { set => _timer.Interval = (int)(1000.0 / value); }
 
-    public void Stop()
+    public Dimension Dimension
     {
-        _timer.Stop();
-        Close();
+        get => new Dimension(_dimension.Width, _dimension.Height);
+        set
+        {
+            _dimension.Width = value.Width;
+            _dimension.Height = value.Height;
+        }
     }
 
     public bool FullScreen
@@ -138,28 +140,18 @@ public partial class WindowsAdapter : Form
         }
     }
 
-    public Dimension Dimension
+    public void Start()
     {
-        get
-        {
-            return new Dimension(_dimension.Width, _dimension.Height);
-        }
-        set
-        {
-            _dimension.Width = value.Width;
-            _dimension.Height = value.Height;
-        }
+        _timer.Start();
     }
 
-    public int FramesPerSecond
+    public void Stop()
     {
-        set
-        {
-            this._timer.Interval = (int)(1000.0 / value);
-        }
+        _timer.Stop();
+        Close();
     }
 
-    private (int, Device.KeyboardModifier) GetKeyboardMask(KeyEventArgs e)
+    private static (int, Device.KeyboardModifier) GetKeyboardMask(KeyEventArgs e)
     {
         int mask = 0;
         mask += e.Alt ? (int)Device.KeyboardModifier.Alt : 0;
@@ -193,7 +185,7 @@ public partial class WindowsAdapter : Form
         RegisterMouseMove?.Invoke(new Position(e.X, e.Y));
     }
 
-    private Device.MouseButton GetMouseButton(MouseEventArgs e)
+    private static Device.MouseButton GetMouseButton(MouseEventArgs e)
     {
         Device.MouseButton button = Device.MouseButton.None;
         switch (e.Button)
@@ -218,587 +210,347 @@ public partial class WindowsAdapter : Form
 
     protected void FirePaint(object? sender, PaintEventArgs e)
     {
-        //TODO draw images and text
-        
+        Graphics g = e.Graphics;
+        foreach (var paintCommand in _drawQueue)
+            paintCommand.Invoke(g);
     }
 
     protected void FireLoop(object? sender, EventArgs e)
     {
+        _drawQueue.Clear();
         RegisterLoop?.Invoke();
         Invalidate();
     }
 
     public Font LoadFont(string path)
     {
+        //FontFamily fontFamily = new FontFamily(@"C:\Projects\MyProj\#free3of9");
+        //The font name without the file extension, and keep the '#' symbol.
+
+        try
+        {
+            return new FontWindows(path);
+        }
+        catch (ArgumentException e)
+        {
+            throw new ResourceNotFoundException("Can not load the resource " + path + ".", e);
+        }
     }
 
     public Image LoadImage(string path)
     {
+        try
+        {
+            return new ImageWindows(this, path);
+        }
+        catch (ArgumentException e)
+        {
+            throw new ResourceNotFoundException("Can not load the resource " + path + ".", e);
+        }
     }
 
     public Sound LoadSound(string path)
     {
+        try
+        {
+            return new SoundWindows(path);
+        }
+        catch (ArgumentException e)
+        {
+            throw new ResourceNotFoundException("Can not load the resource " + path + ".", e);
+        }
     }
 
     public Color MakeColorFrom32Bits(int red, int green, int blue)
     {
-        return new ColorWindows(red, green, blue);
+        return ColorWindows.FromRGB(red, green, blue);
     }
 
     public Color MakeColorFromName(string name)
     {
-        return new ColorWindows(name);
+        return ColorWindows.FromName(name);
+    }
+
+    public SpriteSheet MakeSpriteSheet(Image image, Dimension dimension)
+    {
+        if (image is ImageWindows imageWindows)
+            return new SpriteSheetWindows(this, imageWindows._bitmap, dimension);
+        else throw new ResourceNotFoundException("Can not load the image in the windows plataform!");
+    }
+
+    public Text MakeText(string text, Font font)
+    {
+        if (font is FontWindows fontWindows)
+        {
+            var textWindows = new TextWindows(this, text) { Font = fontWindows };
+            return textWindows;
+        }
+        else throw new ResourceNotFoundException("Can not load the font in the windows plataform!");
+    }
+
+    public void Render(Action<Graphics> render)
+    {
+        _drawQueue.Add(render);
     }
 }
 
 internal class ColorWindows : Color
 {
+    public global::System.Drawing.SolidBrush _drawBrush;
 
-    global::System.Drawing.Color _color;
-
-    public ColorWindows(string name)
+    public ColorWindows()
     {
-        _color = global::System.Drawing.Color.FromName(name);
+        var color = global::System.Drawing.Color.FromName("black");
+        _drawBrush = new global::System.Drawing.SolidBrush(color);
     }
 
-    public ColorWindows(int red, int green, int blue)
+    private ColorWindows(global::System.Drawing.Color color)
     {
-        _color = global::System.Drawing.Color.FromArgb(red, green, blue);
+        _drawBrush = new global::System.Drawing.SolidBrush(color);
+    }
+
+    public static Color FromName(string name)
+    {
+        var color = global::System.Drawing.Color.FromName(name);
+        return new ColorWindows(color);
+    }
+
+    public static Color FromRGB(int red, int green, int blue)
+    {
+        var color = global::System.Drawing.Color.FromArgb(red, green, blue);
+        return new ColorWindows(color);
+    }
+
+    public void Dispose()
+    {
+        _drawBrush.Dispose();
     }
 }
 
 internal class FontWindows : Font
 {
     private string _path;
-    public FontWindows(string path){
-        _path = path;
-    }
-    public int Size { get => _path }
+    internal readonly FontFamily _fontFamily;
 
-    public string Path => throw new NotImplementedException();
+    public FontWindows()
+    {
+        //FontFamily fontFamily = new FontFamily(@"C:\Projects\MyProj\#free3of9");
+        //The font name without the file extension, and keep the '#' symbol.
+        _path = "Arial";
+        _fontFamily = new FontFamily("Arial");
+    }
+
+    public FontWindows(string path)
+    {
+        _path = path;
+        _fontFamily = new FontFamily(path);
+    }
+
+    public string Path { get => _path; }
 
     public void Dispose()
     {
-        throw new NotImplementedException();
+        _fontFamily.Dispose();
     }
 }
-
-//--------------------------------------
-/// REFACTOR
-
 
 public class TextWindows : Text
 {
-    protected string _text;
-    protected int _size;
-    protected string _font;
-    protected string _color;
-    protected internal DeviceWindows _device;
+    private readonly WindowsAdapter _windows;
+    private string _text;
+    private int _size;
+    private ColorWindows _color;
+    private FontWindows _font;
+
+    global::System.Drawing.Font _drawFont;
+
+    public TextWindows(WindowsAdapter windows, string text)
+    {
+        _windows = windows;
+        _text = text;
+        _size = 12;
+        _color = new ColorWindows();
+        _font = new FontWindows();
+        _drawFont = new global::System.Drawing.Font(_font._fontFamily, _size);
+    }
 
     public string Text { get => _text; set => _text = value; }
-    public int Size { get => _size; set => _size = value; }
-    public string Font { get => _font; set => _font = value; }
-    public string Color { get => _color; set => _color = value; }
+    public int Size { get => _size; set { _size = value; UpdateDraw(); } }
+    public Font Font { get => _font; set => _font = (FontWindows)value; }
+    public Color Color { get => _color; set => _color = (ColorWindows)value; }
 
-    public TextWindows(string text, string font, DeviceWindows device)
+    private void UpdateDraw()
     {
-        _text = text;
-        _font = font;
-        _size = 12;
-        _color = "white";
-        _device = device;
+        _drawFont.Dispose();
+        _drawFont = new global::System.Drawing.Font(_font._fontFamily, _size);
     }
 
-    public void Render(int x, int y)
+    public void Render(Position position)
     {
-        _device.Render(this, x, y);
-    }
-}
-
-public class SoundWindows : Sound
-{
-    private static int _countId = 0;
-    private readonly int _id;
-
-    private string _path;
-    protected internal SoundPlayer _sound;
-    protected internal DeviceWindows _game;
-
-    protected internal SoundWindows(string path, SoundPlayer sound, DeviceWindows game)
-    {
-        _id = _countId++;
-        _path = path;
-        _sound = sound;
-        _game = game;
+        int x = position.X;
+        int y = position.Y;
+        var text = _text;
+        var drawFont = _drawFont;
+        var drawBrush = _color._drawBrush;
+        var drawFormat = new global::System.Drawing.StringFormat();
+        Action<Graphics> render = (Graphics g) => g.DrawString(text, drawFont, drawBrush, x, y, drawFormat);
+        _windows.Render(render);
     }
 
-    public double Volume
+    public void Dispose()
     {
-        get { return 100; }
-        set { }
-    }
-
-    public string Path
-    {
-        get { return Path; }
-    }
-
-    public void Play()
-    {
-        _sound.Play();
-    }
-
-    public void Loop()
-    {
-        _sound.PlayLooping();
-    }
-
-    public void Pause()
-    {
-    }
-
-    public void Stop()
-    {
-        _sound.Stop();
-    }
-
-    public override bool Equals(object? obj) { return obj is SoundWindows sound ? sound._id == _id : base.Equals(obj); }
-
-    public override int GetHashCode() { return HashCode.Combine(_id); }
-
-    public override string ToString() { return "Sound(" + Path + ")"; }
-
-    private static void DoLoop(object? sender, EventArgs e)
-    {
-        if (sender != null)
-        {
-            MediaPlayer mediaPlayer = (MediaPlayer)sender;
-            mediaPlayer.Position = TimeSpan.Zero;
-            mediaPlayer.Play();
-        }
+        _drawFont.Dispose();
     }
 }
 
-public class SpriteSheetWindows : SpriteSheet
+internal class ImageWindows : Image
 {
-    private static int _countId = 0;
-    private readonly int _id;
-    private string _path;
-    private int _width;
-    private int _height;
+    protected internal readonly Bitmap _bitmap;
+    private readonly WindowsAdapter _windows;
+    private readonly Dimension _dimension;
+    private readonly string _path;
 
-    protected internal List<Image> _sheet;
-    protected internal Bitmap _bitmap;
-    protected internal DeviceWindows _device;
-
-    protected internal SpriteSheetWindows(string path, Bitmap bitmap, DeviceWindows device)
+    public ImageWindows(WindowsAdapter windows, string path)
     {
-        _id = _countId++;
+        _windows = windows;
         _path = path;
+        _bitmap = new Bitmap(path);
+        _dimension = new Dimension(_bitmap.Width, _bitmap.Height);
+    }
+    public ImageWindows(WindowsAdapter windows, Bitmap bitmap)
+    {
+        _windows = windows;
+        _path = "custom";
         _bitmap = bitmap;
-        _width = 0;
-        _height = 0;
-        _device = device;
-        _sheet = new List<Image>();
+        _dimension = new Dimension(bitmap.Width, bitmap.Height);
+    }
+    public string Path { get => _path; }
+    public Dimension Dimension { get => _dimension; }
+
+    public void Render(Position position)
+    {
+        int x = position.X;
+        int y = position.Y;
+        _windows.Render((Graphics g) => g.DrawImage(_bitmap, x, y));
     }
 
-    public string Path { get { return _path; } }
-    public int Width { get { return _width; } }
-    public int Height { get { return _height; } }
-    public int Length { get { return _sheet.Count; } }
-
-    protected internal void Split(int width, int height)
+    public Image Crop(Position position, Dimension dimension)
     {
-        _width = width;
-        _height = height;
-        int x_count = (int)(_bitmap.Width / width);
-        int y_count = (int)(_bitmap.Height / height);
-        var rect = new Rectangle(0, 0, width, height);
+        var cropped = new Bitmap(dimension.Width, dimension.Height);
+        var graphics = Graphics.FromImage(cropped);
+        graphics.DrawImageUnscaledAndClipped(_bitmap, new Rectangle(position.X, position.Y, cropped.Width, cropped.Height));
+        return new ImageWindows(_windows, cropped);
+    }
+
+    public Image Resize(Dimension dimension)
+    {
+        var resized = new Bitmap(dimension.Width, dimension.Height);
+        var graphics = Graphics.FromImage(resized);
+        graphics.DrawImage(_bitmap, new Rectangle(0, 0, resized.Width, resized.Height));
+        return new ImageWindows(_windows, resized);
+    }
+
+    public void Dispose()
+    {
+        _bitmap.Dispose();
+    }
+}
+
+internal class SpriteSheetWindows : SpriteSheet
+{
+    private readonly WindowsAdapter _windows;
+    private readonly Dimension _dimension;
+    private readonly List<Image> _sprites;
+    public SpriteSheetWindows(WindowsAdapter windows, Bitmap sheet, Dimension dimension)
+    {
+        _windows = windows;
+        _dimension = dimension;
+        _sprites = Split(sheet, _dimension);
+    }
+    public int Length { get => _sprites.Count; }
+
+    public Dimension SpriteDimension { get => _dimension; }
+
+    public Image GetSprite(int index)
+    {
+        if (index < 0 || index >= _sprites.Count)
+            throw new ArgumentException(String.Format("The index {0} does not exist!", index));
+        return _sprites[index];
+    }
+
+    private List<Image> Split(Bitmap bitmap, Dimension dimension)
+    {
+        List<Image> frames = new List<Image>();
+        int x_count = bitmap.Width / dimension.Width;
+        int y_count = bitmap.Height / dimension.Height;
+        var rect = new Rectangle(0, 0, dimension.Width, dimension.Height);
         for (int y = 0; y < y_count; y++)
         {
             for (int x = 0; x < x_count; x++)
             {
-                var index = y * x_count + x;
-                var splitted = new Bitmap(width, height);
+                var splitted = new Bitmap(dimension.Width, dimension.Height);
                 var graphics = Graphics.FromImage(splitted);
-                var dest = new Rectangle(x * width, y * height, width, height);
-                var img = new ImageWindows("", splitted, _device);
-                _sheet.Add(img);
-                graphics.DrawImage(_bitmap, rect, dest, GraphicsUnit.Pixel);
+                var dest = new Rectangle(x * dimension.Width, y * dimension.Height, dimension.Width, dimension.Height);
+                graphics.DrawImage(bitmap, rect, dest, GraphicsUnit.Pixel);
                 graphics.Dispose();
+                var sprite = new ImageWindows(_windows, splitted);
+                frames.Add(sprite);
             }
         }
+        return frames;
     }
-
-    public Image GetImage(int index)
-    {
-        if (index < 0 || index >= _sheet.Count)
-            throw new ArgumentException(String.Format("The index {0} does not exist!", index));
-        return _sheet[index];
-    }
-
-    public override bool Equals(object? obj) { return obj is SpriteSheetWindows ss ? ss._id == _id : base.Equals(obj); }
-
-    public override int GetHashCode() { return HashCode.Combine(_id); }
-
-    public override string ToString() { return "Image(" + Path + ", " + Width + "x" + Height + ")"; }
 }
 
-public class ImageWindows : Image
+internal class SoundWindows : Sound
 {
-    private static int _countId = 0;
-    private readonly int _id;
-    private string _path;
+    private bool _isLoop;
+    private readonly string _path;
+    private readonly NAudio.Wave.AudioFileReader _audioFile;
+    private readonly NAudio.Wave.WaveOutEvent _waveOut;
+    private readonly EventHandler<NAudio.Wave.StoppedEventArgs> _loopCallback;
 
-    protected internal Bitmap _bitmap;
-    protected internal DeviceWindows _device;
-
-    protected internal ImageWindows(string path, Bitmap bitmap, DeviceWindows device)
+    public SoundWindows(string path)
     {
-        _id = _countId++;
         _path = path;
-        _bitmap = bitmap;
-        _device = device;
+        _isLoop = false;
+        _audioFile = new NAudio.Wave.AudioFileReader(path);
+        _waveOut = new NAudio.Wave.WaveOutEvent();
+        _loopCallback = (sender, args) => _waveOut.Play();
     }
+    public float Volume { get => _waveOut.Volume; set => _waveOut.Volume = value > 1 ? 1 : (value < 0 ? 0 : value); }
+    public string Path { get => _path; }
+    public bool IsPlaying { get => _waveOut.PlaybackState == NAudio.Wave.PlaybackState.Playing; }
 
-    public string Path { get { return _path; } }
-    public int Width { get { return _bitmap.Width; } }
-    public int Height { get { return _bitmap.Height; } }
-
-    public void Render(int x, int y)
+    public bool IsLoop
     {
-        _device.Render(_bitmap, x, y);
-    }
-
-    public Image Resize(int width, int height)
-    {
-        var bmp = new Bitmap(width, height);
-        var graphics = Graphics.FromImage(bmp);
-        graphics.DrawImage(_bitmap, new Rectangle(0, 0, bmp.Width, bmp.Height));
-        return new ImageWindows(Path + "_resized(" + width + "," + height + ")", bmp, _device);
-    }
-
-    public Image Crop(int x, int y, int width, int height)
-    {
-        var bmp = new Bitmap(width, height);
-        var graphics = Graphics.FromImage(bmp);
-        graphics.DrawImageUnscaledAndClipped(_bitmap, new Rectangle(x, y, bmp.Width, bmp.Height));
-        return new ImageWindows(Path + "_cropped(" + width + "," + height + ")", bmp, _device);
-    }
-
-    public override bool Equals(object? obj) { return obj is ImageWindows img ? img._id == _id : base.Equals(obj); }
-
-    public override int GetHashCode() { return HashCode.Combine(_id); }
-
-    public override string ToString() { return "Image(" + Path + ", " + Width + "x" + Height + ")"; }
-}
-
-internal interface Render
-{
-    public void Render(Graphics g);
-}
-
-internal class DrawCommand : Render
-{
-    public Bitmap _bitmap;
-    public Point _point;
-    public DrawCommand(Bitmap bitmap, Point point)
-    {
-        _bitmap = bitmap;
-        _point = point;
-    }
-
-    public void Render(Graphics g)
-    {
-        g.DrawImage(_bitmap, _point);
-    }
-}
-
-internal class TextCommand : Render
-{
-
-    public Text _text;
-    public Point _point;
-
-    public TextCommand(Text text, Point point)
-    {
-        _text = text;
-        _point = point;
-    }
-
-    public void Render(Graphics g)
-    { // TODO optimization point: shared references
-        global::System.Drawing.Font drawFont = new global::System.Drawing.Font(_text.Font, _text.Size);
-        global::System.Drawing.Color color = global::System.Drawing.Color.FromName(_text.Color);
-        global::System.Drawing.SolidBrush drawBrush = new global::System.Drawing.SolidBrush(color);
-        global::System.Drawing.StringFormat drawFormat = new global::System.Drawing.StringFormat();
-        g.DrawString(_text.Text, drawFont, drawBrush, _point.X, _point.Y, drawFormat);
-        drawFont.Dispose();
-        drawBrush.Dispose();
-    }
-}
-
-
-
-public partial class DeviceWindows1 : Form, Device
-{
-
-    private LinkedList<Render> _renderCommands;
-    private LinkedList<Render> _bufferCommands;
-
-    public override int FramesPerSecond
-    {
+        get => _isLoop;
         set
         {
-            _framesPerSeconds = value;
-            this.timer.Interval = (int)(1000 / _framesPerSeconds);
+            if (value) _waveOut.PlaybackStopped += _loopCallback;
+            else _waveOut.PlaybackStopped -= _loopCallback;
+            _isLoop = value;
         }
     }
 
-    private Timer timer;
-
-    public DeviceWindows(Game game)
+    public void Play()
     {
-        _current = game;
-        _images = new Dictionary<string, ImageWindows>();
-        _sounds = new Dictionary<string, SoundWindows>();
-        _spriteSheets = new Dictionary<string, SpriteSheetWindows>();
-        _renderCommands = new LinkedList<Render>();
-        _bufferCommands = new LinkedList<Render>();
-        _keyDownCommands = new Dictionary<char, Action<int>>();
-        _keyUpCommands = new Dictionary<char, Action<int>>();
-        _onMouseDown = new Dictionary<char, Action<int, int>>();
-        _onMouseUp = new Dictionary<char, Action<int, int>>();
-
-        InitializeComponent();
-
-        // Set the form's properties
-        this.Text = "Game";
-        this.BackColor = global::System.Drawing.Color.Black;
-        this.WindowState = FormWindowState.Normal;
-        this.FormBorderStyle = FormBorderStyle.None;
-        this.DoubleBuffered = true;
-        FullScreen = false;
-
-        // Add event handlers
-        this.KeyDown += DoKeyDown;
-        this.KeyUp += DoKeyUp;
-        this.Paint += DoPaint;
-        this.MouseDown += DoMouseDown;
-        this.MouseUp += DoMouseUp;
-        this.MouseWheel += DoMouseWheel;
-        this.Load += (sender, e) => this.Location = new Point(500, 0);
-        this._onLoop += () => { };
-
-        this.timer = new Timer();
-        this.timer.Interval = (int)(1000 / _framesPerSeconds);
-        this.timer.Tick += DoLoop;
-        this.timer.Start();
+        _waveOut.Play();
     }
 
-    public bool FullScreen
+    public void Pause()
     {
-        get { return _fullScreen; }
-        set
-        {
-            _fullScreen = value;
-            if (_fullScreen && Screen.PrimaryScreen != null)
-            {
-                this.WindowState = FormWindowState.Normal;
-                this.FormBorderStyle = global::System.Windows.Forms.FormBorderStyle.None;
-                this.Bounds = Screen.PrimaryScreen.Bounds;
-            }
-            else
-            {
-                this.ClientSize = new Size(800, 600);
-                this.FormBorderStyle = global::System.Windows.Forms.FormBorderStyle.Sizable;
-            }
-        }
+        _waveOut.Pause();
     }
 
-    public new (int, int) MousePosition
+    public void Stop()
     {
-        get { Point p = PointToClient(Control.MousePosition); return (p.X, p.Y); }
-    }
-
-    public void RegisterKeyUp(char c, Action<int> command)
-    {
-        c = Char.ToUpper(c);
-        _keyUpCommands.Add(c, command);
-    }
-
-    public void RegisterKeyDown(char c, Action<int> command)
-    {
-        c = Char.ToUpper(c);
-        _keyDownCommands.Add(c, command);
-    }
-
-    public void RegisterMouseWheel(Action<int> command)
-    {
-        _onMouseWheel += command;
-    }
-
-    // L, R, M
-    public void RegisterMouseDown(char button, Action<int, int> command)
-    {
-        if (button == 'L' || button == 'R' || button == 'M')
-            _onMouseDown.Add(button, command);
-    }
-    public void RegisterMouseUp(char button, Action<int, int> command)
-    {
-        if (button == 'L' || button == 'R' || button == 'M')
-            _onMouseUp.Add(button, command);
-    }
-
-    private void DoKey(KeyEventArgs e, Dictionary<char, Action<int>> events)
-    {
-        char c = (char)e.KeyCode;
-        int mask = 0;
-        mask += e.Alt ? 1 : 0;
-        mask += e.Shift ? 10 : 0;
-        mask += e.Control ? 100 : 0;
-        if (events.ContainsKey(c))
-            events[c].Invoke(mask);
-    }
-
-    protected void DoKeyDown(object? sender, KeyEventArgs e)
-    {
-        Console.WriteLine((char)e.KeyCode);
-        DoKey(e, _keyDownCommands);
-    }
-
-    protected void DoKeyUp(object? sender, KeyEventArgs e)
-    {
-        DoKey(e, _keyUpCommands);
-    }
-
-    protected void DoMouseWheel(object? sender, MouseEventArgs e)
-    {
-        _onMouseWheel?.Invoke(Math.Sign(e.Delta));
-    }
-
-    private void DoMouse(MouseEventArgs e, Dictionary<char, Action<int, int>> events)
-    {
-        char button = ' ';
-        switch (e.Button)
-        {
-            case MouseButtons.Left: button = 'L'; break;
-            case MouseButtons.Right: button = 'R'; break;
-            case MouseButtons.Middle: button = 'M'; break;
-        }
-        Point clientPosition = e.Location;
-        if (events.ContainsKey(button))
-            events[button]?.Invoke(clientPosition.X, clientPosition.Y);
-    }
-
-    protected void DoMouseDown(object? sender, MouseEventArgs e)
-    {
-        DoMouse(e, _onMouseDown);
-    }
-    protected void DoMouseUp(object? sender, MouseEventArgs e)
-    {
-        DoMouse(e, _onMouseUp);
-    }
-
-    protected void DoPaint(object? sender, PaintEventArgs e)
-    {
-        Graphics g = e.Graphics;
-        foreach (var cmd in _renderCommands) { cmd.Render(g); }
-    }
-
-    public void Start()
-    {
-        this.timer.Start();
-    }
-
-    public void RegisterLoop(Action loop, int fps = 32)
-    {
-        _onLoop += loop;
-        this.timer.Interval = (int)(1000 / fps);
-    }
-
-    protected void DoLoop(object? sender, EventArgs e)
-    {
-        var aux = _bufferCommands;
-        _bufferCommands = _renderCommands;
-        _renderCommands = aux;
-        _bufferCommands.Clear();
-        _onLoop?.Invoke();
-        Invalidate();
+        _waveOut.Stop();
     }
 
     public void Dispose()
     {
-        this.timer.Stop();
-        this.Close();
-    }
-
-    public Image LoadImage(string path)
-    {
-        if (!_images.ContainsKey(path))
-        {
-            try
-            {
-                var bitmap = new Bitmap(path);
-                var image = new ImageWindows(path, bitmap, this);
-                _images.Add(path, image);
-            }
-            catch (ArgumentException e)
-            {
-                Console.WriteLine(String.Format("Image {0} not found!", path));
-                throw e;
-            }
-        }
-        if (_images[path] is Image img)
-        {
-            return img;
-        }
-        throw new ArgumentException(String.Format("Image {0} not found!", path));
-    }
-
-    public SpriteSheet LoadSpriteSheet(Image img, int width, int height)
-    {
-        if (img is ImageWindows win)
-        {
-            var bitmap = win._bitmap;
-            var sheet = new SpriteSheetWindows(img.Path, bitmap, this);
-            sheet.Split(width, height);
-            _spriteSheets.Add(img.Path, sheet);
-            if (_spriteSheets[img.Path] is SpriteSheetWindows ss)
-            {
-                return ss;
-            }
-        }
-        throw new ArgumentException(String.Format("Image {0} not found!", img));
-    }
-
-    public Sound LoadSound(string path)
-    {
-        if (!_sounds.ContainsKey(path))
-        {
-            var player = new SoundPlayer(path);
-            var sound = new SoundWindows(path, player, this);
-            _sounds.Add(path, sound);
-        }
-        if (_sounds[path] is Sound snd)
-        {
-            return snd;
-        }
-        throw new ArgumentException(String.Format("Sound {0} not found!", path));
-    }
-
-    public Text LoadText(string text, string font = "Arial")
-    {
-        return new TextWindows(text, font, this);
-    }
-
-    protected internal void Render(Bitmap img, int x, int y)
-    {
-        _bufferCommands.AddLast(new DrawCommand(img, new Point(x, y)));
-    }
-
-    protected internal void Render(TextWindows text, int x, int y)
-    {
-        _bufferCommands.AddLast(new TextCommand(text, new Point(x, y)));
+        _waveOut.Stop();
+        _waveOut.Dispose();
+        _audioFile.Dispose();
     }
 }

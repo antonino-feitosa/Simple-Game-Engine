@@ -10,4 +10,8 @@
     <UseWPF>True</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="naudio" Version="2.1.0" />
+  </ItemGroup>
+
 </Project>

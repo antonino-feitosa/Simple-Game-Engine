@@ -51,11 +51,11 @@ public class LoadingSystem : System
 
     public void Process()
     {
-        _background.Render(0,0);
-        _title.Render(200, 20);
+        _background.Render(new Position(0,0));
+        _title.Render(new Position(200, 20));
 
-        _border.Render(215, 180);
-        _fill.Render(215, 180);
-        _loading.Render(265, 175);
+        _border.Render(new Position(215, 180));
+        _fill.Render(new Position(215, 180));
+        _loading.Render(new Position(265, 175));
     }
 }

@@ -34,7 +34,7 @@ static class Program
         //ResizeTest.Test(game);
         
         game.AttachSystem(loading);
-        Application.Run(device);
+        Application.Run(device._windows);
         game.Start();
     }
 }
