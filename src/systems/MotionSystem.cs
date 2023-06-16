@@ -1,13 +1,13 @@
 
-namespace SGE;
+namespace SimpleGameEngine;
 
 public class MotionSystem : System
 {
-    protected List<Motion> _components;
+    protected List<Moveable> _components;
 
     public MotionSystem()
     {
-        _components = new List<Motion>();
+        _components = new List<Moveable>();
     }
 
     public void Process()
@@ -43,15 +43,15 @@ public class MotionSystem : System
         }
     }
 
-    public Motion CreateComponent(PositionSystem.Position comp, double framesToMove = 32)
+    public Moveable CreateComponent(PositionSystem.Localizable comp, double framesToMove = 32)
     {
-        var mc = new Motion(comp, framesToMove);
+        var mc = new Moveable(comp, framesToMove);
         _components.Add(mc);
         mc.OnDestroy += (entity) => { _components.Remove(mc); };
         return mc;
     }
 
-    public class Motion : Component
+    public class Moveable : Component
     {
         protected internal bool _fired;
         protected internal bool _moving;
@@ -59,13 +59,13 @@ public class MotionSystem : System
         protected internal Vector2 _destination;
         protected internal Vector2 _velocity;
         protected double _framesToMove;
-        protected PositionSystem.Position _positionComponent;
+        protected PositionSystem.Localizable _positionComponent;
         public Action<Vector2>? OnStartMove;
         public Action<Vector2>? OnEndMove;
         public Action<Vector2>? OnMoving;
         public Action<Vector2>? OnIdle;
 
-        protected internal Motion(PositionSystem.Position comp, double framesToMove)
+        protected internal Moveable(PositionSystem.Localizable comp, double framesToMove)
         {
             _position = new Vector2();
             _destination = new Vector2();
@@ -77,7 +77,7 @@ public class MotionSystem : System
             _fired = false;
         }
 
-        private void DoMove(Position source, Position dest)
+        private void DoMove(Point source, Point dest)
         {
             _position = new Vector2(source.X, source.Y);
             _destination = new Vector2(dest.X, dest.Y);

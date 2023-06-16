@@ -1,5 +1,5 @@
 
-namespace SGE;
+namespace SimpleGameEngine;
 
 public interface System
 {

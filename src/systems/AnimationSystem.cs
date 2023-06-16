@@ -1,13 +1,13 @@
 
-namespace SGE;
+namespace SimpleGameEngine;
 
 public class AnimationSystem : System
 {
-    protected HashSet<Animation> _components;
+    protected HashSet<Animatable> _components;
 
     public AnimationSystem()
     {
-        _components = new HashSet<Animation>();
+        _components = new HashSet<Animatable>();
     }
 
     public void Process()
@@ -30,24 +30,24 @@ public class AnimationSystem : System
         }
     }
 
-    public Animation CreateComponent(CameraSystem.Render comp, SpriteSheet sheet, params int[] sequence)
+    public Animatable CreateComponent(CameraSystem.Renderable comp, SpriteSheet sheet, params int[] sequence)
     {
-        var anim = new Animation(comp, sheet, sequence);
+        var anim = new Animatable(comp, sheet, sequence);
         _components.Add(anim);
         anim.OnDestroy += (entity) => _components.Remove(anim);
         return anim;
     }
 
-    public class Animation : Component
+    public class Animatable : Component
     {
         public List<int> Sequence;
         public SpriteSheet Sheet;
-        public CameraSystem.Render RenderComponent;
+        public CameraSystem.Renderable RenderComponent;
         public bool Running;
         public int UpdatesByFrames;
         protected internal int _current;
         protected internal int _count;
-        public Animation(CameraSystem.Render comp, SpriteSheet sheet, params int[] sequence)
+        public Animatable(CameraSystem.Renderable comp, SpriteSheet sheet, params int[] sequence)
         {
             Sheet = sheet;
             RenderComponent = comp;

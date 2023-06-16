@@ -1,20 +1,20 @@
 
-namespace SGE;
+namespace SimpleGameEngine;
 
 public class CameraSystem : System
 {
-    public Position Position;
+    public Point Position;
     public Dimension Dimension;
     public int PixelsUnit;
 
-    protected List<Render> _components;
+    protected List<Renderable> _components;
 
-    public CameraSystem(Position position, Dimension dimension)
+    public CameraSystem(Point position, Dimension dimension)
     {
         Position = position;
         Dimension = dimension;
         PixelsUnit = 32;
-        _components = new List<Render>(); // TODO optimization on delete
+        _components = new List<Renderable>(); // TODO optimization on delete
     }
 
     public void Process()
@@ -32,27 +32,27 @@ public class CameraSystem : System
             int height = y + comp.Image.Dimension.Height;
             if (!(width < cx || x > cWidth || height < cy || y > cHeight))
             {
-                comp.Image.Render(new Position(x, y));
+                comp.Image.Render(new Point(x, y));
             }
         }
     }
 
-    public Render CreateComponent(Image image, Vector2 position)
+    public Renderable CreateComponent(Image image, Vector2 position)
     {
-        var comp = new Render(image, position);
+        var comp = new Renderable(image, position);
         _components.Add(comp);
         comp.OnDestroy += (entity) => _components.Remove(comp);
         return comp;
     }
 
-    public class Render : Component
+    public class Renderable : Component
     {
         public Vector2 Position;
         public int ZIndex;
         public Image Image;
         public bool Visible;
 
-        public Render(Image image, Vector2 position)
+        public Renderable(Image image, Vector2 position)
         {
             Image = image;
             ZIndex = 0;

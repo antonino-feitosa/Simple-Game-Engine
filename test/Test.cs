@@ -1,7 +1,10 @@
 
-namespace test;
+namespace SimpleGameEngine.Test;
 
 using global::System.Reflection;
+
+[AttributeUsage(AttributeTargets.Class)]
+public class TestClass : Attribute {}
 
 public class AssertionException : Exception
 {
@@ -14,20 +17,21 @@ public class Test
 {
     public static readonly bool EXIT_ON_ERROR = false;
     public static readonly bool RUN_TESTS = true;
+    
     public static void Execute()
     {
         if(!RUN_TESTS) return;
         
         Console.WriteLine("Starting Tests...");
-        var classes = new List<Type>();
-
-        classes.Add(typeof(DimensionTest));
+        
+        var classes = Assembly.GetExecutingAssembly().GetTypes()
+            .Where(type => type.IsDefined(typeof(TestClass))).ToList();
 
         Console.WriteLine("Running Tests...");
         Run(classes);
         Console.WriteLine("End of Tests!");
 
-        global::System.Environment.Exit(0);
+        Environment.Exit(0);
     }
 
     public static void Run(List<Type> classes)
@@ -48,7 +52,7 @@ public class Test
             {
                 method.Invoke(null, null);
             }
-            catch (global::System.Reflection.TargetInvocationException e)
+            catch (TargetInvocationException e)
             {
                 string message = e.InnerException?.StackTrace ?? "unknown";
                 int index = message.IndexOf(" at ");
@@ -57,7 +61,7 @@ public class Test
                 message = message.Replace(" in ", "\n\tin ");
                 Console.WriteLine("Fail " + message);
                 if (EXIT_ON_ERROR)
-                    global::System.Environment.Exit(0);
+                    Environment.Exit(0);
             }
         }
     }

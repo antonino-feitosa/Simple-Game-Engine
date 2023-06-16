@@ -1,8 +1,7 @@
 
-using SGE;
+namespace SimpleGameEngine.Test;
 
-namespace test;
-
+[TestClass]
 public class DimensionTest
 {
 

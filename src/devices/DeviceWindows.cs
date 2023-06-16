@@ -1,5 +1,5 @@
 
-namespace SGE;
+namespace SimpleGameEngine;
 
 public class DeviceWindows : Device
 {
@@ -30,7 +30,7 @@ public class DeviceWindows : Device
         _form.MouseUp += OnMouseUp;
         _form.MouseWheel += OnMouseWheelScroll;
         _form.MouseMove += OnMouseMove;
-        _form.Load += (sender, e) => _form.Location = new Point(500, 0);
+        _form.Load += (sender, e) => _form.Location = new global::System.Drawing.Point(500, 0);
 
         _timer = new global::System.Windows.Forms.Timer();
         _timer.Tick += OnLoop;
@@ -41,7 +41,7 @@ public class DeviceWindows : Device
     ~DeviceWindows() { Dispose(false); }
 
     public Game Game { get => _device.Game; set => _device.Game = value; }
-    public Position MousePosition { get => _device.MousePosition; }
+    public Point MousePosition { get => _device.MousePosition; }
     public Dimension Dimension { get => _device.Dimesion; set => _device.Dimesion = value; }
     public int FramesPerSecond
     {
@@ -129,7 +129,7 @@ public class DeviceWindows : Device
 
     protected void OnMouseMove(object? sender, MouseEventArgs e)
     {
-        _device.MousePosition = new Position(e.X, e.Y);
+        _device.MousePosition = new Point(e.X, e.Y);
     }
 
     private static Device.MouseButton GetMouseButton(MouseEventArgs e)
@@ -242,8 +242,8 @@ public class DeviceWindows : Device
     public void RegisterKeyUp(int charInUTF16, Action<Device.KeyboardModifier> command) { _device.RegisterKeyUp(charInUTF16, command); }
     public void RegisterKeyDown(int charInUTF16, Action<Device.KeyboardModifier> command) { _device.RegisterKeyDown(charInUTF16, command); }
     public void RegisterMouseWheelScroll(Action<Device.MouseWheelDirection> command) { _device.RegisterMouseWheelScroll(command); }
-    public void RegisterMouseDown(Device.MouseButton button, Action<Position> command) { _device.RegisterMouseDown(button, command); }
-    public void RegisterMouseUp(Device.MouseButton button, Action<Position> command) { _device.RegisterMouseUp(button, command); }
+    public void RegisterMouseDown(Device.MouseButton button, Action<Point> command) { _device.RegisterMouseDown(button, command); }
+    public void RegisterMouseUp(Device.MouseButton button, Action<Point> command) { _device.RegisterMouseUp(button, command); }
 
 }
 
@@ -344,7 +344,7 @@ public class TextWindows : Text
         _drawFont = new global::System.Drawing.Font(_font._fontFamily, _size);
     }
 
-    public void Render(Position position)
+    public void Render(Point position)
     {
         int x = position.X;
         int y = position.Y;
@@ -399,14 +399,14 @@ internal class ImageWindows : Image
     public string Path { get => _path; }
     public Dimension Dimension { get => _dimension; }
 
-    public void Render(Position position)
+    public void Render(Point position)
     {
         int x = position.X;
         int y = position.Y;
         _windows.Render((Graphics g) => g.DrawImage(_bitmap, x, y));
     }
 
-    public Image Crop(Position position, Dimension dimension)
+    public Image Crop(Point position, Dimension dimension)
     {
         var cropped = new Bitmap(dimension.Width, dimension.Height);
         var graphics = Graphics.FromImage(cropped);

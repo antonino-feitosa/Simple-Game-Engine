@@ -1,4 +1,4 @@
-namespace SGE;
+namespace SimpleGameEngine;
 
 using global::System.Runtime.InteropServices;
 

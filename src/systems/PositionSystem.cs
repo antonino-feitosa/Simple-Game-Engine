@@ -1,6 +1,6 @@
 
 
-namespace SGE;
+namespace SimpleGameEngine;
 
 public class PositionSystem : System
 {
@@ -13,33 +13,33 @@ public class PositionSystem : System
     public readonly Direction LEFT = new(-1, 0);
     public readonly Direction RIGHT = new(+1, -0);
 
-    protected HashSet<SGE.Position> _ground;
-    protected Dictionary<SGE.Position, Position> _components;
-    protected Dictionary<Position, SGE.Position> _moving;
-    protected Dictionary<Position, SGE.Position> _outOfBounds;
-    protected HashSet<Position> _free;
+    protected HashSet<Point> _ground;
+    protected Dictionary<Point, Localizable> _components;
+    protected Dictionary<Localizable, Point> _moving;
+    protected Dictionary<Localizable, Point> _outOfBounds;
+    protected HashSet<Localizable> _free;
 
-    public PositionSystem(HashSet<SGE.Position> ground)
+    public PositionSystem(HashSet<Point> ground)
     {
         _ground = ground;
-        _components = new Dictionary<SGE.Position, Position>();
-        _moving = new Dictionary<Position, SGE.Position>();
-        _outOfBounds = new Dictionary<Position, SGE.Position>();
-        _free = new HashSet<Position>();
+        _components = new Dictionary<Point, Localizable>();
+        _moving = new Dictionary<Localizable, Point>();
+        _outOfBounds = new Dictionary<Localizable, Point>();
+        _free = new HashSet<Localizable>();
     }
 
-    public Position CreateComponent(int x, int y)
+    public Localizable CreateComponent(int x, int y)
     {
-        return new Position(new SGE.Position(x, y), this);
+        return new Localizable(new Point(x, y), this);
     }
 
-    protected internal void Move(Position comp, Direction dir)
+    protected internal void Move(Localizable comp, Direction dir)
     {
         var destination = dir.Next(comp._position);
         if (_ground.Contains(destination))
         {
             _moving.Add(comp, destination);
-            if (_components.TryGetValue(destination, out Position? value))
+            if (_components.TryGetValue(destination, out Localizable? value))
             {
                 var other = value;
                 other._dependency.Add(comp);
@@ -60,13 +60,13 @@ public class PositionSystem : System
         foreach (var pair in _outOfBounds) { pair.Key.OnOutOfBounds?.Invoke(pair.Value); };
         _outOfBounds.Clear();
 
-        var collision = new HashSet<Position>();
+        var collision = new HashSet<Localizable>();
         while (_free.Count > 0)
         {
             var comp = _free.First();
             _free.Remove(comp);
             var dest = _moving[comp];
-            if (_components.TryGetValue(dest, out Position? value))
+            if (_components.TryGetValue(dest, out Localizable? value))
             {
                 var other = value;
                 other._dependency.Add(comp);
@@ -94,7 +94,7 @@ public class PositionSystem : System
         _moving.Clear();
     }
 
-    private void DoMove(Position comp, SGE.Position dest)
+    private void DoMove(Localizable comp, Point dest)
     {
         _components.Remove(comp._position);
         _components.Add(dest, comp);
@@ -102,20 +102,20 @@ public class PositionSystem : System
         comp._position = dest;
     }
 
-    public class Position : Component
+    public class Localizable : Component
     {
         protected PositionSystem _system;
-        protected internal SGE.Position _position;
-        protected internal HashSet<Position> _dependency;
-        public Action<SGE.Position, SGE.Position>? OnMove; // successful move
-        public Action<Position>? OnCollision; // collision with another component
-        public Action<SGE.Position>? OnOutOfBounds; // move to out of the ground
+        protected internal Point _position;
+        protected internal HashSet<Localizable> _dependency;
+        public Action<Point, Point>? OnMove; // successful move
+        public Action<Localizable>? OnCollision; // collision with another component
+        public Action<Point>? OnOutOfBounds; // move to out of the ground
 
-        protected internal Position(SGE.Position position, PositionSystem system)
+        protected internal Localizable(Point position, PositionSystem system)
         {
             _system = system;
             _position = position;
-            _dependency = new HashSet<Position>();
+            _dependency = new HashSet<Localizable>();
         }
 
         public void Move(Direction dir)

@@ -1,5 +1,5 @@
 
-namespace SGE;
+namespace SimpleGameEngine;
 
 public class Vector2
 {
@@ -53,24 +53,24 @@ public class Direction
         X = x;
         Y = y;
     }
-    public Position Next(Position p)
+    public Point Next(Point p)
     {
-        return new Position(p.X + X, p.Y + Y);
+        return new Point(p.X + X, p.Y + Y);
     }
 }
 
-public class Position
+public class Point
 {
     public int X;
     public int Y;
 
-    public Position(int x = 0, int y = 0)
+    public Point(int x = 0, int y = 0)
     {
         X = x;
         Y = y;
     }
-    public void Copy(Position point) { X = point.X; Y = point.Y; }
-    public override bool Equals(object? obj) { return obj is Position p ? p.X == X && p.Y == Y : base.Equals(obj); }
+    public void Copy(Point point) { X = point.X; Y = point.Y; }
+    public override bool Equals(object? obj) { return obj is Point p ? p.X == X && p.Y == Y : base.Equals(obj); }
     public override int GetHashCode() { return HashCode.Combine(X, Y); }
     public override string ToString() { return String.Format("({0},{1})", X, Y); }
 }

@@ -1,5 +1,5 @@
 
-namespace SGE;
+namespace SimpleGameEngine;
 
 public interface Resource : IDisposable
 {
@@ -23,7 +23,7 @@ public interface Text : IDisposable
     public Font Font { get; set; }
     public Color Color { get; set; }
     public string Text { get; set; }
-    public void Render(Position position);
+    public void Render(Point position);
 }
 
 public interface Sound : Resource
@@ -46,9 +46,9 @@ public interface SpriteSheet
 public interface Image : Resource
 {
     public Dimension Dimension { get; }
-    public void Render(Position position);
+    public void Render(Point position);
     public Image Resize(Dimension dimension);
-    public Image Crop(Position position, Dimension dimension);
+    public Image Crop(Point position, Dimension dimension);
 }
 
 public interface Device : IDisposable
@@ -59,7 +59,7 @@ public interface Device : IDisposable
 
     public Game Game { get; set; }
     public Dimension Dimension { get; }
-    public Position MousePosition { get; }
+    public Point MousePosition { get; }
     public bool IsFullScreen { get; set; }
     public int FramesPerSecond { get; set; }
 
@@ -76,8 +76,8 @@ public interface Device : IDisposable
     public void RegisterKeyUp(int charInUTF16, Action<KeyboardModifier> command);
     public void RegisterKeyDown(int charInUTF16, Action<KeyboardModifier> command);
     public void RegisterMouseWheelScroll(Action<MouseWheelDirection> command);
-    public void RegisterMouseDown(MouseButton button, Action<Position> command);
-    public void RegisterMouseUp(MouseButton button, Action<Position> command);
+    public void RegisterMouseDown(MouseButton button, Action<Point> command);
+    public void RegisterMouseUp(MouseButton button, Action<Point> command);
 }
 
 
@@ -87,14 +87,14 @@ public class DeviceHelper
     private bool _isFullScreen;
     private int _framesPerSecond;
     private readonly Dimension _dimension;
-    private readonly Position _mousePosition;
+    private readonly Point _mousePosition;
 
     private readonly Dictionary<string, Resource> _resources;
     private readonly Dictionary<int, Action<Device.KeyboardModifier>> _onKeyDown;
     private readonly Dictionary<int, Action<Device.KeyboardModifier>> _onKeyUp;
-    private readonly Dictionary<Device.MouseButton, Action<Position>> _onMouseDown;
+    private readonly Dictionary<Device.MouseButton, Action<Point>> _onMouseDown;
     private Action<Device.MouseWheelDirection>? _onMouseWheel;
-    private readonly Dictionary<Device.MouseButton, Action<Position>> _onMouseUp;
+    private readonly Dictionary<Device.MouseButton, Action<Point>> _onMouseUp;
 
     public DeviceHelper(Game game)
     {
@@ -102,18 +102,18 @@ public class DeviceHelper
         _isFullScreen = false;
         _framesPerSecond = 32;
         _dimension = new Dimension(800, 600);
-        _mousePosition = new Position();
+        _mousePosition = new Point();
         _resources = new Dictionary<string, Resource>();
         _onKeyDown = new Dictionary<int, Action<Device.KeyboardModifier>>();
         _onKeyUp = new Dictionary<int, Action<Device.KeyboardModifier>>();
-        _onMouseDown = new Dictionary<Device.MouseButton, Action<Position>>();
-        _onMouseUp = new Dictionary<Device.MouseButton, Action<Position>>();
+        _onMouseDown = new Dictionary<Device.MouseButton, Action<Point>>();
+        _onMouseUp = new Dictionary<Device.MouseButton, Action<Point>>();
     }
 
     public bool IsFullScreen { get => _isFullScreen; set => _isFullScreen = value; }
     public int FramesPerSecond { get => _framesPerSecond; set => _framesPerSecond = value; }
     public Dimension Dimesion { get => new(_dimension.Width, _dimension.Height); set => _dimension.Copy(value); }
-    public Position MousePosition { get => new(_mousePosition.X, _mousePosition.Y); set => _mousePosition.Copy(value); }
+    public Point MousePosition { get => new(_mousePosition.X, _mousePosition.Y); set => _mousePosition.Copy(value); }
 
     public Game Game
     {
@@ -149,9 +149,9 @@ public class DeviceHelper
     }
     public void FireKeyUp(int charInUTF16, Device.KeyboardModifier modifiers) { FireKey(charInUTF16, modifiers, _onKeyUp); }
     public void FireKeyDown(int charInUTF16, Device.KeyboardModifier modifiers) { FireKey(charInUTF16, modifiers, _onKeyDown); }
-    private void FireMouse(Device.MouseButton button, Dictionary<Device.MouseButton, Action<Position>> events)
+    private void FireMouse(Device.MouseButton button, Dictionary<Device.MouseButton, Action<Point>> events)
     {
-        if (events.TryGetValue(button, out Action<Position>? value))
+        if (events.TryGetValue(button, out Action<Point>? value))
             value.Invoke(MousePosition);
     }
     public void FireMouseUp(Device.MouseButton button) { FireMouse(button, _onMouseUp); }
@@ -161,7 +161,7 @@ public class DeviceHelper
     public void RegisterKeyUp(int charInUTF16, Action<Device.KeyboardModifier> command) { _onKeyUp.Add(charInUTF16, command); }
     public void RegisterKeyDown(int charInUTF16, Action<Device.KeyboardModifier> command) { _onKeyDown.Add(charInUTF16, command); }
     public void RegisterMouseWheelScroll(Action<Device.MouseWheelDirection> command) { _onMouseWheel = command; }
-    public void RegisterMouseDown(Device.MouseButton button, Action<Position> command) { _onMouseDown.Add(button, command); }
-    public void RegisterMouseUp(Device.MouseButton button, Action<Position> command) { _onMouseUp.Add(button, command); }
+    public void RegisterMouseDown(Device.MouseButton button, Action<Point> command) { _onMouseDown.Add(button, command); }
+    public void RegisterMouseUp(Device.MouseButton button, Action<Point> command) { _onMouseUp.Add(button, command); }
 
 }
