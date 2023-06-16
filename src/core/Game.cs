@@ -36,12 +36,12 @@ public class Game
 
     public void Start()
     {
-        foreach (var ent in _entities) { ent.OnStart?.Invoke(); }
+        foreach (var ent in _entities) { ent.FireStart(); }
     }
 
     public void Stop()
     {
-        foreach (var ent in _entities) { ent.OnDestroy?.Invoke(); }
+        foreach (var ent in _entities) { ent.FireDestroy(); }
         _entities.Clear();
     }
 
@@ -49,12 +49,10 @@ public class Game
     {
         foreach (var sys in _systems) { sys.Process(); }
 
-        foreach (var ent in _entities) { ent.OnUpdate?.Invoke(); }
-
         foreach (var del in _entities_destroy)
         {
             var node = _entities_reference[del];
-            del.OnDestroy?.Invoke();
+            del.FireDestroy();
             _entities.Remove(node);
         }
         _entities_destroy.Clear();

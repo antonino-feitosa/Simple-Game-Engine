@@ -28,9 +28,9 @@ public class PositionSystem : System
         _free = new HashSet<Position>();
     }
 
-    public Position CreateComponent(Entity entity, int x, int y)
+    public Position CreateComponent(int x, int y)
     {
-        return new Position(entity, new SGE.Position(x, y), this);
+        return new Position(new SGE.Position(x, y), this);
     }
 
     protected internal void Move(Position comp, Direction dir)
@@ -111,7 +111,7 @@ public class PositionSystem : System
         public Action<Position>? OnCollision; // collision with another component
         public Action<SGE.Position>? OnOutOfBounds; // move to out of the ground
 
-        protected internal Position(Entity entity, SGE.Position position, PositionSystem system) : base(entity)
+        protected internal Position(SGE.Position position, PositionSystem system)
         {
             _system = system;
             _position = position;

@@ -47,7 +47,7 @@ public class MotionSystem : System
     {
         var mc = new Motion(comp, framesToMove);
         _components.Add(mc);
-        mc._entity.OnDestroy += () => { _components.Remove(mc); };
+        mc.OnDestroy += (entity) => { _components.Remove(mc); };
         return mc;
     }
 
@@ -65,7 +65,7 @@ public class MotionSystem : System
         public Action<Vector2>? OnMoving;
         public Action<Vector2>? OnIdle;
 
-        protected internal Motion(PositionSystem.Position comp, double framesToMove) : base(comp._entity)
+        protected internal Motion(PositionSystem.Position comp, double framesToMove)
         {
             _position = new Vector2();
             _destination = new Vector2();

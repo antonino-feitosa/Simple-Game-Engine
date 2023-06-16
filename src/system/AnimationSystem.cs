@@ -34,7 +34,7 @@ public class AnimationSystem : System
     {
         var anim = new Animation(comp, sheet, sequence);
         _components.Add(anim);
-        anim._entity.OnDestroy += () => _components.Remove(anim);
+        anim.OnDestroy += (entity) => _components.Remove(anim);
         return anim;
     }
 
@@ -47,7 +47,7 @@ public class AnimationSystem : System
         public int UpdatesByFrames;
         protected internal int _current;
         protected internal int _count;
-        public Animation(CameraSystem.Render comp, SpriteSheet sheet, params int[] sequence) : base(comp._entity)
+        public Animation(CameraSystem.Render comp, SpriteSheet sheet, params int[] sequence)
         {
             Sheet = sheet;
             RenderComponent = comp;

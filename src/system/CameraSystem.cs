@@ -37,11 +37,11 @@ public class CameraSystem : System
         }
     }
 
-    public Render CreateComponent(Entity entity, Image image, Vector2 position)
+    public Render CreateComponent(Image image, Vector2 position)
     {
-        var comp = new Render(entity, image, position);
+        var comp = new Render(image, position);
         _components.Add(comp);
-        entity.OnDestroy += () => _components.Remove(comp);
+        comp.OnDestroy += (entity) => _components.Remove(comp);
         return comp;
     }
 
@@ -52,7 +52,7 @@ public class CameraSystem : System
         public Image Image;
         public bool Visible;
 
-        public Render(Entity entity, Image image, Vector2 position) : base(entity)
+        public Render(Image image, Vector2 position)
         {
             Image = image;
             ZIndex = 0;

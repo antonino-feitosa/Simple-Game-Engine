@@ -1,43 +1,62 @@
 
 namespace SGE;
 
-public class Entity : Identifiable
+public interface System
 {
-    public Action? OnStart;
-    public Action? OnUpdate;
-    public Action? OnDestroy;
+    public void Process();
+}
 
+public class Component
+{
+    private Entity? _entity;
+    public Action<Entity>? OnStart;
+    public Action<Entity>? OnDestroy;
+    public Entity Entity
+    {
+        get => _entity ?? throw new ArgumentException("There is not an Entity for this Component!");
+        set => _entity = value;
+    }
+}
+
+public class Entity
+{
     private readonly Game _game;
     protected HashSet<Component> _components;
 
+    private static uint _countId = 0;
+    private readonly uint _id;
+
     public Entity(Game game)
     {
+        _id = _countId++;
         _game = game;
         _components = new HashSet<Component>();
     }
+    protected uint ID { get { return _id; } }
 
     public T? GetComponent<T>() where T : Component
     {
-        return _components.Where<Component>(c => c is T).First<Component>() as T;
+        return _components.Where(c => c is T).First() as T;
     }
 
-    public void Destroy()
+    public void Destroy() { _game.DestroyEntity(this); }
+
+    protected internal void FireStart()
     {
-        _game.DestroyEntity(this);
+        foreach (var component in _components) component.OnStart?.Invoke(this);
     }
 
-    protected internal void AttachComponent(Component comp)
+    protected internal void FireDestroy()
     {
-        _components.Add(comp);
+        foreach (var component in _components) component.OnDestroy?.Invoke(this);
     }
 
-    public void DetachComponent(Component comp)
-    {
-        _components.Remove(comp);
-    }
+    public void AttachComponent(Component comp) { _components.Add(comp); }
+    public void DetachComponent(Component comp) { _components.Remove(comp); }
 
-    public override string ToString()
-    {
-        return "Entity(" + base.ID + ")";
-    }
+    public override bool Equals(object? obj) { return obj is Entity e ? ID == e.ID : base.Equals(obj); }
+
+    public override int GetHashCode() { return HashCode.Combine(ID); }
+
+    public override string ToString() { return "Entity(" + ID + ")"; }
 }

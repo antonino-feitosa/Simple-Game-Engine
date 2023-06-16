@@ -77,30 +77,20 @@ public class Position
 
 public class Dimension
 {
-    public int Width;
-    public int Height;
+    public int _width;
+    public int _height;
 
     public Dimension(int width, int height)
     {
         Width = width;
         Height = height;
     }
+
+    public int Width { get => _width; set => _width = value >= 0 ? _width = value : _width; }
+    public int Height { get => _height; set => _height = value >= 0 ? _height = value : _height; }
+
     public void Copy(Dimension dimension) { Width = dimension.Width; Height = dimension.Height; }
     public override bool Equals(object? obj) { return obj is Dimension d ? d.Width == Width && d.Height == Height : base.Equals(obj); }
     public override int GetHashCode() { return HashCode.Combine(Width, Height); }
     public override string ToString() { return String.Format("({0},{1})", Width, Height); }
-}
-
-public class Identifiable
-{
-    private static int _countId = 0;
-    private readonly int _id;
-    protected int ID { get { return _id; } }
-    public Identifiable() { _id = _countId++; }
-
-    public override bool Equals(object? obj) { return obj is Identifiable e ? _id == e._id : base.Equals(obj); }
-
-    public override int GetHashCode() { return HashCode.Combine(_id); }
-
-    public override string ToString() { return "ID(" + _id + ")"; }
 }
