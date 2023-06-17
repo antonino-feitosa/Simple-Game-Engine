@@ -55,11 +55,7 @@ public class PositionSystem : System
         }
     }
 
-    public void Process()
-    {
-        foreach (var pair in _outOfBounds) { pair.Key.OnOutOfBounds?.Invoke(pair.Value); };
-        _outOfBounds.Clear();
-
+    private void MoveWithDependencies(){
         var collision = new HashSet<Localizable>();
         while (_free.Count > 0)
         {
@@ -85,6 +81,14 @@ public class PositionSystem : System
                 }
             }
         }
+    }
+
+    public void Process()
+    {
+        foreach (var pair in _outOfBounds) { pair.Key.OnOutOfBounds?.Invoke(pair.Value); };
+        _outOfBounds.Clear();
+
+        MoveWithDependencies();
 
         foreach (var pair in _moving)
         {

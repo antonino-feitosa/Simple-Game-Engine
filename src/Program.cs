@@ -22,7 +22,7 @@ static class Program
         // must be before any calls to Console.WriteLine()
         AttachConsole(ATTACH_PARENT_PROCESS);
 
-        test.Test.Execute(); // TODO remove on build
+        Test.Test.Execute(); // TODO remove on build
 
         // To customize application configuration such as set high DPI settings or default font,
         // see https://aka.ms/applicationconfiguration.
