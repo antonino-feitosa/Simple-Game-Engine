@@ -1,6 +1,6 @@
-namespace SimpleGameEngine;
+using System.Runtime.InteropServices;
 
-using global::System.Runtime.InteropServices;
+namespace SimpleGameEngine;
 
 public class DoubleBufferedForm : Form {
     public DoubleBufferedForm() {
@@ -14,15 +14,12 @@ static class Program
     static extern bool AttachConsole(int dwProcessId);
     private const int ATTACH_PARENT_PROCESS = -1;
 
-
     [STAThread]
     static void Main()
     {
         // redirect console output to parent process;
         // must be before any calls to Console.WriteLine()
         AttachConsole(ATTACH_PARENT_PROCESS);
-
-        Test.Test.Execute(); // TODO remove on build
 
         // To customize application configuration such as set high DPI settings or default font,
         // see https://aka.ms/applicationconfiguration.

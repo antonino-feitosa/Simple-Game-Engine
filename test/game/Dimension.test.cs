@@ -1,7 +1,9 @@
 
-namespace SimpleGameEngine.Test;
+using static SimpleGameEngine.TestRunner;
 
-[TestClass]
+namespace SimpleGameEngine;
+
+[UnitTest]
 public class DimensionTest
 {
 
@@ -11,7 +13,7 @@ public class DimensionTest
 
         var width = dimension.Width;
 
-        Test.Assert(width == 800);
+        Assert(width == 800);
     }
 
     public static void GivenDimension800x600_whenHeightIsGet_then600IsReturned()
@@ -20,7 +22,7 @@ public class DimensionTest
 
         var height = dimension.Height;
 
-        Test.Assert(height == 600);
+        Assert(height == 600);
     }
 
     public static void GivenDimension800x600_whenWidthIsSetToZero_thenZeroIsReturned()
@@ -29,7 +31,7 @@ public class DimensionTest
 
         var width = dimension.Width;
 
-        Test.Assert(width == 0);
+        Assert(width == 0);
     }
 
     public static void GivenDimension800x600_whenHeightIsSetToZero_thenZeroIsReturned()
@@ -38,7 +40,7 @@ public class DimensionTest
 
         var height = dimension.Height;
 
-        Test.Assert(height == 0);
+        Assert(height == 0);
     }
 
     public static void GivenDimension800x600_whenWidthIsSetToNegative_then800IsReturned()
@@ -47,7 +49,7 @@ public class DimensionTest
 
         var width = dimension.Width;
 
-        Test.Assert(width == 800);
+        Assert(width == 800);
     }
 
     public static void GivenDimension800x600_whenHeightIsSetToNegative_then600IsReturned()
@@ -56,7 +58,7 @@ public class DimensionTest
 
         var height = dimension.Height;
 
-        Test.Assert(height == 600);
+        Assert(height == 600);
     }
 
     public static void GivenDimension800x600_whenWidthIsSetTo320_thenWidthIs320()
@@ -65,7 +67,7 @@ public class DimensionTest
 
         var width = dimension.Width;
 
-        Test.Assert(width == 320);
+        Assert(width == 320);
     }
 
     public static void GivenDimension800x600_whenHeightIsSetTo320_thenHeightIs320()
@@ -74,7 +76,7 @@ public class DimensionTest
 
         var height = dimension.Height;
 
-        Test.Assert(height == 320);
+        Assert(height == 320);
     }
 
     public static void GivenDimension800x600_whenDimension320x240IsCopied_thenWidthIs320()
@@ -85,7 +87,7 @@ public class DimensionTest
         dest.Copy(source);
         var width = dest.Width;
 
-        Test.Assert(width == 320);
+        Assert(width == 320);
     }
 
     public static void GivenDimension800x600_whenDimension320x240IsCopied_thenHeightIs240()
@@ -96,7 +98,7 @@ public class DimensionTest
         dest.Copy(source);
         var height = dest.Height;
 
-        Test.Assert(height == 240);
+        Assert(height == 240);
     }
 
     public static void Given2Dimension800x600_whenEqualsIsCompared_thenTrueIsReturned()
@@ -106,7 +108,7 @@ public class DimensionTest
 
         var compare = source.Equals(target);
 
-        Test.Assert(compare);
+        Assert(compare == true);
     }
 
     public static void GivenDimension800x600andDimension800x400_whenEqualsIsCompared_thenFalseIsReturned()
@@ -114,9 +116,9 @@ public class DimensionTest
         var source = new Dimension(800, 600);
         var target = new Dimension(800, 400);
 
-        var compare = !source.Equals(target);
+        var compare = source.Equals(target);
 
-        Test.Assert(compare);
+        Assert(compare == false);
     }
 
     public static void GivenDimension800x600andDimension600x600_whenEqualsIsCompared_thenFalseIsReturned()
@@ -124,9 +126,9 @@ public class DimensionTest
         var source = new Dimension(800, 600);
         var target = new Dimension(600, 600);
 
-        var compare = !source.Equals(target);
+        var compare = source.Equals(target);
 
-        Test.Assert(compare);
+        Assert(compare == false);
     }
 
     public static void GivenDimension800x600andDimension400x400_whenEqualsIsCompared_thenFalseIsReturned()
@@ -134,9 +136,9 @@ public class DimensionTest
         var source = new Dimension(800, 600);
         var target = new Dimension(400, 400);
 
-        var compare = !source.Equals(target);
+        var compare = source.Equals(target);
 
-        Test.Assert(compare);
+        Assert(compare == false);
     }
 
     public static void Given2Dimension800x600_whenHashCodeIsCompared_thenTrueIsReturned()
@@ -147,7 +149,7 @@ public class DimensionTest
         var sourceHash = source.GetHashCode();
         var targetHash = target.GetHashCode();
 
-        Test.Assert(sourceHash == targetHash);
+        Assert(sourceHash == targetHash);
     }
 
     public static void GivenDimension800x600andDimension800x400_whenHashCodeIsCompared_thenFalseIsReturned()
@@ -158,7 +160,7 @@ public class DimensionTest
         var sourceHash = source.GetHashCode();
         var targetHash = target.GetHashCode();
 
-        Test.Assert(sourceHash != targetHash);
+        Assert(sourceHash != targetHash);
     }
 
     public static void GivenDimension800x600andDimension600x600_whenHashCodeIsCompared_thenFalseIsReturned()
@@ -169,7 +171,7 @@ public class DimensionTest
         var sourceHash = source.GetHashCode();
         var targetHash = target.GetHashCode();
 
-        Test.Assert(sourceHash != targetHash);
+        Assert(sourceHash != targetHash);
     }
 
     public static void GivenDimension800x600andDimension400x400_whenHashCodeIsCompared_thenFalseIsReturned()
@@ -180,6 +182,6 @@ public class DimensionTest
         var sourceHash = source.GetHashCode();
         var targetHash = target.GetHashCode();
 
-        Test.Assert(sourceHash != targetHash);
+        Assert(sourceHash != targetHash);
     }
 }
