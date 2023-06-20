@@ -54,14 +54,15 @@ public class TestRunner
 
     protected static void RunClass(Type type)
     {
-        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
+        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
         var methodsWhitoutArgumentsOrReturn = methods.Where(m => m.GetParameters().Length == 0 && m.ReturnType == typeof(void));
         foreach (var method in methodsWhitoutArgumentsOrReturn)
         {
             try
             {
                 Console.Write("\t\tRunning: " + method.Name);
-                method.Invoke(null, null);
+                var testInstance = Activator.CreateInstance(type); // constructor is called for each test
+                method.Invoke(testInstance, null);
                 Console.WriteLine(" OK!");
             }
             catch (Exception e)

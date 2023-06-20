@@ -2,6 +2,7 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <NoWarn>IDE1006</NoWarn>
+        <NoWarn>CA1822</NoWarn>
         <StartupObject>SimpleGameEngine.TestRunner</StartupObject>
     </PropertyGroup>
     <ItemGroup>
