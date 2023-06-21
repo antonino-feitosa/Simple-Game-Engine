@@ -1,20 +1,20 @@
 
 namespace SimpleGameEngine;
 
-public class CameraSystem : System
+public class CameraSystem : ISystem
 {
     public Point Position;
     public Dimension Dimension;
     public int PixelsUnit;
 
-    protected List<Renderable> _components;
+    protected List<RenderableComponent> _components;
 
     public CameraSystem(Point position, Dimension dimension)
     {
         Position = position;
         Dimension = dimension;
         PixelsUnit = 32;
-        _components = new List<Renderable>(); // TODO optimization on delete
+        _components = new List<RenderableComponent>(); // TODO optimization on delete
     }
 
     public void Process()
@@ -37,27 +37,9 @@ public class CameraSystem : System
         }
     }
 
-    public Renderable CreateComponent(Image image, Vector2 position)
+    internal void AddComponent(RenderableComponent component)
     {
-        var comp = new Renderable(image, position);
-        _components.Add(comp);
-        comp.OnDestroy += (entity) => _components.Remove(comp);
-        return comp;
-    }
-
-    public class Renderable : Component
-    {
-        public Vector2 Position;
-        public int ZIndex;
-        public Image Image;
-        public bool Visible;
-
-        public Renderable(Image image, Vector2 position)
-        {
-            Image = image;
-            ZIndex = 0;
-            Position = position;
-            Visible = true;
-        }
+        _components.Add(component);
+        component.OnDestroy += (entity) => _components.Remove(component);
     }
 }

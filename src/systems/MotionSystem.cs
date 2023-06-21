@@ -1,13 +1,13 @@
 
 namespace SimpleGameEngine;
 
-public class MotionSystem : System
+public class MotionSystem : ISystem
 {
-    protected List<Moveable> _components;
+    protected List<MoveableComponent> _components;
 
     public MotionSystem()
     {
-        _components = new List<Moveable>();
+        _components = new List<MoveableComponent>();
     }
 
     public void Process()
@@ -43,51 +43,9 @@ public class MotionSystem : System
         }
     }
 
-    public Moveable CreateComponent(PositionSystem.Localizable comp, double framesToMove = 32)
+    internal void AddComponent(MoveableComponent component)
     {
-        var mc = new Moveable(comp, framesToMove);
-        _components.Add(mc);
-        mc.OnDestroy += (entity) => { _components.Remove(mc); };
-        return mc;
-    }
-
-    public class Moveable : Component
-    {
-        protected internal bool _fired;
-        protected internal bool _moving;
-        protected internal Vector2 _position;
-        protected internal Vector2 _destination;
-        protected internal Vector2 _velocity;
-        protected double _framesToMove;
-        protected PositionSystem.Localizable _positionComponent;
-        public Action<Vector2>? OnStartMove;
-        public Action<Vector2>? OnEndMove;
-        public Action<Vector2>? OnMoving;
-        public Action<Vector2>? OnIdle;
-
-        protected internal Moveable(PositionSystem.Localizable comp, double framesToMove)
-        {
-            _position = new Vector2();
-            _destination = new Vector2();
-            _velocity = new Vector2();
-            _framesToMove = framesToMove;
-            _positionComponent = comp;
-            _positionComponent.OnMove += DoMove;
-            _moving = false;
-            _fired = false;
-        }
-
-        private void DoMove(Point source, Point dest)
-        {
-            _position = new Vector2(source.X, source.Y);
-            _destination = new Vector2(dest.X, dest.Y);
-            _velocity = new Vector2((dest.X - source.X) / _framesToMove, (dest.Y - source.Y) / _framesToMove);
-            _fired = true;
-        }
-
-        public override string ToString()
-        {
-            return "MotionComponent:" + _positionComponent.ToString();
-        }
+        _components.Add(component);
+        component.OnDestroy += (entity) => { _components.Remove(component); };
     }
 }

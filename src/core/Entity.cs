@@ -1,7 +1,7 @@
 
 namespace SimpleGameEngine;
 
-public interface System
+public interface ISystem
 {
     public void Process();
 }

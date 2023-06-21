@@ -3,14 +3,14 @@ namespace SimpleGameEngine;
 
 public class Game
 {
-    protected LinkedList<System> _systems;
+    protected LinkedList<ISystem> _systems;
     protected LinkedList<Entity> _entities;
     protected LinkedList<Entity> _entities_destroy;
     protected Dictionary<Entity, LinkedListNode<Entity>> _entities_reference;
 
     public Game()
     {
-        _systems = new LinkedList<System>();
+        _systems = new LinkedList<ISystem>();
         _entities = new LinkedList<Entity>();
         _entities_destroy = new LinkedList<Entity>();
         _entities_reference = new Dictionary<Entity, LinkedListNode<Entity>>();
@@ -29,7 +29,7 @@ public class Game
         _entities_destroy.AddLast(e);
     }
 
-    protected internal void AttachSystem(System system)
+    protected internal void AttachSystem(ISystem system)
     {
         _systems.AddLast(system);
     }

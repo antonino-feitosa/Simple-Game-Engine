@@ -3,9 +3,11 @@ using static SimpleGameEngine.TestRunner;
 
 namespace SimpleGameEngine;
 
-[UnitTest]
+[TestClass]
 public class DimensionTest
 {
+    // Dimension must have no negative and indepedent values
+    // Setting negative values results in error ArgumentException
 
     public void GivenDimension800x600_whenWidthIsGet_then800IsReturned()
     {
@@ -25,58 +27,116 @@ public class DimensionTest
         Assert(height == 600);
     }
 
-    public void GivenDimension800x600_whenWidthIsSetToZero_thenZeroIsReturned()
+    public void GivenDimension800x600_whenWidthIsSetToZero_thenWidthIsZero()
     {
-        var dimension = new Dimension(800, 600) { Width = 0 };
+        var dimension = new Dimension(800, 600);
 
+        dimension.Width = 0;
         var width = dimension.Width;
 
         Assert(width == 0);
     }
 
-    public void GivenDimension800x600_whenHeightIsSetToZero_thenZeroIsReturned()
+    public void GivenDimension800x600_whenHeightIsSetToZero_thenHeightIsZero()
     {
-        var dimension = new Dimension(800, 600) { Height = 0 };
+        var dimension = new Dimension(800, 600);
 
+        dimension.Height = 0;
         var height = dimension.Height;
 
         Assert(height == 0);
     }
 
-    public void GivenDimension800x600_whenWidthIsSetToNegative_then800IsReturned()
+    public void GivenDimension800x600_whenWidthIsSetTo1_thenWidthIs1()
     {
-        var dimension = new Dimension(800, 600) { Width = -2 };
+        var dimension = new Dimension(800, 600);
 
+        dimension.Width = 1;
+        var width = dimension.Width;
+
+        Assert(width == 1);
+    }
+
+    public void GivenDimension800x600_whenHeightIsSetTo1_thenHeightIs1()
+    {
+        var dimension = new Dimension(800, 600);
+
+        dimension.Height = 1;
+        var height = dimension.Height;
+
+        Assert(height == 1);
+    }
+
+    public void GivenDimension800x600_whenWidthIsSetToNegative_thenThrowsArgumentException()
+    {
+        var dimension = new Dimension(800, 600);
+        bool capturedException = false;
+
+        try {
+            dimension.Width = -1;
+        } catch (ArgumentException){
+            capturedException = true;
+        }
         var width = dimension.Width;
 
         Assert(width == 800);
+        Assert(capturedException);
     }
 
-    public void GivenDimension800x600_whenHeightIsSetToNegative_then600IsReturned()
+    public void GivenDimension800x600_whenHeightIsSetToNegative_thenThrowsArgumentException()
     {
-        var dimension = new Dimension(800, 600) { Height = -3 };
+        var dimension = new Dimension(800, 600);
+        bool capturedException = false;
 
-        var height = dimension.Height;
+        try {
+            dimension.Height = -1;
+        } catch (ArgumentException){
+            capturedException = true;
+        }
+        var height = dimension.Width;
 
         Assert(height == 600);
+        Assert(capturedException);
     }
 
     public void GivenDimension800x600_whenWidthIsSetTo320_thenWidthIs320()
     {
-        var dimension = new Dimension(800, 600) { Width = 320 };
+        var dimension = new Dimension(800, 600);
 
+        dimension.Width = 320;
         var width = dimension.Width;
 
         Assert(width == 320);
     }
 
+    public void GivenDimension800x600_whenWidthIsSetTo320_thenHeightIs600()
+    {
+        var dimension = new Dimension(800, 600);
+
+        dimension.Width = 320;
+        var height = dimension.Height;
+
+        Assert(height == 600);
+    }
+
     public void GivenDimension800x600_whenHeightIsSetTo320_thenHeightIs320()
     {
-        var dimension = new Dimension(800, 600) { Height = 320 };
+        var dimension = new Dimension(800, 600);
 
+        dimension.Height = 320;
         var height = dimension.Height;
 
         Assert(height == 320);
+    }
+
+    public void GivenDimension800x600_whenHeightIsSetTo320_thenWidthIs800()
+    {
+        var dimension = new Dimension(800, 600);
+
+        dimension.Height = 320;
+        var width = dimension.Width;
+
+        Assert(width == 800);
     }
 
     public void GivenDimension800x600_whenDimension320x240IsCopied_thenWidthIs320()

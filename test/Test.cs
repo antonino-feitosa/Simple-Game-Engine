@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace SimpleGameEngine;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class UnitTest : Attribute { }
+public class TestClass : Attribute { }
 
 public class AssertException : Exception
 {
@@ -34,7 +34,7 @@ public class TestRunner
         Console.WriteLine("Starting Tests...");
 
         var classes = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(type => type.IsDefined(typeof(UnitTest))).ToList();
+            .Where(type => type.IsDefined(typeof(TestClass))).ToList();
 
         Console.WriteLine("Running Tests...");
         Run(classes);
@@ -67,8 +67,11 @@ public class TestRunner
             }
             catch (Exception e)
             {
-                Console.WriteLine(" Fail");
-                Console.WriteLine((e.InnerException ?? e).ToString());
+                var defaultColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Error.WriteLine(" Fail");
+                Console.Error.WriteLine((e.InnerException ?? e).ToString());
+                Console.ForegroundColor = defaultColor;
             }
         }
     }

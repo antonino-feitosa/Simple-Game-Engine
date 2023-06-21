@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <NoWarn>IDE1006</NoWarn>
-        <NoWarn>CA1822</NoWarn>
+        <NoWarn>IDE1006</NoWarn> <!-- initial I in interfaces -->
+        <NoWarn>CA1822</NoWarn> <!-- make method static -->
+        <NoWarn>IDE0017</NoWarn> <!-- initialization can be simplified -->
         <StartupObject>SimpleGameEngine.TestRunner</StartupObject>
     </PropertyGroup>
     <ItemGroup>
