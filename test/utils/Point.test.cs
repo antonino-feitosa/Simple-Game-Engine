@@ -1,7 +1,7 @@
 
-using static SimpleGameEngine.TestRunner;
+using static SimpleGameEngine.Test.TestRunner;
 
-namespace SimpleGameEngine;
+namespace SimpleGameEngine.Test;
 
 [TestClass]
 public class PointTest

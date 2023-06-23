@@ -1,6 +1,13 @@
 
 namespace SimpleGameEngine;
 
+public enum MouseButton { Left = 1, Middle = 2, Right = 3 };
+
+public enum MouseWheelDirection { Backward = -1, Neutral = 0, Forward = 1 };
+
+[Flags]
+public enum KeyboardModifier { None = 0, Shift = 1, Alt = 2, Ctrl = 4 };
+
 public class ResourceNotFoundException : Exception
 {
     public ResourceNotFoundException() { }
@@ -53,10 +60,6 @@ public interface IImage : IResource
 
 public interface IDevice : IDisposable
 {
-    public enum MouseButton { None = 100, Left = -1, Middle = 0, Right = 1 };
-    public enum MouseWheelDirection { Backward = -1, Neutral = 0, Forward = 1 };
-    public enum KeyboardModifier { None = 0, Shift = 0b001, Alt = 0b010, Ctrl = 0b100 };
-
     public Game Game { get; set; }
     public Dimension Dimension { get; }
     public Point MousePosition { get; }

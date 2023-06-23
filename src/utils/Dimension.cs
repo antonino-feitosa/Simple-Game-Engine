@@ -21,7 +21,7 @@ public class Dimension
                 if (value >= 0)
                     _width = value;
                 else
-                    throw new ArgumentException("The value can not be negative!", nameof(Width));
+                    throw new ArgumentOutOfRangeException(nameof(Width), "The value can not be negative!");
             }
         }
     }
@@ -33,7 +33,7 @@ public class Dimension
             if (value >= 0)
                 _height = value;
             else
-                throw new ArgumentException("The value can not be negative!", nameof(Height));
+                throw new ArgumentOutOfRangeException(nameof(Height), "The value can not be negative!");
         }
     }
 

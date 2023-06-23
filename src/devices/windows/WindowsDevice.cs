@@ -4,7 +4,7 @@ namespace SimpleGameEngine;
 public class WindowsDevice : IDevice
 {
     private readonly Form _form;
-    private readonly global::System.Windows.Forms.Timer _timer;
+    private readonly System.Windows.Forms.Timer _timer;
     private readonly List<Action<Graphics>> _drawQueue;
     private readonly DeviceHelper _device;
     private bool _disposed;
@@ -12,7 +12,7 @@ public class WindowsDevice : IDevice
 
     public Game Game { get => _device.Game; set => _device.Game = value; }
     public Point MousePosition { get => _device.MousePosition; }
-    public Dimension Dimension { get => _device.Dimesion; set => _device.Dimesion = value; }
+    public Dimension Dimension { get => _device.Dimension; set => _device.Dimension = value; }
     public int FramesPerSecond
     {
         get => _device.FramesPerSecond;
@@ -31,13 +31,13 @@ public class WindowsDevice : IDevice
             if (value && Screen.PrimaryScreen != null)
             {
                 _form.WindowState = FormWindowState.Normal;
-                _form.FormBorderStyle = global::System.Windows.Forms.FormBorderStyle.None;
+                _form.FormBorderStyle = FormBorderStyle.None;
                 _form.Bounds = Screen.PrimaryScreen.Bounds;
             }
             else
             {
-                _form.ClientSize = new Size(_device.Dimesion.Width, _device.Dimesion.Height);
-                _form.FormBorderStyle = global::System.Windows.Forms.FormBorderStyle.Sizable;
+                _form.ClientSize = new Size(_device.Dimension.Width, _device.Dimension.Height);
+                _form.FormBorderStyle = FormBorderStyle.Sizable;
             }
             _device.IsFullScreen = value;
         }
@@ -51,8 +51,8 @@ public class WindowsDevice : IDevice
 
         _form = form;
         _form.Text = "Simple Game";
-        _form.AutoScaleMode = global::System.Windows.Forms.AutoScaleMode.Font;
-        _form.BackColor = global::System.Drawing.Color.Black;
+        _form.AutoScaleMode = AutoScaleMode.Font;
+        _form.BackColor = Color.Black;
         //_form.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
         //_form.DoubleBuffered = true;
 
@@ -64,9 +64,9 @@ public class WindowsDevice : IDevice
         _form.MouseUp += OnMouseUp;
         _form.MouseWheel += OnMouseWheelScroll;
         _form.MouseMove += OnMouseMove;
-        _form.Load += (sender, e) => _form.Location = new global::System.Drawing.Point(500, 0);
+        _form.Load += (sender, e) => _form.Location = new System.Drawing.Point(500, 0);
 
-        _timer = new global::System.Windows.Forms.Timer();
+        _timer = new System.Windows.Forms.Timer();
         _timer.Tick += OnLoop;
 
         IsFullScreen = false;
@@ -99,32 +99,32 @@ public class WindowsDevice : IDevice
         GC.SuppressFinalize(this);
     }
 
-    private static (int, IDevice.KeyboardModifier) GetKeyboardMask(KeyEventArgs e)
+    private static (int, KeyboardModifier) GetKeyboardMask(KeyEventArgs e)
     {
         int mask = 0;
-        mask += e.Alt ? (int)IDevice.KeyboardModifier.Alt : 0;
-        mask += e.Shift ? (int)IDevice.KeyboardModifier.Shift : 0;
-        mask += e.Control ? (int)IDevice.KeyboardModifier.Ctrl : 0;
-        return (e.KeyValue, (IDevice.KeyboardModifier)mask);
+        mask += e.Alt ? (int)KeyboardModifier.Alt : 0;
+        mask += e.Shift ? (int)KeyboardModifier.Shift : 0;
+        mask += e.Control ? (int)KeyboardModifier.Ctrl : 0;
+        return (e.KeyValue, (KeyboardModifier)mask);
     }
 
     protected void OnKeyDown(object? sender, KeyEventArgs e)
     {
-        (int key, IDevice.KeyboardModifier mask) = GetKeyboardMask(e);
+        (int key, KeyboardModifier mask) = GetKeyboardMask(e);
         _device.FireKeyDown(key, mask);
     }
 
     protected void OnKeyUp(object? sender, KeyEventArgs e)
     {
-        (int key, IDevice.KeyboardModifier mask) = GetKeyboardMask(e);
+        (int key, KeyboardModifier mask) = GetKeyboardMask(e);
         _device.FireKeyUp(key, mask);
     }
 
     protected void OnMouseWheelScroll(object? sender, MouseEventArgs e)
     {
-        IDevice.MouseWheelDirection direction = IDevice.MouseWheelDirection.Neutral;
-        if (e.Delta > 0) direction = IDevice.MouseWheelDirection.Forward;
-        if (e.Delta < 0) direction = IDevice.MouseWheelDirection.Backward;
+        MouseWheelDirection direction = MouseWheelDirection.Neutral;
+        if (e.Delta > 0) direction = MouseWheelDirection.Forward;
+        if (e.Delta < 0) direction = MouseWheelDirection.Backward;
         _device.FireMouseWheel(direction);
     }
 
@@ -133,26 +133,26 @@ public class WindowsDevice : IDevice
         _device.MousePosition = new Point(e.X, e.Y);
     }
 
-    private static IDevice.MouseButton GetMouseButton(MouseEventArgs e)
+    private static MouseButton GetMouseButton(MouseEventArgs e)
     {
-        IDevice.MouseButton button = IDevice.MouseButton.None;
+        MouseButton button = 0;
         switch (e.Button)
         {
-            case MouseButtons.Left: button = IDevice.MouseButton.Left; break;
-            case MouseButtons.Right: button = IDevice.MouseButton.Right; break;
-            case MouseButtons.Middle: button = IDevice.MouseButton.Middle; break;
+            case MouseButtons.Left: button = MouseButton.Left; break;
+            case MouseButtons.Right: button = MouseButton.Right; break;
+            case MouseButtons.Middle: button = MouseButton.Middle; break;
         }
         return button;
     }
 
     protected void OnMouseDown(object? sender, MouseEventArgs e)
     {
-        IDevice.MouseButton button = GetMouseButton(e);
+        MouseButton button = GetMouseButton(e);
         _device.FireMouseDown(button);
     }
     protected void OnMouseUp(object? sender, MouseEventArgs e)
     {
-        IDevice.MouseButton button = GetMouseButton(e);
+        MouseButton button = GetMouseButton(e);
         _device.FireMouseUp(button);
     }
 
@@ -240,10 +240,10 @@ public class WindowsDevice : IDevice
         _drawQueue.Add(render);
     }
 
-    public void RegisterKeyUp(int charInUTF16, Action<IDevice.KeyboardModifier> command) { _device.RegisterKeyUp(charInUTF16, command); }
-    public void RegisterKeyDown(int charInUTF16, Action<IDevice.KeyboardModifier> command) { _device.RegisterKeyDown(charInUTF16, command); }
-    public void RegisterMouseWheelScroll(Action<IDevice.MouseWheelDirection> command) { _device.RegisterMouseWheelScroll(command); }
-    public void RegisterMouseDown(IDevice.MouseButton button, Action<Point> command) { _device.RegisterMouseDown(button, command); }
-    public void RegisterMouseUp(IDevice.MouseButton button, Action<Point> command) { _device.RegisterMouseUp(button, command); }
+    public void RegisterKeyUp(int charInUTF16, Action<KeyboardModifier> command) { _device.RegisterKeyUp(charInUTF16, command); }
+    public void RegisterKeyDown(int charInUTF16, Action<KeyboardModifier> command) { _device.RegisterKeyDown(charInUTF16, command); }
+    public void RegisterMouseWheelScroll(Action<MouseWheelDirection> command) { _device.RegisterMouseWheelScroll(command); }
+    public void RegisterMouseDown(MouseButton button, Action<Point> command) { _device.RegisterMouseDown(button, command); }
+    public void RegisterMouseUp(MouseButton button, Action<Point> command) { _device.RegisterMouseUp(button, command); }
 
 }

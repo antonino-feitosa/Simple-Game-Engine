@@ -31,6 +31,7 @@ public class Entity
         _id = _countId++;
         _game = game;
         _components = new HashSet<Component>();
+        game.AddEntity(this);
     }
     protected uint ID { get { return _id; } }
 

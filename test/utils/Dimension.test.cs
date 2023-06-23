@@ -1,7 +1,7 @@
 
-using static SimpleGameEngine.TestRunner;
+using static SimpleGameEngine.Test.TestRunner;
 
-namespace SimpleGameEngine;
+namespace SimpleGameEngine.Test;
 
 [TestClass]
 public class DimensionTest
@@ -67,36 +67,56 @@ public class DimensionTest
         Assert(height == 1);
     }
 
-    public void GivenDimension800x600_whenWidthIsSetToNegative_thenThrowsArgumentException()
+    public void GivenDimension800x600_whenWidthIsSetToNegative_thenThrowsArgumentOutOfRangeException()
     {
         var dimension = new Dimension(800, 600);
         bool capturedException = false;
 
         try {
             dimension.Width = -1;
-        } catch (ArgumentException){
+        } catch (ArgumentOutOfRangeException){
             capturedException = true;
         }
-        var width = dimension.Width;
 
-        Assert(width == 800);
         Assert(capturedException);
     }
 
-    public void GivenDimension800x600_whenHeightIsSetToNegative_thenThrowsArgumentException()
+    public void GivenDimension800x600_whenHeightIsSetToNegative_thenThrowsArgumentOutOfRangeException()
     {
         var dimension = new Dimension(800, 600);
         bool capturedException = false;
 
         try {
             dimension.Height = -1;
-        } catch (ArgumentException){
+        } catch (ArgumentOutOfRangeException){
             capturedException = true;
         }
-        var height = dimension.Width;
+
+        Assert(capturedException);
+    }
+
+    public void GivenDimension800x600_whenWidthIsSetToNegativeThrowingArgumentOutOfRangeException_thenWidthDontChange()
+    {
+        var dimension = new Dimension(800, 600);
+
+        try {
+            dimension.Width = -1;
+        } catch (ArgumentOutOfRangeException){}
+        var width = dimension.Width;
+
+        Assert(width == 800);
+    }
+
+    public void GivenDimension800x600_whenHeightIsSetToNegativeThrowingArgumentOutOfRangeException_thenHeightDontChange()
+    {
+        var dimension = new Dimension(800, 600);
+        
+        try {
+            dimension.Height = -1;
+        } catch (ArgumentOutOfRangeException){}
+        var height = dimension.Height;
 
         Assert(height == 600);
-        Assert(capturedException);
     }
 
     public void GivenDimension800x600_whenWidthIsSetTo320_thenWidthIs320()

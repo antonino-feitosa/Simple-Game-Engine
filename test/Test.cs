@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace SimpleGameEngine;
+namespace SimpleGameEngine.Test;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class TestClass : Attribute { }

@@ -1,0 +1,7 @@
+root = true
+
+[*.{cs,vb}]
+dotnet_diagnostic.CA1822.severity=silent # make method static
+
+[*.{cs,vb}]
+dotnet_diagnostic.IDE0017.severity=silent # initialization can be simplified
