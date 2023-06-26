@@ -1,18 +1,11 @@
 
 namespace SimpleGameEngine;
 
-public class AnimationSystem : ISystem
+public class AnimationSystem : SystemHelper<AnimatableComponent>
 {
-    protected HashSet<AnimatableComponent> _components;
-
-    public AnimationSystem()
+    public override void Process()
     {
-        _components = new HashSet<AnimatableComponent>();
-    }
-
-    public void Process()
-    {
-        foreach (var comp in _components)
+        foreach (var comp in Components)
         {
             if (comp.Running)
             {
@@ -28,10 +21,5 @@ public class AnimationSystem : ISystem
                 }
             }
         }
-    }
-
-    internal void AddComponent(AnimatableComponent component){
-        _components.Add(component);
-        component.OnDestroy += (entity) => _components.Remove(component);
     }
 }

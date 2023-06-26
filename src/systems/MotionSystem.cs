@@ -1,16 +1,14 @@
 
 namespace SimpleGameEngine;
 
-public class MotionSystem : ISystem
+public class MotionSystem : SystemHelper<MoveableComponent>
 {
-    protected List<MoveableComponent> _components;
-
     public MotionSystem()
     {
         _components = new List<MoveableComponent>();
     }
 
-    public void Process()
+    public override void Process()
     {
         foreach (var comp in _components)
         {
@@ -41,11 +39,5 @@ public class MotionSystem : ISystem
                 comp.OnIdle?.Invoke(comp._position);
             }
         }
-    }
-
-    internal void AddComponent(MoveableComponent component)
-    {
-        _components.Add(component);
-        component.OnDestroy += (entity) => { _components.Remove(component); };
     }
 }

@@ -19,6 +19,9 @@ public class PositionSystem : ISystem
     protected Dictionary<LocalizableComponent, Point> _outOfBounds;
     protected HashSet<LocalizableComponent> _free;
 
+    // TODO add standby component
+    // TODO move only the components in destination different of location
+    // TODO Handle enable disable entity
     public PositionSystem(HashSet<Point> ground)
     {
         _ground = ground;

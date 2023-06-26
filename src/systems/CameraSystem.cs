@@ -1,13 +1,11 @@
 
 namespace SimpleGameEngine;
 
-public class CameraSystem : ISystem
+public class CameraSystem : SystemHelper<RenderableComponent>
 {
     public Point Position;
     public Dimension Dimension;
     public int PixelsUnit;
-
-    protected List<RenderableComponent> _components;
 
     public CameraSystem(Point position, Dimension dimension)
     {
@@ -17,29 +15,22 @@ public class CameraSystem : ISystem
         _components = new List<RenderableComponent>(); // TODO optimization on delete
     }
 
-    public void Process()
+    public override void Process()
     {
-        _components.Sort((a, b) => a.ZIndex - b.ZIndex);
         int cx = Position.X * PixelsUnit;
         int cy = Position.Y * PixelsUnit;
         int cWidth = cx + Dimension.Width;
         int cHeight = cy + Dimension.Height;
-        foreach (var comp in _components)
+        foreach (var component in Components.OrderBy(c => c.ZIndex))
         { // TODO correct truncation location
-            int x = (int)(comp.Position.X * PixelsUnit);
-            int y = (int)(comp.Position.Y * PixelsUnit);
-            int width = x + comp.Image.Dimension.Width;
-            int height = y + comp.Image.Dimension.Height;
+            int x = (int)(component.Position.X * PixelsUnit);
+            int y = (int)(component.Position.Y * PixelsUnit);
+            int width = x + component.Image.Dimension.Width;
+            int height = y + component.Image.Dimension.Height;
             if (!(width < cx || x > cWidth || height < cy || y > cHeight))
             {
-                comp.Image.Render(new Point(x, y));
+                component.Image.Render(new Point(x, y));
             }
         }
-    }
-
-    internal void AddComponent(RenderableComponent component)
-    {
-        _components.Add(component);
-        component.OnDestroy += (entity) => _components.Remove(component);
     }
 }

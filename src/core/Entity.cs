@@ -1,20 +1,25 @@
 
 namespace SimpleGameEngine;
 
-public interface ISystem
-{
-    public void Process();
-}
-
 public class Component
 {
+    public readonly Action<Entity> OnStart;
+    public Action<Entity> OnDestroy;
+    public Action<Entity> OnEnable;
+    public Action<Entity> OnDisable;
     private Entity? _entity;
-    public Action<Entity>? OnStart;
-    public Action<Entity>? OnDestroy;
     public Entity Entity
     {
         get => _entity ?? throw new ArgumentException("There is not an Entity for this Component!");
         set => _entity = value;
+    }
+
+    public Component()
+    {
+        OnStart = (Entity) => { };
+        OnDestroy = (Entity) => { };
+        OnEnable = (Entity) => { };
+        OnDisable = (Entity) => { };
     }
 }
 
@@ -25,16 +30,33 @@ public class Entity
 
     private static uint _countId = 0;
     private readonly uint _id;
+    private bool _enabled;
 
+    protected uint ID { get { return _id; } }
+
+    public bool Enabled
+    {
+        get => _enabled;
+        set
+        {
+            foreach (var comp in _components)
+            {
+                if (value)
+                    comp.OnEnable(this);
+                else
+                    comp.OnDisable(this);
+            }
+            _enabled = value;
+        }
+    }
     public Entity(Game game)
     {
         _id = _countId++;
         _game = game;
+        _enabled = true;
         _components = new HashSet<Component>();
         game.AddEntity(this);
     }
-    protected uint ID { get { return _id; } }
-
     public T? GetComponent<T>() where T : Component
     {
         return _components.Where(c => c is T).First() as T;

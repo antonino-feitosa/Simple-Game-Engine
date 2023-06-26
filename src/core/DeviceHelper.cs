@@ -13,7 +13,7 @@ public class DeviceHelper
     private readonly Dictionary<int, List<Action<KeyboardModifier>>> _onKeyDown;
     private readonly Dictionary<int, List<Action<KeyboardModifier>>> _onKeyUp;
     private readonly Dictionary<MouseButton, List<Action<Point>>> _onMouseDown;
-    private List<Action<MouseWheelDirection>> _onMouseWheel;
+    private readonly List<Action<MouseWheelDirection>> _onMouseWheel;
     private readonly Dictionary<MouseButton, List<Action<Point>>> _onMouseUp;
 
     public bool IsFullScreen { get => _isFullScreen; set => _isFullScreen = value; }
