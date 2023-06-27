@@ -208,14 +208,9 @@ public class WindowsDevice : IDevice
         }
     }
 
-    public IColor MakeColorFrom32Bits(int red, int green, int blue)
+    public IColor MakeColor(int red, int green, int blue)
     {
-        return WindowsColor.FromRGB(red, green, blue);
-    }
-
-    public IColor MakeColorFromName(string name)
-    {
-        return WindowsColor.FromName(name);
+        return new WindowsColor(red, green, blue);
     }
 
     public ISpriteSheet MakeSpriteSheet(IImage image, Dimension dimension)

@@ -1,12 +1,12 @@
 
 namespace SimpleGameEngine;
 
-public enum MouseButton { Left = 1, Middle = 2, Right = 3 };
+public enum MouseButton { Left = 1, Middle = 2, Right = 3 }
 
-public enum MouseWheelDirection { Backward = -1, Neutral = 0, Forward = 1 };
+public enum MouseWheelDirection { Backward = -1, Neutral = 0, Forward = 1 }
 
 [Flags]
-public enum KeyboardModifier { None = 0, Shift = 1, Alt = 2, Ctrl = 4 };
+public enum KeyboardModifier { None = 0, Shift = 1, Alt = 2, Ctrl = 4 }
 
 public class ResourceNotFoundException : Exception
 {
@@ -71,8 +71,7 @@ public interface IDevice : IDisposable
     public IImage MakeImage(string path);
     public ISound MakeSound(string path);
     public IFont MakeFont(string path);
-    public IColor MakeColorFromName(string colorName);
-    public IColor MakeColorFrom32Bits(int red, int green, int blue);
+    public IColor MakeColor(int red, int green, int blue);
     public IText MakeText(string text, IFont font);
     public ISpriteSheet MakeSpriteSheet(IImage img, Dimension dimension);
 
