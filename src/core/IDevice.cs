@@ -71,7 +71,7 @@ public interface IDevice : IDisposable
     public IImage MakeImage(string path);
     public ISound MakeSound(string path);
     public IFont MakeFont(string path);
-    public IColor MakeColor(int red, int green, int blue);
+    public IColor MakeColor(int red8bits, int green8bits, int blue8bits, int alpha8bits = 255);
     public IText MakeText(string text, IFont font);
     public ISpriteSheet MakeSpriteSheet(IImage img, Dimension dimension);
 

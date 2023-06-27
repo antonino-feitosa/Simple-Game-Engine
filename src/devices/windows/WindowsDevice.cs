@@ -208,9 +208,9 @@ public class WindowsDevice : IDevice
         }
     }
 
-    public IColor MakeColor(int red, int green, int blue)
+    public IColor MakeColor(int red8bits, int green8bits, int blue8bits, int alpha8bits = 255)
     {
-        return new WindowsColor(red, green, blue);
+        return new WindowsColor(red8bits, green8bits, blue8bits, alpha8bits);
     }
 
     public ISpriteSheet MakeSpriteSheet(IImage image, Dimension dimension)

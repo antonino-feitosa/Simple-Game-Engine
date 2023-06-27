@@ -7,8 +7,8 @@ public class IDeviceTest {
 
     public IDevice device;
 
-    public IDeviceTest(){
-        device = null;
+    public IDeviceTest(IDevice device){
+        this.device = device;
     }
 
     public void GivenValidPath_whenMakeImage_thenDoesNotThrowsResourceNotFoundException(){
@@ -84,11 +84,11 @@ public class IDeviceTest {
     }
 
 
-    public void GivenValidName_whenMakeColor_thenDoesNotThrowsResourceNotFoundException(){
+    public void GivenValidValues_whenMakeColor_thenDoesNotThrowsResourceNotFoundException(){
         var capturedException = false;
 
         try {
-            device.MakeColorFromName("black");
+            device.MakeColor(0, 0, 0);
         } catch(ResourceNotFoundException){
             capturedException = true;
         }
@@ -96,20 +96,16 @@ public class IDeviceTest {
         Assert(capturedException == false);
     }
 
-    public void GivenInvalidName_whenMakeColor_thenThrowsResourceNotFoundException(){
+    public void GivenInvalidValues_whenMakeColor_thenThrowsResourceNotFoundException(){
         var capturedException = false;
 
         try {
-            device.MakeColorFromName("invalid name");
+            device.MakeColor(5000, 255, 0);
         } catch(ResourceNotFoundException){
             capturedException = true;
         }
 
         Assert(capturedException == true);
-    }
-
-    public void GivenValues_whenMakeColor_thenDoesNotThrowsResourceNotFoundException(){
-        
     }
 
     public void GivenFont_whenMakeText_thenDoesNotThrowsResourceNotFoundException(){

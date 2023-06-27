@@ -18,7 +18,7 @@ public class WindowsText : IText
         _windows = windows;
         _text = text;
         _size = 12;
-        _color = new WindowsColor();
+        _color = new WindowsColor(0, 0, 0);
         _font = new WindowsFont();
         _drawFont = new global::System.Drawing.Font(_font._fontFamily, _size);
     }
