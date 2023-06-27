@@ -1,7 +1,7 @@
 
 namespace SimpleGameEngine;
 
-public class AnimationSystem : SystemHelper<AnimatableComponent>
+public class AnimationSystem : SystemBase<AnimatableComponent>
 {
     public override void Process()
     {

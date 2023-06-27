@@ -8,7 +8,7 @@ public class DeviceHelperTest
 {
 
     // The frames per second must be positive
-    public void GivenDeviceHelperWhenFramesPerSecondIsSetToNegativeThenThrowsArgumentOutOfRangeException()
+    public void GivenDeviceHelper_WhenFramesPerSecondIsSetToNegative_thenThrowsArgumentOutOfRangeException()
     {
         var gameDummy = new Game();
         var device = new DeviceHelper(gameDummy) { FramesPerSecond = 32 };

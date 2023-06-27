@@ -1,28 +1,6 @@
 
 namespace SimpleGameEngine;
 
-public class Component
-{
-    public readonly Action<Entity> OnStart;
-    public Action<Entity> OnDestroy;
-    public Action<Entity> OnEnable;
-    public Action<Entity> OnDisable;
-    private Entity? _entity;
-    public Entity Entity
-    {
-        get => _entity ?? throw new ArgumentException("There is not an Entity for this Component!");
-        set => _entity = value;
-    }
-
-    public Component()
-    {
-        OnStart = (Entity) => { };
-        OnDestroy = (Entity) => { };
-        OnEnable = (Entity) => { };
-        OnDisable = (Entity) => { };
-    }
-}
-
 public class Entity
 {
     private readonly Game _game;
@@ -39,12 +17,14 @@ public class Entity
         get => _enabled;
         set
         {
-            foreach (var comp in _components)
-            {
-                if (value)
-                    comp.OnEnable(this);
-                else
-                    comp.OnDisable(this);
+            if(value != _enabled){
+                foreach (var comp in _components)
+                {
+                    if (value)
+                        comp.OnEnable(this);
+                    else
+                        comp.OnDisable(this);
+                }
             }
             _enabled = value;
         }
@@ -57,9 +37,13 @@ public class Entity
         _components = new HashSet<Component>();
         game.AddEntity(this);
     }
-    public T? GetComponent<T>() where T : Component
-    {
-        return _components.Where(c => c is T).First() as T;
+    public T GetComponent<T>() where T : Component
+    {  
+        var selected = _components.Where(c => c is T);
+        if(selected.Any() && selected.First() is T component){
+            return component;
+        }
+        throw new ArgumentException("There is no component of type " + typeof(T).Name);
     }
 
     public void Destroy() { _game.DestroyEntity(this); }

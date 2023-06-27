@@ -1,7 +1,7 @@
 
 namespace SimpleGameEngine;
 
-public class CameraSystem : SystemHelper<RenderableComponent>
+public class CameraSystem : SystemBase<RenderableComponent>
 {
     public Point Position;
     public Dimension Dimension;

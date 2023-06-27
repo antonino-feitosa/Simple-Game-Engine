@@ -1,13 +1,13 @@
 
 namespace SimpleGameEngine;
 
-public class SystemHelper <TComponent> : ISystem where TComponent : Component {
+public class SystemBase <TComponent> : ISystem where TComponent : Component {
 
     protected ICollection <TComponent> _components;
 
     protected IEnumerable<TComponent> Components { get => _components;}
 
-    public SystemHelper()
+    public SystemBase()
     {
         _components = new HashSet<TComponent>();
     }

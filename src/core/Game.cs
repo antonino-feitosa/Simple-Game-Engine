@@ -16,15 +16,16 @@ public class Game
         _entitiesReferences = new Dictionary<Entity, LinkedListNode<Entity>>();
     }
 
-    internal void AddEntity(Entity e)
+    internal void AddEntity(Entity entity)
     {
-        var node = _entities.AddLast(e);
-        _entitiesReferences.Add(e, node);
+        var node = _entities.AddLast(entity);
+        _entitiesReferences.Add(entity, node);
     }
 
-    internal void DestroyEntity(Entity e)
+    internal void DestroyEntity(Entity entity)
     {
-        _entitiesToDestroy.AddLast(e);
+        if (_entities.Contains(entity))
+            _entitiesToDestroy.AddLast(entity);
     }
 
     internal void AttachSystem(ISystem system)
@@ -34,23 +35,23 @@ public class Game
 
     public void Start()
     {
-        foreach (var ent in _entities) { ent.FireStart(); }
+        foreach (var entity in _entities) { entity.FireStart(); }
     }
 
     public void Stop()
     {
-        foreach (var ent in _entities) { ent.FireDestroy(); }
+        foreach (var entity in _entities) { entity.FireDestroy(); }
         _entities.Clear();
     }
 
     public void Loop()
     {
-        foreach (var sys in _systems) { sys.Process(); }
+        foreach (var system in _systems) { system.Process(); }
 
-        foreach (var del in _entitiesToDestroy)
+        foreach (var destroyedComponent in _entitiesToDestroy)
         {
-            var node = _entitiesReferences[del];
-            del.FireDestroy();
+            var node = _entitiesReferences[destroyedComponent];
+            destroyedComponent.FireDestroy();
             _entities.Remove(node);
         }
         _entitiesToDestroy.Clear();

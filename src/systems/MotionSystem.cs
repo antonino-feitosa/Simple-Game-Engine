@@ -1,7 +1,7 @@
 
 namespace SimpleGameEngine;
 
-public class MotionSystem : SystemHelper<MoveableComponent>
+public class MotionSystem : SystemBase<MoveableComponent>
 {
     public MotionSystem()
     {
