@@ -71,3 +71,6 @@ Simple ARPG with rogue like game elements:
 # Dependências
 
 dotnet add . package naudio
+
+
+[^34]: https://gist.github.com/davidfowl/ed7564297c61fe9ab814

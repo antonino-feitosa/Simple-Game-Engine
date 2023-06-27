@@ -17,20 +17,10 @@ public class AssertException : Exception
 
 public class TestRunner
 {
-    [DllImport("kernel32.dll")] // to attach console on forms application
-    static extern bool AttachConsole(int dwProcessId);
-    private const int ATTACH_PARENT_PROCESS = -1;
-
-
     public static readonly bool EXIT_ON_ERROR = false;
-    public static readonly bool RUN_TESTS = true;
 
     public static void Main()
     {
-        AttachConsole(ATTACH_PARENT_PROCESS);
-
-        if (!RUN_TESTS) return;
-
         Console.WriteLine("Starting Tests...");
 
         var classes = Assembly.GetExecutingAssembly().GetTypes()
