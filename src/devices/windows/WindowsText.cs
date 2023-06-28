@@ -9,7 +9,7 @@ public class WindowsText : IText
     private WindowsColor _color;
     private WindowsFont _font;
 
-    internal global::System.Drawing.Font _drawFont;
+    internal Font _drawFont;
     private bool _disposed;
 
     public WindowsText(WindowsDevice windows, string text)
@@ -18,9 +18,9 @@ public class WindowsText : IText
         _windows = windows;
         _text = text;
         _size = 12;
-        _color = new WindowsColor(0, 0, 0);
+        _color = new WindowsColor(0, 0, 0, 255);
         _font = new WindowsFont();
-        _drawFont = new global::System.Drawing.Font(_font._fontFamily, _size);
+        _drawFont = new Font(_font._fontFamily, _size);
     }
     ~WindowsText()
     {
@@ -35,7 +35,7 @@ public class WindowsText : IText
     private void UpdateDraw()
     {
         _drawFont.Dispose();
-        _drawFont = new global::System.Drawing.Font(_font._fontFamily, _size);
+        _drawFont = new Font(_font._fontFamily, _size);
     }
 
     public void Render(Point position)
@@ -45,7 +45,7 @@ public class WindowsText : IText
         var text = _text;
         var drawFont = _drawFont;
         var drawBrush = _color._drawBrush;
-        var drawFormat = new global::System.Drawing.StringFormat();
+        var drawFormat = new StringFormat();
         void render(Graphics g) => g.DrawString(text, drawFont, drawBrush, x, y, drawFormat);
         _windows.Render(render);
     }
