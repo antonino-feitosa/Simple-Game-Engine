@@ -9,5 +9,6 @@ public class IResourceStub : IResource
         set => _path = value;
     }
 
-    public void Dispose(){}
+    public void Dispose(){
+    }
 }

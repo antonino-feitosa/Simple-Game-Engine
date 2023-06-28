@@ -1,4 +1,6 @@
 
+using System.IO;
+
 namespace SimpleGameEngine;
 
 public class WindowsDevice : IDevice
@@ -180,7 +182,7 @@ public class WindowsDevice : IDevice
         }
         catch (ArgumentException e)
         {
-            throw new ResourceNotFoundException("Can not load the resource " + path + ".", e);
+            throw new FileNotFoundException("Can not load the resource " + path + ".", e);
         }
     }
 
@@ -192,7 +194,7 @@ public class WindowsDevice : IDevice
         }
         catch (ArgumentException e)
         {
-            throw new ResourceNotFoundException("Can not load the resource " + path + ".", e);
+            throw new FileNotFoundException("Can not load the resource " + path + ".", e);
         }
     }
 
@@ -204,7 +206,7 @@ public class WindowsDevice : IDevice
         }
         catch (ArgumentException e)
         {
-            throw new ResourceNotFoundException("Can not load the resource " + path + ".", e);
+            throw new FileNotFoundException("Can not load the resource " + path + ".", e);
         }
     }
 
@@ -217,7 +219,7 @@ public class WindowsDevice : IDevice
     {
         if (image is WindowsImage imageWindows)
             return new WindowsSpriteSheet(this, imageWindows._bitmap, dimension);
-        else throw new ResourceNotFoundException("Can not load the image in the windows plataform!");
+        else throw new FileNotFoundException("Can not load the image in the windows plataform!");
     }
 
     public IText MakeText(string text, IFont font)
@@ -227,7 +229,7 @@ public class WindowsDevice : IDevice
             var textWindows = new WindowsText(this, text) { Font = fontWindows };
             return textWindows;
         }
-        else throw new ResourceNotFoundException("Can not load the font in the windows plataform!");
+        else throw new FileNotFoundException("Can not load the font in the windows plataform!");
     }
 
     public void Render(Action<Graphics> render)

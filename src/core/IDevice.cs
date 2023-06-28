@@ -8,13 +8,6 @@ public enum MouseWheelDirection { Backward = -1, Neutral = 0, Forward = 1 }
 [Flags]
 public enum KeyboardModifier { None = 0, Shift = 1, Alt = 2, Ctrl = 4 }
 
-public class ResourceNotFoundException : Exception
-{
-    public ResourceNotFoundException() { }
-    public ResourceNotFoundException(string message) : base(message) { }
-    public ResourceNotFoundException(string message, Exception inner) : base(message, inner) { }
-}
-
 public interface IResource : IDisposable
 {
     public string Path { get; }

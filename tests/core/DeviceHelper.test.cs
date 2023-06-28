@@ -306,9 +306,9 @@ public class DeviceHelperTest
         Assert(calledPath == "Y");
     }
 
-    public void GivenNoResourceLoaded_whenInvalidResourceIsLoaded_thenResourceNotFoundExceptionIsThrowed()
+    public void GivenNoResourceLoaded_whenInvalidResourceIsLoaded_thenFileNotFoundExceptionIsThrowed()
     {
-        var loader = (string path) => { if (path == "valid") return new IResourceStub(); else throw new ResourceNotFoundException(); };
+        var loader = (string path) => { if (path == "valid") return new IResourceStub(); else throw new FileNotFoundException(); };
         var gameDummy = new Game();
         var device = new DeviceHelper(gameDummy);
         var capturedException = false;
@@ -317,7 +317,7 @@ public class DeviceHelperTest
         {
             device.LoadResource<IResourceStub>("invalid", loader);
         }
-        catch (ResourceNotFoundException)
+        catch (FileNotFoundException)
         {
             capturedException = true;
         }

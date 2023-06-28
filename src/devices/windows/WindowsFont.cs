@@ -1,4 +1,6 @@
 
+using System.Drawing.Text;
+
 namespace SimpleGameEngine;
 
 internal class WindowsFont : IFont
@@ -17,7 +19,9 @@ internal class WindowsFont : IFont
     public WindowsFont(string path)
     {
         _path = path;
-        _fontFamily = new FontFamily(path);
+        var privateFontCollection = new PrivateFontCollection();
+        privateFontCollection.AddFontFile(path);
+        _fontFamily = privateFontCollection.Families[0];
     }
 
     public string Path { get => _path; }

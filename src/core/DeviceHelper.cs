@@ -1,4 +1,6 @@
 
+using System.IO;
+
 namespace SimpleGameEngine;
 
 public class DeviceHelper
@@ -70,7 +72,7 @@ public class DeviceHelper
         if (_resources[path] is T resource)
             return resource;
         else
-            throw new ResourceNotFoundException(path);
+            throw new FileNotFoundException(path);
     }
 
     private static void Fire<TEvent, TArg>(TEvent eventType, TArg argument, Dictionary<TEvent, List<Action<TArg>>> callback) where TEvent : notnull
