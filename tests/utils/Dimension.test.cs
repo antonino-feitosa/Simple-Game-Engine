@@ -9,6 +9,38 @@ public class DimensionTest
     // Dimension must have no negative and indepedent values
     // Setting negative values results in error ArgumentException
 
+    public void Given_whenCreateDimensionNegativeWidth_thenThrowsArgumentOutOfRangeException()
+    {
+        var capturedException = false;
+
+        try
+        {
+            var dimension = new Dimension(-1, 0);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            capturedException = true;
+        }
+
+        Assert(capturedException == true);
+    }
+
+    public void Given_whenCreateDimensionNegativeHeight_thenThrowsArgumentOutOfRangeException()
+    {
+        var capturedException = false;
+
+        try
+        {
+            var dimension = new Dimension(0, -1);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            capturedException = true;
+        }
+
+        Assert(capturedException == true);
+    }
+
     public void GivenDimension800x600_whenWidthIsGet_then800IsReturned()
     {
         var dimension = new Dimension(800, 600);
@@ -72,9 +104,12 @@ public class DimensionTest
         var dimension = new Dimension(800, 600);
         bool capturedException = false;
 
-        try {
+        try
+        {
             dimension.Width = -1;
-        } catch (ArgumentOutOfRangeException){
+        }
+        catch (ArgumentOutOfRangeException)
+        {
             capturedException = true;
         }
 
@@ -86,9 +121,12 @@ public class DimensionTest
         var dimension = new Dimension(800, 600);
         bool capturedException = false;
 
-        try {
+        try
+        {
             dimension.Height = -1;
-        } catch (ArgumentOutOfRangeException){
+        }
+        catch (ArgumentOutOfRangeException)
+        {
             capturedException = true;
         }
 
@@ -99,9 +137,11 @@ public class DimensionTest
     {
         var dimension = new Dimension(800, 600);
 
-        try {
+        try
+        {
             dimension.Width = -1;
-        } catch (ArgumentOutOfRangeException){}
+        }
+        catch (ArgumentOutOfRangeException) { }
         var width = dimension.Width;
 
         Assert(width == 800);
@@ -110,10 +150,12 @@ public class DimensionTest
     public void GivenDimension800x600_whenHeightIsSetToNegativeThrowingArgumentOutOfRangeException_thenHeightDontChange()
     {
         var dimension = new Dimension(800, 600);
-        
-        try {
+
+        try
+        {
             dimension.Height = -1;
-        } catch (ArgumentOutOfRangeException){}
+        }
+        catch (ArgumentOutOfRangeException) { }
         var height = dimension.Height;
 
         Assert(height == 600);
