@@ -34,6 +34,11 @@ internal class WindowsImage : IImage
 
     public IImage Crop(Point position, Dimension dimension)
     {
+        if (!dimension.Contains(position))
+            throw new ArgumentException("Position out of bound of the image!");
+        if (!Dimension.Contains(dimension))
+            throw new ArgumentException("Dimension out of bound of the image!");
+
         var cropped = new Bitmap(dimension.Width, dimension.Height);
         var graphics = Graphics.FromImage(cropped);
         graphics.DrawImageUnscaledAndClipped(_bitmap, new Rectangle(position.X, position.Y, cropped.Width, cropped.Height));

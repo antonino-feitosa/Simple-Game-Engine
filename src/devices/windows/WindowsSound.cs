@@ -17,6 +17,7 @@ internal class WindowsSound : ISound
         _isLoop = false;
         _audioFile = new AudioFileReader(path);
         _waveOut = new WaveOutEvent();
+        _waveOut.Init(_audioFile);
         _loopCallback = (sender, args) => _waveOut.Play();
     }
     public float Volume { get => _waveOut.Volume; set => _waveOut.Volume = value > 1 ? 1 : (value < 0 ? 0 : value); }

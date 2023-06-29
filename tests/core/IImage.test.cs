@@ -121,6 +121,23 @@ public class IImageTest
         Assert(capturedException == true);
     }
 
+    public void GivenImage_whenCropPointXBiggerThanWidth_thenThrowsAgumentException()
+    {
+        var capturedException = false;
+        var width = image.Dimension.Width;
+
+        try
+        {
+            image.Crop(new Point(width + 1, 0), new Dimension(1, 1));
+        }
+        catch
+        {
+            capturedException = true;
+        }
+
+        Assert(capturedException == true);
+    }
+
     public void GivenImage_whenCropNegativePointY_thenThrowsAgumentException()
     {
         var capturedException = false;
@@ -128,6 +145,23 @@ public class IImageTest
         try
         {
             image.Crop(new Point(0, -1), new Dimension(1, 1));
+        }
+        catch
+        {
+            capturedException = true;
+        }
+
+        Assert(capturedException == true);
+    }
+
+    public void GivenImage_whenCropPointYBiggerThanHeight_thenThrowsAgumentException()
+    {
+        var capturedException = false;
+        var height = image.Dimension.Height;
+
+        try
+        {
+            image.Crop(new Point(0, height + 1), new Dimension(1, 1));
         }
         catch
         {
@@ -153,6 +187,23 @@ public class IImageTest
         Assert(capturedException == true);
     }
 
+    public void GivenImage_whenCropDimensionWidthBiggerThanImageWidth_thenThrowsAgumentException()
+    {
+        var capturedException = false;
+        var width = image.Dimension.Width;
+
+        try
+        {
+            image.Crop(new Point(0, 0), new Dimension(width + 1, 1));
+        }
+        catch
+        {
+            capturedException = true;
+        }
+
+        Assert(capturedException == true);
+    }
+
     public void GivenImage_whenCropDimensionZeroHeight_thenThrowsAgumentException()
     {
         var capturedException = false;
@@ -160,6 +211,23 @@ public class IImageTest
         try
         {
             image.Crop(new Point(0, 0), new Dimension(1, 0));
+        }
+        catch
+        {
+            capturedException = true;
+        }
+
+        Assert(capturedException == true);
+    }
+
+    public void GivenImage_whenCropDimensionHeightBiggerThanImageHeight_thenThrowsAgumentException()
+    {
+        var capturedException = false;
+        var height = image.Dimension.Height;
+
+        try
+        {
+            image.Crop(new Point(0, 0), new Dimension(1, height + 1));
         }
         catch
         {

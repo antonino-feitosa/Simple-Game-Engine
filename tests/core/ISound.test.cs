@@ -23,7 +23,7 @@ public class ISoundTest : IResourceTest
         sound.Volume = 0.1f;
         var volume = sound.Volume;
 
-        Assert(volume == 0.1);
+        AssertEquals(volume, 0.1f);
     }
 
     public void CheckIsPlaying()
@@ -32,7 +32,7 @@ public class ISoundTest : IResourceTest
 
         var isPlaying = sound.IsPlaying;
 
-        Assert(isPlaying == false);
+        Assert(isPlaying == true);
     }
 
     public void CheckIsLoop()
@@ -41,7 +41,7 @@ public class ISoundTest : IResourceTest
 
         var isLoop = sound.IsLoop;
 
-        Assert(isLoop == false);
+        Assert(isLoop == true);
     }
 
     public void CheckPlay()

@@ -72,4 +72,30 @@ public class TestRunner
     {
         if (!condition) throw new AssertException(message);
     }
+
+    [StackTraceHidden]
+    public static void AssertEquals(float result, float expected, string message = "", float relativeEpsilon = 0.01f)
+    {
+        float absA = Math.Abs(result);
+        float absB = Math.Abs(expected);
+        float diff = Math.Abs(result - expected);
+
+        bool isEquals;
+        if (result == expected)
+        {
+            // shortcut, handles infinities
+            isEquals = true;
+        }
+        else if (result == 0 || expected == 0 || absA + absB < float.MinValue)
+        {
+            // relative error is less meaningful here
+            isEquals = diff < (relativeEpsilon * float.MinValue);
+        }
+        else
+        {
+            // use relative error
+            isEquals = diff / (absA + absB) < relativeEpsilon;
+        }
+        Assert(isEquals, message == "" ? "Result: <" + result + "> Expected: <" + expected + ">!" : message);
+    }
 }
