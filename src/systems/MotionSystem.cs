@@ -31,7 +31,7 @@ public class MotionSystem : SystemBase<MoveableComponent>
                 else
                 {
                     comp._position.Sum(comp._velocity);
-                    comp.OnMoving?.Invoke(comp._position);
+                    comp.OnMoveIncrement?.Invoke(comp._position);
                 }
             }
             else

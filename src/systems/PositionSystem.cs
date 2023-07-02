@@ -2,7 +2,7 @@
 
 namespace SimpleGameEngine;
 
-public class PositionSystem : ISystem
+public class PositionSystem : SystemBase<LocalizableComponent>
 {
     public readonly Direction UP = new(0, -1);
     public readonly Direction UP_LEFT = new(-1, -1);
@@ -14,19 +14,16 @@ public class PositionSystem : ISystem
     public readonly Direction RIGHT = new(+1, -0);
 
     protected HashSet<Point> _ground;
-    protected Dictionary<Point, LocalizableComponent> _components;
-    protected Dictionary<LocalizableComponent, Point> _moving;
+    protected Dictionary<Point, LocalizableComponent> _destinationToComponent;
+    protected Dictionary<LocalizableComponent, Point> _componentToDestination;
     protected Dictionary<LocalizableComponent, Point> _outOfBounds;
     protected HashSet<LocalizableComponent> _free;
 
-    // TODO add standby component
-    // TODO move only the components in destination different of location
-    // TODO Handle enable disable entity
     public PositionSystem(HashSet<Point> ground)
     {
         _ground = ground;
-        _components = new Dictionary<Point, LocalizableComponent>();
-        _moving = new Dictionary<LocalizableComponent, Point>();
+        _destinationToComponent = new Dictionary<Point, LocalizableComponent>();
+        _componentToDestination = new Dictionary<LocalizableComponent, Point>();
         _outOfBounds = new Dictionary<LocalizableComponent, Point>();
         _free = new HashSet<LocalizableComponent>();
     }
@@ -36,8 +33,8 @@ public class PositionSystem : ISystem
         var destination = dir.Next(comp._position);
         if (_ground.Contains(destination))
         {
-            _moving.Add(comp, destination);
-            if (_components.TryGetValue(destination, out LocalizableComponent? value))
+            _componentToDestination.Add(comp, destination);
+            if (_destinationToComponent.TryGetValue(destination, out LocalizableComponent? value))
             {
                 var other = value;
                 other._dependency.Add(comp);
@@ -59,16 +56,16 @@ public class PositionSystem : ISystem
         {
             var comp = _free.First();
             _free.Remove(comp);
-            var dest = _moving[comp];
-            if (_components.TryGetValue(dest, out LocalizableComponent? value))
+            var dest = _componentToDestination[comp];
+            if (_destinationToComponent.TryGetValue(dest, out LocalizableComponent? value))
             {
                 var other = value;
                 other._dependency.Add(comp);
             }
             else
             {
-                DoMove(comp, dest);
-                _moving.Remove(comp);
+                FireMove(comp, dest);
+                _componentToDestination.Remove(comp);
                 if (comp._dependency.Count > 0)
                 {
                     var next = comp._dependency.First();
@@ -81,26 +78,30 @@ public class PositionSystem : ISystem
         }
     }
 
-    public void Process()
+    public override void Process()
     {
         foreach (var pair in _outOfBounds) { pair.Key.OnOutOfBounds?.Invoke(pair.Value); };
         _outOfBounds.Clear();
 
         MoveWithDependencies();
 
-        foreach (var pair in _moving)
+        foreach (var pair in _componentToDestination)
         {
-            var other = _components[pair.Value];
+            var other = _destinationToComponent[pair.Value];
             pair.Key.OnCollision?.Invoke(other);
         };
-        _moving.Clear();
+        _componentToDestination.Clear();
     }
 
-    private void DoMove(LocalizableComponent comp, Point dest)
+    private void FireMove(LocalizableComponent comp, Point dest)
     {
-        _components.Remove(comp._position);
-        _components.Add(dest, comp);
+        _destinationToComponent.Remove(comp._position);
+        _destinationToComponent.Add(dest, comp);
         comp.OnMove?.Invoke(comp._position, dest);
         comp._position = dest;
+    }
+
+    internal override void AddComponent(LocalizableComponent component){
+        _destinationToComponent.Add(component._position, component);
     }
 }

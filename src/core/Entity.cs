@@ -3,8 +3,9 @@ namespace SimpleGameEngine;
 
 public class Entity
 {
-    private readonly Game _game;
     protected HashSet<Component> _components;
+
+    private readonly Game _game;
 
     private static uint _countId = 0;
     private readonly uint _id;
@@ -21,9 +22,9 @@ public class Entity
                 foreach (var comp in _components)
                 {
                     if (value)
-                        comp.OnEnable(this);
+                        comp.OnEnable?.Invoke(this);
                     else
-                        comp.OnDisable(this);
+                        comp.OnDisable?.Invoke(this);
                 }
             }
             _enabled = value;

@@ -1,7 +1,14 @@
 
 namespace SimpleGameEngine;
+
+
 public class MoveableComponent : Component
-{
+{   
+    public Action<Vector2>? OnStartMove;
+    public Action<Vector2>? OnEndMove;
+    public Action<Vector2>? OnMoveIncrement;
+    public Action<Vector2>? OnIdle;
+
     protected internal bool _fired;
     protected internal bool _moving;
     protected internal Vector2 _position;
@@ -9,10 +16,6 @@ public class MoveableComponent : Component
     protected internal Vector2 _velocity;
     protected int _framesToMove;
     protected LocalizableComponent _positionComponent;
-    public Action<Vector2>? OnStartMove;
-    public Action<Vector2>? OnEndMove;
-    public Action<Vector2>? OnMoving;
-    public Action<Vector2>? OnIdle;
 
     public int FramesToMove
     {
@@ -32,13 +35,13 @@ public class MoveableComponent : Component
         _velocity = new Vector2();
         _framesToMove = 32;
         _positionComponent = comp;
-        _positionComponent.OnMove += DoMove;
+        _positionComponent.OnMove += ApplyPositionIncrement;
         _moving = false;
         _fired = false;
         motionSystem.AddComponent(this);
     }
 
-    private void DoMove(Point source, Point dest)
+    private void ApplyPositionIncrement(Point source, Point dest)
     {
         _position = new Vector2(source.X, source.Y);
         _destination = new Vector2(dest.X, dest.Y);

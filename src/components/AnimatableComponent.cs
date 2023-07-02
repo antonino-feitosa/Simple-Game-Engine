@@ -8,6 +8,7 @@ public class AnimatableComponent : Component
     public RenderableComponent RenderComponent;
     public bool Running;
     public int UpdatesByFrames;
+
     protected internal int _current;
     protected internal int _count;
     public AnimatableComponent(AnimationSystem system, RenderableComponent comp, ISpriteSheet sheet)
