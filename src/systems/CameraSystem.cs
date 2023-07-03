@@ -1,6 +1,9 @@
 
 namespace SimpleGameEngine;
 
+/// <summary>
+/// This system performs the rendering only of the <c>RenderableComponent</c> in the region.<see cref="RenderableComponent"/>
+/// </summary>
 public class CameraSystem : SystemBase<RenderableComponent>
 {
     public Point Position;

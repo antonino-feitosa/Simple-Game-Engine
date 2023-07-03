@@ -1,6 +1,9 @@
 
 namespace SimpleGameEngine;
 
+/// <summary>
+/// This system performs the animation of the <c>AnimatableComponent</c>.<see cref="AnimatableComponent"/>
+/// </summary>
 public class AnimationSystem : SystemBase<AnimatableComponent>
 {
     public override void Process()

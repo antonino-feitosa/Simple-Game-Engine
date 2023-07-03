@@ -1,6 +1,9 @@
 
 namespace SimpleGameEngine;
 
+/// <summary>
+/// This system performs a continuous moviment between two points of a <c>MoveableComponent</c><see cref="MoveableComponent"/>
+/// </summary>
 public class MotionSystem : SystemBase<MoveableComponent>
 {
     public MotionSystem()

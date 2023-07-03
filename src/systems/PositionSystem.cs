@@ -2,6 +2,9 @@
 
 namespace SimpleGameEngine;
 
+/// <summary>
+/// This system performs discrete position, moviment and collision of <c>LocalizableComponent</c><see cref="LocalizableComponent"/>.
+/// </summary>
 public class PositionSystem : SystemBase<LocalizableComponent>
 {
     public readonly Direction UP = new(0, -1);
@@ -50,6 +53,21 @@ public class PositionSystem : SystemBase<LocalizableComponent>
         }
     }
 
+    public override void Process()
+    {
+        foreach (var pair in _outOfBounds) { pair.Key.OnOutOfBounds?.Invoke(pair.Value); };
+        _outOfBounds.Clear();
+
+        MoveWithDependencies();
+
+        foreach (var pair in _componentToDestination)
+        {
+            var other = _destinationToComponent[pair.Value];
+            pair.Key.OnCollision?.Invoke(other);
+        };
+        _componentToDestination.Clear();
+    }
+
     private void MoveWithDependencies(){
         var collision = new HashSet<LocalizableComponent>();
         while (_free.Count > 0)
@@ -76,21 +94,6 @@ public class PositionSystem : SystemBase<LocalizableComponent>
                 }
             }
         }
-    }
-
-    public override void Process()
-    {
-        foreach (var pair in _outOfBounds) { pair.Key.OnOutOfBounds?.Invoke(pair.Value); };
-        _outOfBounds.Clear();
-
-        MoveWithDependencies();
-
-        foreach (var pair in _componentToDestination)
-        {
-            var other = _destinationToComponent[pair.Value];
-            pair.Key.OnCollision?.Invoke(other);
-        };
-        _componentToDestination.Clear();
     }
 
     private void FireMove(LocalizableComponent comp, Point dest)
