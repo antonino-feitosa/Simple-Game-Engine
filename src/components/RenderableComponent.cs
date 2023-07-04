@@ -3,12 +3,12 @@ namespace SimpleGameEngine;
 
 public class RenderableComponent : Component
 {
-    public Vector2 Position;
+    public Point Position;
     public int ZIndex;
     public IImage Image;
     public bool Visible;
 
-    public RenderableComponent(CameraSystem system, IImage image, Vector2 position)
+    public RenderableComponent(CameraSystem system, IImage image, Point position)
     {
         Image = image;
         ZIndex = 0;

@@ -23,7 +23,7 @@ public class ISoundTest : IResourceTest
         sound.Volume = 0.1f;
         var volume = sound.Volume;
 
-        AssertEquals(volume, 0.1f);
+        AssertPrecisionEquals(volume, 0.1f);
     }
 
     public void CheckIsPlaying()

@@ -6,6 +6,203 @@ namespace SimpleGameEngine.Test;
 [TestClass]
 public class PositionSystemTest
 {
+    public void GivenComponent_whenMoveLeft_thenFireOnMove()
+    {
+        var called = false;
+        var sourceCalled = new Point(-1, -1);
+        var destinationCalled = new Point(-1, -1);
+        var ground = new HashSet<Point> { new Point(0, 0), new Point(-1, 0) };
+        var system = new PositionSystem(ground);
+        var component = new LocalizableComponent(system, new Point(0, 0))
+        {
+            OnMove = (source, destination) =>
+            {
+                called = true;
+                sourceCalled = source;
+                destinationCalled = destination;
+            }
+        };
+
+        component.Move(PositionSystem.LEFT);
+        system.Process();
+
+        AssertTrue(called, "The event OnMove must be called!");
+        AssertEquals(component.Position.X, -1, "The component must move on X.");
+        AssertEquals(component.Position.Y, 0, "The component must not move on Y.");
+        AssertEquals(sourceCalled.X, 0, "The source argument of OnMove is wrong for X.");
+        AssertEquals(sourceCalled.Y, 0, "The source argument of OnMove is wrong for Y.");
+        AssertEquals(destinationCalled.X, -1, "The destination argument of OnMove is wrong for X.");
+        AssertEquals(destinationCalled.Y, 0, "The destination argument of OnMove is wrong for Y.");
+    }
+    public void GivenComponent_whenMoveRight_thenFireOnMove()
+    {
+        var called = false;
+        var sourceCalled = new Point(-1, -1);
+        var destinationCalled = new Point(-1, -1);
+        var ground = new HashSet<Point> { new Point(0, 0), new Point(1, 0) };
+        var system = new PositionSystem(ground);
+        var component = new LocalizableComponent(system, new Point(0, 0))
+        {
+            OnMove = (source, destination) =>
+            {
+                called = true;
+                sourceCalled = source;
+                destinationCalled = destination;
+            }
+        };
+
+        component.Move(PositionSystem.RIGHT);
+        system.Process();
+
+        AssertTrue(called, "The event OnMove must be called!");
+        AssertEquals(component.Position.X, 1, "The component must move on X.");
+        AssertEquals(component.Position.Y, 0, "The component must not move on Y.");
+        AssertEquals(sourceCalled.X, 0, "The source argument of OnMove is wrong for X.");
+        AssertEquals(sourceCalled.Y, 0, "The source argument of OnMove is wrong for Y.");
+        AssertEquals(destinationCalled.X, 1, "The destination argument of OnMove is wrong for X.");
+        AssertEquals(destinationCalled.Y, 0, "The destination argument of OnMove is wrong for Y.");
+    }
+    public void GivenComponent_whenMoveDown_thenFireOnMove()
+    {
+        var called = false;
+        var sourceCalled = new Point(-1, -1);
+        var destinationCalled = new Point(-1, -1);
+        var ground = new HashSet<Point> { new Point(0, 0), new Point(0, -1) };
+        var system = new PositionSystem(ground);
+        var component = new LocalizableComponent(system, new Point(0, 0))
+        {
+            OnMove = (source, destination) =>
+            {
+                called = true;
+                sourceCalled = source;
+                destinationCalled = destination;
+            }
+        };
+
+        component.Move(PositionSystem.DOWN);
+        system.Process();
+
+        AssertTrue(called, "The event OnMove must be called!");
+        AssertEquals(component.Position.X, 0, "The component must move on X.");
+        AssertEquals(component.Position.Y, -1, "The component must not move on Y.");
+        AssertEquals(sourceCalled.X, 0, "The source argument of OnMove is wrong for X.");
+        AssertEquals(sourceCalled.Y, 0, "The source argument of OnMove is wrong for Y.");
+        AssertEquals(destinationCalled.X, 0, "The destination argument of OnMove is wrong for X.");
+        AssertEquals(destinationCalled.Y, -1, "The destination argument of OnMove is wrong for Y.");
+    }
+    public void GivenComponent_whenMoveUpLeft_thenFireOnMove()
+    {
+        var called = false;
+        var sourceCalled = new Point(-1, -1);
+        var destinationCalled = new Point(-1, -1);
+        var ground = new HashSet<Point> { new Point(0, 0), new Point(-1, 1) };
+        var system = new PositionSystem(ground);
+        var component = new LocalizableComponent(system, new Point(0, 0))
+        {
+            OnMove = (source, destination) =>
+            {
+                called = true;
+                sourceCalled = source;
+                destinationCalled = destination;
+            }
+        };
+
+        component.Move(PositionSystem.UP_LEFT);
+        system.Process();
+
+        AssertTrue(called, "The event OnMove must be called!");
+        AssertEquals(component.Position.X, -1, "The component must move on X.");
+        AssertEquals(component.Position.Y, 1, "The component must not move on Y.");
+        AssertEquals(sourceCalled.X, 0, "The source argument of OnMove is wrong for X.");
+        AssertEquals(sourceCalled.Y, 0, "The source argument of OnMove is wrong for Y.");
+        AssertEquals(destinationCalled.X, -1, "The destination argument of OnMove is wrong for X.");
+        AssertEquals(destinationCalled.Y, 1, "The destination argument of OnMove is wrong for Y.");
+    }
+    public void GivenComponent_whenMoveUpRight_thenFireOnMove()
+    {
+        var called = false;
+        var sourceCalled = new Point(-1, -1);
+        var destinationCalled = new Point(-1, -1);
+        var ground = new HashSet<Point> { new Point(0, 0), new Point(1, 1) };
+        var system = new PositionSystem(ground);
+        var component = new LocalizableComponent(system, new Point(0, 0))
+        {
+            OnMove = (source, destination) =>
+            {
+                called = true;
+                sourceCalled = source;
+                destinationCalled = destination;
+            }
+        };
+
+        component.Move(PositionSystem.UP_RIGHT);
+        system.Process();
+
+        AssertTrue(called, "The event OnMove must be called!");
+        AssertEquals(component.Position.X, 1, "The component must move on X.");
+        AssertEquals(component.Position.Y, 1, "The component must not move on Y.");
+        AssertEquals(sourceCalled.X, 0, "The source argument of OnMove is wrong for X.");
+        AssertEquals(sourceCalled.Y, 0, "The source argument of OnMove is wrong for Y.");
+        AssertEquals(destinationCalled.X, 1, "The destination argument of OnMove is wrong for X.");
+        AssertEquals(destinationCalled.Y, 1, "The destination argument of OnMove is wrong for Y.");
+    }
+    public void GivenComponent_whenMoveDownLeft_thenFireOnMove()
+    {
+        var called = false;
+        var sourceCalled = new Point(-1, -1);
+        var destinationCalled = new Point(-1, -1);
+        var ground = new HashSet<Point> { new Point(0, 0), new Point(-1, -1) };
+        var system = new PositionSystem(ground);
+        var component = new LocalizableComponent(system, new Point(0, 0))
+        {
+            OnMove = (source, destination) =>
+            {
+                called = true;
+                sourceCalled = source;
+                destinationCalled = destination;
+            }
+        };
+
+        component.Move(PositionSystem.DOWN_LEFT);
+        system.Process();
+
+        AssertTrue(called, "The event OnMove must be called!");
+        AssertEquals(component.Position.X, -1, "The component must move on X.");
+        AssertEquals(component.Position.Y, -1, "The component must not move on Y.");
+        AssertEquals(sourceCalled.X, 0, "The source argument of OnMove is wrong for X.");
+        AssertEquals(sourceCalled.Y, 0, "The source argument of OnMove is wrong for Y.");
+        AssertEquals(destinationCalled.X, -1, "The destination argument of OnMove is wrong for X.");
+        AssertEquals(destinationCalled.Y, -1, "The destination argument of OnMove is wrong for Y.");
+    }
+    public void GivenComponent_whenMoveDownRight_thenFireOnMove()
+    {
+        var called = false;
+        var sourceCalled = new Point(-1, -1);
+        var destinationCalled = new Point(-1, -1);
+        var ground = new HashSet<Point> { new Point(0, 0), new Point(1, -1) };
+        var system = new PositionSystem(ground);
+        var component = new LocalizableComponent(system, new Point(0, 0))
+        {
+            OnMove = (source, destination) =>
+            {
+                called = true;
+                sourceCalled = source;
+                destinationCalled = destination;
+            }
+        };
+
+        component.Move(PositionSystem.DOWN_RIGHT);
+        system.Process();
+
+        AssertTrue(called, "The event OnMove must be called!");
+        AssertEquals(component.Position.X, 1, "The component must move on X.");
+        AssertEquals(component.Position.Y, -1, "The component must not move on Y.");
+        AssertEquals(sourceCalled.X, 0, "The source argument of OnMove is wrong for X.");
+        AssertEquals(sourceCalled.Y, 0, "The source argument of OnMove is wrong for Y.");
+        AssertEquals(destinationCalled.X, 1, "The destination argument of OnMove is wrong for X.");
+        AssertEquals(destinationCalled.Y, -1, "The destination argument of OnMove is wrong for Y.");
+    }
+
     public void GivenComponent_whenMoveUp_thenFireOnMove()
     {
         var called = false;
@@ -13,12 +210,14 @@ public class PositionSystemTest
         var destinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1) };
         var system = new PositionSystem(ground);
-        var component = new LocalizableComponent(system, new Point(0, 0));
-        component.OnMove = (source, destination) =>
+        var component = new LocalizableComponent(system, new Point(0, 0))
         {
-            called = true;
-            sourceCalled = source;
-            destinationCalled = destination;
+            OnMove = (source, destination) =>
+            {
+                called = true;
+                sourceCalled = source;
+                destinationCalled = destination;
+            }
         };
 
         component.Move(PositionSystem.UP);
@@ -39,11 +238,13 @@ public class PositionSystemTest
         var destinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1) };
         var system = new PositionSystem(ground);
-        var component = new LocalizableComponent(system, new Point(0, 1));
-        component.OnOutOfBounds = (destination) =>
+        var component = new LocalizableComponent(system, new Point(0, 1))
         {
-            called = true;
-            destinationCalled = destination;
+            OnOutOfBounds = (destination) =>
+            {
+                called = true;
+                destinationCalled = destination;
+            }
         };
 
         component.Move(PositionSystem.UP);
