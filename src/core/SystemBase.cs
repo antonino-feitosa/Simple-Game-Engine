@@ -13,9 +13,11 @@ public class SystemBase <TComponent> : ISystem where TComponent : Component {
     }
     public virtual void Process(){}
     internal virtual void AddComponent(TComponent component){
-        _components.Add(component);
-        component.OnDestroy += (entity) => _components.Remove(component);
-        component.OnEnable += (entity) => _components.Add(component);
-        component.OnDisable += (entity) => _components.Remove(component);
+        if(component is TComponent derived){
+            _components.Add(derived);
+            component.OnDestroy += (entity) => _components.Remove(derived);
+            component.OnEnable += (entity) => _components.Add(derived);
+            component.OnDisable += (entity) => _components.Remove(derived);
+        }
     }
 }

@@ -8,11 +8,12 @@ public class RenderableComponent : Component
     public IImage Image;
     public bool Visible;
 
-    public RenderableComponent(IImage image, Vector2 position)
+    public RenderableComponent(CameraSystem system, IImage image, Vector2 position)
     {
         Image = image;
         ZIndex = 0;
         Position = position;
         Visible = true;
+        system.AddComponent(this);
     }
 }

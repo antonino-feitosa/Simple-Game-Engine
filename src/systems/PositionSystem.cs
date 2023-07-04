@@ -7,14 +7,14 @@ namespace SimpleGameEngine;
 /// </summary>
 public class PositionSystem : SystemBase<LocalizableComponent>
 {
-    public readonly Direction UP = new(0, -1);
-    public readonly Direction UP_LEFT = new(-1, -1);
-    public readonly Direction UP_RIGHT = new(+1, -1);
-    public readonly Direction DOWN = new(0, +1);
-    public readonly Direction DOWN_LEFT = new(-1, +1);
-    public readonly Direction DOWN_RIGHT = new(+1, +1);
-    public readonly Direction LEFT = new(-1, 0);
-    public readonly Direction RIGHT = new(+1, -0);
+    public static readonly Direction UP = new(0, +1);
+    public static readonly Direction UP_LEFT = new(-1, +1);
+    public static readonly Direction UP_RIGHT = new(+1, +1);
+    public static readonly Direction DOWN = new(0, -1);
+    public static readonly Direction DOWN_LEFT = new(-1, -1);
+    public static readonly Direction DOWN_RIGHT = new(+1, -1);
+    public static readonly Direction LEFT = new(-1, 0);
+    public static readonly Direction RIGHT = new(+1, 0);
 
     protected HashSet<Point> _ground;
     protected Dictionary<Point, LocalizableComponent> _destinationToComponent;
@@ -62,8 +62,10 @@ public class PositionSystem : SystemBase<LocalizableComponent>
 
         foreach (var pair in _componentToDestination)
         {
+            var source = pair.Key;
             var other = _destinationToComponent[pair.Value];
-            pair.Key.OnCollision?.Invoke(other);
+            source.OnCollision?.Invoke(other);
+            other.OnCollision?.Invoke(source);
         };
         _componentToDestination.Clear();
     }
@@ -100,8 +102,10 @@ public class PositionSystem : SystemBase<LocalizableComponent>
     {
         _destinationToComponent.Remove(comp._position);
         _destinationToComponent.Add(dest, comp);
-        comp.OnMove?.Invoke(comp._position, dest);
+        var source = new Point();
+        source.Copy(comp._position);
         comp._position = dest;
+        comp.OnMove?.Invoke(source, dest);
     }
 
     internal override void AddComponent(LocalizableComponent component){

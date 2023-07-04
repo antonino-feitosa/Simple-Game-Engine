@@ -74,6 +74,22 @@ public class TestRunner
     }
 
     [StackTraceHidden]
+    public static void AssertTrue(bool actual, string message = "")
+    {
+        if (!actual)
+            Assert(false, message + " Was expected a True value!");
+    }
+
+    [StackTraceHidden]
+    public static void AssertEquals(object? actual, object? expected, string message = "")
+    {
+        bool failByNull = expected is null && actual is not null;
+        bool failByDiff = expected is not null && !expected.Equals(actual);
+        if (failByNull || failByDiff)
+            Assert(false, message + " Expected: <" + expected + ">, Actual: <" + actual + ">.");
+    }
+
+    [StackTraceHidden]
     public static void AssertEquals(float result, float expected, string message = "", float relativeEpsilon = 0.01f)
     {
         float absA = Math.Abs(result);

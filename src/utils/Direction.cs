@@ -5,6 +5,8 @@ public class Direction
 {
     public readonly int X;
     public readonly int Y;
+
+    public Direction Opposite { get => new(-X, -Y); }
     protected internal Direction(int x, int y)
     {
         X = x;
