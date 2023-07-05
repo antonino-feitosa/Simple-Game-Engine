@@ -5,13 +5,13 @@ namespace SimpleGameEngine;
 /// This system performs the rendering only of the <c>RenderableComponent</c> in the region.<see cref="RenderableComponent"/>
 /// This uses world coordinates mapped to screen throught PixelsUnit, that is, a world unit is mapped to PixelsUnits of the screen.
 /// </summary>
-public class CameraSystem : SystemBase<RenderableComponent>
+public class RenderingSystem : SystemBase<RenderableComponent>
 {
     public Point Position;
     public Dimension Dimension;
     public int PixelsUnit;
 
-    public CameraSystem(Point position, Dimension dimension)
+    public RenderingSystem(Point position, Dimension dimension)
     {
         Position = position;
         Dimension = dimension;

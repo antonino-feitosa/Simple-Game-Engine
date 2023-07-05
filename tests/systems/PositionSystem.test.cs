@@ -13,7 +13,7 @@ public class PositionSystemTest
         var destinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(-1, 0) };
         var system = new PositionSystem(ground);
-        var component = new LocalizableComponent(system, new Point(0, 0))
+        var component = new PositionableComponent(system, new Point(0, 0))
         {
             OnMove = (source, destination) =>
             {
@@ -41,7 +41,7 @@ public class PositionSystemTest
         var destinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(1, 0) };
         var system = new PositionSystem(ground);
-        var component = new LocalizableComponent(system, new Point(0, 0))
+        var component = new PositionableComponent(system, new Point(0, 0))
         {
             OnMove = (source, destination) =>
             {
@@ -69,7 +69,7 @@ public class PositionSystemTest
         var destinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, -1) };
         var system = new PositionSystem(ground);
-        var component = new LocalizableComponent(system, new Point(0, 0))
+        var component = new PositionableComponent(system, new Point(0, 0))
         {
             OnMove = (source, destination) =>
             {
@@ -97,7 +97,7 @@ public class PositionSystemTest
         var destinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(-1, 1) };
         var system = new PositionSystem(ground);
-        var component = new LocalizableComponent(system, new Point(0, 0))
+        var component = new PositionableComponent(system, new Point(0, 0))
         {
             OnMove = (source, destination) =>
             {
@@ -125,7 +125,7 @@ public class PositionSystemTest
         var destinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(1, 1) };
         var system = new PositionSystem(ground);
-        var component = new LocalizableComponent(system, new Point(0, 0))
+        var component = new PositionableComponent(system, new Point(0, 0))
         {
             OnMove = (source, destination) =>
             {
@@ -153,7 +153,7 @@ public class PositionSystemTest
         var destinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(-1, -1) };
         var system = new PositionSystem(ground);
-        var component = new LocalizableComponent(system, new Point(0, 0))
+        var component = new PositionableComponent(system, new Point(0, 0))
         {
             OnMove = (source, destination) =>
             {
@@ -181,7 +181,7 @@ public class PositionSystemTest
         var destinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(1, -1) };
         var system = new PositionSystem(ground);
-        var component = new LocalizableComponent(system, new Point(0, 0))
+        var component = new PositionableComponent(system, new Point(0, 0))
         {
             OnMove = (source, destination) =>
             {
@@ -210,7 +210,7 @@ public class PositionSystemTest
         var destinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1) };
         var system = new PositionSystem(ground);
-        var component = new LocalizableComponent(system, new Point(0, 0))
+        var component = new PositionableComponent(system, new Point(0, 0))
         {
             OnMove = (source, destination) =>
             {
@@ -238,7 +238,7 @@ public class PositionSystemTest
         var destinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1) };
         var system = new PositionSystem(ground);
-        var component = new LocalizableComponent(system, new Point(0, 1))
+        var component = new PositionableComponent(system, new Point(0, 1))
         {
             OnOutOfBounds = (destination) =>
             {
@@ -267,9 +267,9 @@ public class PositionSystemTest
         var bDestinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1), new Point(0, 2) };
         var system = new PositionSystem(ground);
-        var aComponent = new LocalizableComponent(system, new Point(0, 0));
+        var aComponent = new PositionableComponent(system, new Point(0, 0));
         aComponent.OnMove = (source, destination) => { aCalled = true; aSourceCalled = source; aDestinationCalled = destination; };
-        var bComponent = new LocalizableComponent(system, new Point(0, 1));
+        var bComponent = new PositionableComponent(system, new Point(0, 1));
         bComponent.OnMove = (source, destination) => { bCalled = true; bSourceCalled = source; bDestinationCalled = destination; };
 
         aComponent.Move(PositionSystem.UP);
@@ -303,9 +303,9 @@ public class PositionSystemTest
         var bDestinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1), new Point(0, 2) };
         var system = new PositionSystem(ground);
-        var aComponent = new LocalizableComponent(system, new Point(0, 0));
+        var aComponent = new PositionableComponent(system, new Point(0, 0));
         aComponent.OnMove = (source, destination) => { aCalled = true; aSourceCalled = source; aDestinationCalled = destination; };
-        var bComponent = new LocalizableComponent(system, new Point(0, 1));
+        var bComponent = new PositionableComponent(system, new Point(0, 1));
         bComponent.OnMove = (source, destination) => { bCalled = true; bSourceCalled = source; bDestinationCalled = destination; };
 
         bComponent.Move(PositionSystem.UP);
@@ -342,11 +342,11 @@ public class PositionSystemTest
         var cDestinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1), new Point(0, 2), new Point(0, 3) };
         var system = new PositionSystem(ground);
-        var aComponent = new LocalizableComponent(system, new Point(0, 0));
+        var aComponent = new PositionableComponent(system, new Point(0, 0));
         aComponent.OnMove = (source, destination) => { aCalled = true; aSourceCalled = source; aDestinationCalled = destination; };
-        var bComponent = new LocalizableComponent(system, new Point(0, 1));
+        var bComponent = new PositionableComponent(system, new Point(0, 1));
         bComponent.OnMove = (source, destination) => { bCalled = true; bSourceCalled = source; bDestinationCalled = destination; };
-        var cComponent = new LocalizableComponent(system, new Point(0, 2));
+        var cComponent = new PositionableComponent(system, new Point(0, 2));
         cComponent.OnMove = (source, destination) => { cCalled = true; cSourceCalled = source; cDestinationCalled = destination; };
 
         aComponent.Move(PositionSystem.UP);
@@ -392,11 +392,11 @@ public class PositionSystemTest
         var cDestinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1), new Point(0, 2), new Point(0, 3) };
         var system = new PositionSystem(ground);
-        var aComponent = new LocalizableComponent(system, new Point(0, 0));
+        var aComponent = new PositionableComponent(system, new Point(0, 0));
         aComponent.OnMove = (source, destination) => { aCalled = true; aSourceCalled = source; aDestinationCalled = destination; };
-        var bComponent = new LocalizableComponent(system, new Point(0, 1));
+        var bComponent = new PositionableComponent(system, new Point(0, 1));
         bComponent.OnMove = (source, destination) => { bCalled = true; bSourceCalled = source; bDestinationCalled = destination; };
-        var cComponent = new LocalizableComponent(system, new Point(0, 2));
+        var cComponent = new PositionableComponent(system, new Point(0, 2));
         cComponent.OnMove = (source, destination) => { cCalled = true; cSourceCalled = source; cDestinationCalled = destination; };
 
         aComponent.Move(PositionSystem.UP);
@@ -442,11 +442,11 @@ public class PositionSystemTest
         var cDestinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1), new Point(0, 2), new Point(0, 3) };
         var system = new PositionSystem(ground);
-        var aComponent = new LocalizableComponent(system, new Point(0, 0));
+        var aComponent = new PositionableComponent(system, new Point(0, 0));
         aComponent.OnMove = (source, destination) => { aCalled = true; aSourceCalled = source; aDestinationCalled = destination; };
-        var bComponent = new LocalizableComponent(system, new Point(0, 1));
+        var bComponent = new PositionableComponent(system, new Point(0, 1));
         bComponent.OnMove = (source, destination) => { bCalled = true; bSourceCalled = source; bDestinationCalled = destination; };
-        var cComponent = new LocalizableComponent(system, new Point(0, 2));
+        var cComponent = new PositionableComponent(system, new Point(0, 2));
         cComponent.OnMove = (source, destination) => { cCalled = true; cSourceCalled = source; cDestinationCalled = destination; };
 
         bComponent.Move(PositionSystem.UP);
@@ -492,11 +492,11 @@ public class PositionSystemTest
         var cDestinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1), new Point(0, 2), new Point(0, 3) };
         var system = new PositionSystem(ground);
-        var aComponent = new LocalizableComponent(system, new Point(0, 0));
+        var aComponent = new PositionableComponent(system, new Point(0, 0));
         aComponent.OnMove = (source, destination) => { aCalled = true; aSourceCalled = source; aDestinationCalled = destination; };
-        var bComponent = new LocalizableComponent(system, new Point(0, 1));
+        var bComponent = new PositionableComponent(system, new Point(0, 1));
         bComponent.OnMove = (source, destination) => { bCalled = true; bSourceCalled = source; bDestinationCalled = destination; };
-        var cComponent = new LocalizableComponent(system, new Point(0, 2));
+        var cComponent = new PositionableComponent(system, new Point(0, 2));
         cComponent.OnMove = (source, destination) => { cCalled = true; cSourceCalled = source; cDestinationCalled = destination; };
 
         bComponent.Move(PositionSystem.UP);
@@ -542,11 +542,11 @@ public class PositionSystemTest
         var cDestinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1), new Point(0, 2), new Point(0, 3) };
         var system = new PositionSystem(ground);
-        var aComponent = new LocalizableComponent(system, new Point(0, 0));
+        var aComponent = new PositionableComponent(system, new Point(0, 0));
         aComponent.OnMove = (source, destination) => { aCalled = true; aSourceCalled = source; aDestinationCalled = destination; };
-        var bComponent = new LocalizableComponent(system, new Point(0, 1));
+        var bComponent = new PositionableComponent(system, new Point(0, 1));
         bComponent.OnMove = (source, destination) => { bCalled = true; bSourceCalled = source; bDestinationCalled = destination; };
-        var cComponent = new LocalizableComponent(system, new Point(0, 2));
+        var cComponent = new PositionableComponent(system, new Point(0, 2));
         cComponent.OnMove = (source, destination) => { cCalled = true; cSourceCalled = source; cDestinationCalled = destination; };
 
         cComponent.Move(PositionSystem.UP);
@@ -592,11 +592,11 @@ public class PositionSystemTest
         var cDestinationCalled = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1), new Point(0, 2), new Point(0, 3) };
         var system = new PositionSystem(ground);
-        var aComponent = new LocalizableComponent(system, new Point(0, 0));
+        var aComponent = new PositionableComponent(system, new Point(0, 0));
         aComponent.OnMove = (source, destination) => { aCalled = true; aSourceCalled = source; aDestinationCalled = destination; };
-        var bComponent = new LocalizableComponent(system, new Point(0, 1));
+        var bComponent = new PositionableComponent(system, new Point(0, 1));
         bComponent.OnMove = (source, destination) => { bCalled = true; bSourceCalled = source; bDestinationCalled = destination; };
-        var cComponent = new LocalizableComponent(system, new Point(0, 2));
+        var cComponent = new PositionableComponent(system, new Point(0, 2));
         cComponent.OnMove = (source, destination) => { cCalled = true; cSourceCalled = source; cDestinationCalled = destination; };
 
         cComponent.Move(PositionSystem.UP);
@@ -632,14 +632,14 @@ public class PositionSystemTest
     public void GivenStandComponentA_whenComponentBMoveUpToA_thenTheyFireCollision()
     {
         var aCalled = false;
-        LocalizableComponent? aArgument = null;
+        PositionableComponent? aArgument = null;
         var bCalled = false;
-        LocalizableComponent? bArgument = null;
+        PositionableComponent? bArgument = null;
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1) };
         var system = new PositionSystem(ground);
-        var aComponent = new LocalizableComponent(system, new Point(0, 1));
+        var aComponent = new PositionableComponent(system, new Point(0, 1));
         aComponent.OnCollision = (other) => { aCalled = true; aArgument = other; };
-        var bComponent = new LocalizableComponent(system, new Point(0, 0));
+        var bComponent = new PositionableComponent(system, new Point(0, 0));
         bComponent.OnCollision = (other) => { bCalled = true; bArgument = other; };
 
         bComponent.Move(PositionSystem.UP);
@@ -659,14 +659,14 @@ public class PositionSystemTest
     public void GivenComponentAWithComponentB_whenAMoveUpAndBTowardsA_thenTheyNotMove()
     {
         var aCalled = false;
-        LocalizableComponent? aArgument = null;
+        PositionableComponent? aArgument = null;
         var bCalled = false;
-        LocalizableComponent? bArgument = null;
+        PositionableComponent? bArgument = null;
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1) };
         var system = new PositionSystem(ground);
-        var aComponent = new LocalizableComponent(system, new Point(0, 0));
+        var aComponent = new PositionableComponent(system, new Point(0, 0));
         aComponent.OnCollision = (other) => { aCalled = true; aArgument = other; };
-        var bComponent = new LocalizableComponent(system, new Point(0, 1));
+        var bComponent = new PositionableComponent(system, new Point(0, 1));
         bComponent.OnCollision = (other) => { bCalled = true; bArgument = other; };
 
         aComponent.Move(PositionSystem.UP);
@@ -690,12 +690,12 @@ public class PositionSystemTest
         var aSource = new Point(-1, -1);
         var aDestination = new Point(-1, -1);
         var bCalled = false;
-        LocalizableComponent? bArgument = null;
+        PositionableComponent? bArgument = null;
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1), new Point(0, 2) };
         var system = new PositionSystem(ground);
-        var aComponent = new LocalizableComponent(system, new Point(0, 0));
+        var aComponent = new PositionableComponent(system, new Point(0, 0));
         aComponent.OnMove = (source, destination) => { aCalled = true; aSource = source; aDestination = destination; };
-        var bComponent = new LocalizableComponent(system, new Point(0, 2));
+        var bComponent = new PositionableComponent(system, new Point(0, 2));
         bComponent.OnCollision = (other) => { bCalled = true; bArgument = other; };
 
         aComponent.Move(PositionSystem.UP);
@@ -719,15 +719,15 @@ public class PositionSystemTest
     public void GivenComponentAWithComponentBTwoUp_whenBMoveUpAndATowardsB_thenOnlyBMove()
     {
         var aCalled = false;
-        LocalizableComponent? aArgument = null;
+        PositionableComponent? aArgument = null;
         var bCalled = false;
         var bSource = new Point(-1, -1);
         var bDestination = new Point(-1, -1);
         var ground = new HashSet<Point> { new Point(0, 0), new Point(0, 1), new Point(0, 2) };
         var system = new PositionSystem(ground);
-        var aComponent = new LocalizableComponent(system, new Point(0, 0));
+        var aComponent = new PositionableComponent(system, new Point(0, 0));
         aComponent.OnCollision = (other) => { aCalled = true; aArgument = other; };
-        var bComponent = new LocalizableComponent(system, new Point(0, 2));
+        var bComponent = new PositionableComponent(system, new Point(0, 2));
         bComponent.OnMove = (source, destination) => { bCalled = true; bSource = source; bDestination = destination; };
 
         bComponent.Move(PositionSystem.UP.Opposite);

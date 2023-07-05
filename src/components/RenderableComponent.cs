@@ -8,7 +8,7 @@ public class RenderableComponent : Component
     public IImage Image;
     public bool Visible;
 
-    public RenderableComponent(CameraSystem system, IImage image, Point position)
+    public RenderableComponent(RenderingSystem system, IImage image, Point position)
     {
         Image = image;
         ZIndex = 0;

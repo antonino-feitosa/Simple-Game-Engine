@@ -3,9 +3,9 @@
 namespace SimpleGameEngine;
 
 /// <summary>
-/// This system performs discrete position, moviment and collision of <c>LocalizableComponent</c><see cref="LocalizableComponent"/>.
+/// This system performs discrete position, moviment and collision of <c>LocalizableComponent</c><see cref="PositionableComponent"/>.
 /// </summary>
-public class PositionSystem : SystemBase<LocalizableComponent>
+public class PositionSystem : SystemBase<PositionableComponent>
 {
     public static readonly Direction UP = new(0, +1);
     public static readonly Direction UP_LEFT = new(-1, +1);
@@ -17,27 +17,27 @@ public class PositionSystem : SystemBase<LocalizableComponent>
     public static readonly Direction RIGHT = new(+1, 0);
 
     protected HashSet<Point> _ground;
-    protected Dictionary<Point, LocalizableComponent> _destinationToComponent;
-    protected Dictionary<LocalizableComponent, Point> _componentToDestination;
-    protected Dictionary<LocalizableComponent, Point> _outOfBounds;
-    protected HashSet<LocalizableComponent> _free;
+    protected Dictionary<Point, PositionableComponent> _destinationToComponent;
+    protected Dictionary<PositionableComponent, Point> _componentToDestination;
+    protected Dictionary<PositionableComponent, Point> _outOfBounds;
+    protected HashSet<PositionableComponent> _free;
 
     public PositionSystem(HashSet<Point> ground)
     {
         _ground = ground;
-        _destinationToComponent = new Dictionary<Point, LocalizableComponent>();
-        _componentToDestination = new Dictionary<LocalizableComponent, Point>();
-        _outOfBounds = new Dictionary<LocalizableComponent, Point>();
-        _free = new HashSet<LocalizableComponent>();
+        _destinationToComponent = new Dictionary<Point, PositionableComponent>();
+        _componentToDestination = new Dictionary<PositionableComponent, Point>();
+        _outOfBounds = new Dictionary<PositionableComponent, Point>();
+        _free = new HashSet<PositionableComponent>();
     }
 
-    protected internal void Move(LocalizableComponent comp, Direction dir)
+    protected internal void Move(PositionableComponent comp, Direction dir)
     {
         var destination = dir.Next(comp._position);
         if (_ground.Contains(destination))
         {
             _componentToDestination.Add(comp, destination);
-            if (_destinationToComponent.TryGetValue(destination, out LocalizableComponent? value))
+            if (_destinationToComponent.TryGetValue(destination, out PositionableComponent? value))
             {
                 var other = value;
                 other._dependency.Add(comp);
@@ -71,13 +71,13 @@ public class PositionSystem : SystemBase<LocalizableComponent>
     }
 
     private void MoveWithDependencies(){
-        var collision = new HashSet<LocalizableComponent>();
+        var collision = new HashSet<PositionableComponent>();
         while (_free.Count > 0)
         {
             var comp = _free.First();
             _free.Remove(comp);
             var dest = _componentToDestination[comp];
-            if (_destinationToComponent.TryGetValue(dest, out LocalizableComponent? value))
+            if (_destinationToComponent.TryGetValue(dest, out PositionableComponent? value))
             {
                 var other = value;
                 other._dependency.Add(comp);
@@ -98,7 +98,7 @@ public class PositionSystem : SystemBase<LocalizableComponent>
         }
     }
 
-    private void FireMove(LocalizableComponent comp, Point dest)
+    private void FireMove(PositionableComponent comp, Point dest)
     {
         _destinationToComponent.Remove(comp._position);
         _destinationToComponent.Add(dest, comp);
@@ -108,7 +108,7 @@ public class PositionSystem : SystemBase<LocalizableComponent>
         comp.OnMove?.Invoke(source, dest);
     }
 
-    internal override void AddComponent(LocalizableComponent component){
+    internal override void AddComponent(PositionableComponent component){
         _destinationToComponent.Add(component._position, component);
     }
 }

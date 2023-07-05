@@ -15,7 +15,7 @@ public class MoveableComponent : Component
     protected internal Vector2 _destination;
     protected internal Vector2 _velocity;
     protected int _framesToMove;
-    protected LocalizableComponent _positionComponent;
+    protected PositionableComponent _positionComponent;
 
     public int FramesToMove
     {
@@ -28,7 +28,7 @@ public class MoveableComponent : Component
         }
     }
 
-    public MoveableComponent(MotionSystem motionSystem, LocalizableComponent comp)
+    public MoveableComponent(MotionSystem motionSystem, PositionableComponent comp)
     {
         _position = new Vector2();
         _destination = new Vector2();

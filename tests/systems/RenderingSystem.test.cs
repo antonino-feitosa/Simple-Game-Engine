@@ -3,13 +3,13 @@ using static SimpleGameEngine.Test.TestRunner;
 namespace SimpleGameEngine.Test;
 
 [TestClass]
-public class CameraSystemTest
+public class RenderingSystemTest
 {
     public void GivenRenderable_whenRenderAtBounds_thenCallImageRender()
     {
         var cameraPosition = new Point(2, 3);
         var cameraDimension = new Dimension(2, 2);
-        var system = new CameraSystem(cameraPosition, cameraDimension);
+        var system = new RenderingSystem(cameraPosition, cameraDimension);
         var called = false;
         var calledPosition = new Point(-1, -1);
         var image = new IImageStub()
@@ -31,7 +31,7 @@ public class CameraSystemTest
     {
         var cameraPosition = new Point(2, 3);
         var cameraDimension = new Dimension(2, 2);
-        var system = new CameraSystem(cameraPosition, cameraDimension);
+        var system = new RenderingSystem(cameraPosition, cameraDimension);
         var called = false;
         var calledPosition = new Point(-1, -1);
         var image = new IImageStub()
@@ -53,7 +53,7 @@ public class CameraSystemTest
     {
         var cameraPosition = new Point(2, 3);
         var cameraDimension = new Dimension(2, 2);
-        var system = new CameraSystem(cameraPosition, cameraDimension);
+        var system = new RenderingSystem(cameraPosition, cameraDimension);
         var called = false;
         var image = new IImageStub()
         {
@@ -72,7 +72,7 @@ public class CameraSystemTest
     {
         var cameraPosition = new Point(2, 3);
         var cameraDimension = new Dimension(2, 2);
-        var system = new CameraSystem(cameraPosition, cameraDimension);
+        var system = new RenderingSystem(cameraPosition, cameraDimension);
         var called = false;
         var image = new IImageStub()
         {
@@ -91,7 +91,7 @@ public class CameraSystemTest
     {
         var cameraPosition = new Point(2, 3);
         var cameraDimension = new Dimension(2, 2);
-        var system = new CameraSystem(cameraPosition, cameraDimension);
+        var system = new RenderingSystem(cameraPosition, cameraDimension);
         var called = new List<int>();
         var firstImage = new IImageStub()
         {
@@ -118,7 +118,7 @@ public class CameraSystemTest
     {
         var cameraPosition = new Point(2, 3);
         var cameraDimension = new Dimension(3, 6);
-        var system = new CameraSystem(cameraPosition, cameraDimension);
+        var system = new RenderingSystem(cameraPosition, cameraDimension);
         var called = false;
         var calledPosition = new Point(-1, -1);
         var image = new IImageStub()
@@ -140,7 +140,7 @@ public class CameraSystemTest
     {
         var cameraPosition = new Point(2, 3);
         var cameraDimension = new Dimension(3, 6);
-        var system = new CameraSystem(cameraPosition, cameraDimension);
+        var system = new RenderingSystem(cameraPosition, cameraDimension);
         var called = false;
         var calledPosition = new Point(-1, -1);
         var image = new IImageStub()
@@ -162,7 +162,7 @@ public class CameraSystemTest
     {
         var cameraPosition = new Point(2, 3);
         var cameraDimension = new Dimension(3, 6);
-        var system = new CameraSystem(cameraPosition, cameraDimension);
+        var system = new RenderingSystem(cameraPosition, cameraDimension);
         var called = false;
         var calledPosition = new Point(-1, -1);
         var image = new IImageStub()
@@ -184,7 +184,7 @@ public class CameraSystemTest
     {
         var cameraPosition = new Point(2, 3);
         var cameraDimension = new Dimension(3, 6);
-        var system = new CameraSystem(cameraPosition, cameraDimension);
+        var system = new RenderingSystem(cameraPosition, cameraDimension);
         var called = false;
         var calledPosition = new Point(-1, -1);
         var image = new IImageStub()
