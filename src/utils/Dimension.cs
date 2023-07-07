@@ -11,6 +11,7 @@ public class Dimension
         Width = width;
         Height = height;
     }
+    public Dimension(Dimension dimension) : this(dimension.Width, dimension.Height) { }
 
     public int Width
     {

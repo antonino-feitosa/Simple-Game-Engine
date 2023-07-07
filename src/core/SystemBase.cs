@@ -11,6 +11,7 @@ public class SystemBase <TComponent> : ISystem where TComponent : Component {
     {
         _components = new HashSet<TComponent>();
     }
+    public virtual void Start(IDevice device){}
     public virtual void Process(){}
     internal virtual void AddComponent(TComponent component){
         if(component is TComponent derived){

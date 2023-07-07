@@ -11,6 +11,8 @@ public class Point
         X = x;
         Y = y;
     }
+    public Point(Point point) : this(point.X, point.Y) { }
+
     public void Copy(Point point) { X = point.X; Y = point.Y; }
     public override bool Equals(object? obj) { return obj is Point p ? p.X == X && p.Y == Y : base.Equals(obj); }
     public override int GetHashCode() { return HashCode.Combine(X, Y); }
