@@ -21,4 +21,8 @@ public class SystemBase <TComponent> : ISystem where TComponent : Component {
             component.OnDisable += (entity) => _components.Remove(derived);
         }
     }
+
+    internal virtual void RemoveComponent(TComponent component){
+        _components.Remove(component);
+    }
 }

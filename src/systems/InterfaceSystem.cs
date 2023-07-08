@@ -1,9 +1,6 @@
 
 namespace SimpleGameEngine;
 
-/// <summary>
-/// This system performs the animation of the <c>AnimatableComponent</c>.<see cref="AnimatableComponent"/>
-/// </summary>
 public class InterfaceSystem : SystemBase<InterfaciableComponent>
 {
     private InterfaciableComponent? _selectedMouseDown;

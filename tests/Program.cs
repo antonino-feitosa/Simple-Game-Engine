@@ -19,6 +19,9 @@ public class TestRunner
 {
     public static readonly bool EXIT_ON_ERROR = false;
 
+    private static int _countFail = 0;
+    private static int _countSuccess = 0;
+
     public static void Main()
     {
         Console.WriteLine("Starting Tests...");
@@ -29,7 +32,13 @@ public class TestRunner
         Console.WriteLine("Running Tests...");
         Run(classes);
         Console.WriteLine("End of Tests!");
-
+        Console.WriteLine(String.Format("\t{0} Classes, {1} Tests: ", classes.Count, _countFail + _countSuccess));
+        var defaultColor = Console.ForegroundColor;
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.Error.WriteLine("\t\t{0} Success", _countSuccess);
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.Error.WriteLine("\t\t{0} Fails", _countFail);
+        Console.ForegroundColor = defaultColor;
         Environment.Exit(0);
     }
 
@@ -54,6 +63,7 @@ public class TestRunner
                 var testInstance = Activator.CreateInstance(type); // constructor is called for each test
                 method.Invoke(testInstance, null);
                 Console.WriteLine(" OK!");
+                _countSuccess++;
             }
             catch (Exception e)
             {
@@ -62,6 +72,7 @@ public class TestRunner
                 Console.Error.WriteLine(" Fail");
                 Console.Error.WriteLine((e.InnerException ?? e).ToString());
                 Console.ForegroundColor = defaultColor;
+                _countFail++;
             }
         }
     }
@@ -88,7 +99,7 @@ public class TestRunner
     }
 
     [StackTraceHidden]
-    public static void AssertEquals(object? actual, object? expected, string message = "")
+    public static void AssertEquals<T>(T? actual, T? expected, string message = "")
     {
         bool failByNull = expected is null && actual is not null;
         bool failByDiff = expected is not null && !expected.Equals(actual);
