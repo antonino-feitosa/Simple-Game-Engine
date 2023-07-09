@@ -19,7 +19,7 @@ public class TestRunner
 {
     public static readonly bool EXIT_ON_ERROR = false;
 
-    private static int _countFail = 0;
+    private static int _countFailures = 0;
     private static int _countSuccess = 0;
 
     public static void Main()
@@ -32,12 +32,12 @@ public class TestRunner
         Console.WriteLine("Running Tests...");
         Run(classes);
         Console.WriteLine("End of Tests!");
-        Console.WriteLine(String.Format("\t{0} Classes, {1} Tests: ", classes.Count, _countFail + _countSuccess));
+        Console.WriteLine(String.Format("\t{0} Classes, {1} Tests: ", classes.Count, _countFailures + _countSuccess));
         var defaultColor = Console.ForegroundColor;
         Console.ForegroundColor = ConsoleColor.Green;
         Console.Error.WriteLine("\t\t{0} Success", _countSuccess);
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.Error.WriteLine("\t\t{0} Fails", _countFail);
+        Console.Error.WriteLine("\t\t{0} Failures", _countFailures);
         Console.ForegroundColor = defaultColor;
         Environment.Exit(0);
     }
@@ -72,7 +72,7 @@ public class TestRunner
                 Console.Error.WriteLine(" Fail");
                 Console.Error.WriteLine((e.InnerException ?? e).ToString());
                 Console.ForegroundColor = defaultColor;
-                _countFail++;
+                _countFailures++;
             }
         }
     }

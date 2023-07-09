@@ -6,60 +6,46 @@ public class InterfaceSystem : SystemBase<InterfaciableComponent>
     private InterfaciableComponent? _selectedMouseDown;
     private InterfaciableComponent? _selectedMouseUp;
 
-    private enum State { WaitingMouseDown, FireMouseDown, WaitingMouseUp, FireMouseUp, FireReset };
-    private State _state;
+    private bool _fireReset;
+    private bool _fireMouseUp;
+    private bool _fireMouseDown;
 
-    public InterfaceSystem()
-    {
-        _state = State.WaitingMouseDown;
-    }
     public override void Start(IDevice device)
     {
-        _state = State.WaitingMouseDown;
+        _fireReset = false;
+        _fireMouseUp = false;
+        _fireMouseDown = false;
         device.RegisterMouseDown(MouseButton.Left, OnMouseDown);
         device.RegisterMouseUp(MouseButton.Left, OnMouseUp);
     }
     public override void Process()
     {
-        switch (_state)
-        {
-            case State.FireMouseDown:
-                _selectedMouseDown?.OnMouseDown?.Invoke();
-                _state = State.WaitingMouseUp;
-                break;
-            case State.FireMouseUp:
-                if (_selectedMouseDown == _selectedMouseUp)
-                    _selectedMouseUp?.OnMouseUp?.Invoke();
-                else
-                    _selectedMouseDown?.OnReset?.Invoke();
-                _selectedMouseDown = null;
-                _selectedMouseUp = null;
-                _state = State.WaitingMouseDown;
-                break;
-            case State.FireReset:
-                _selectedMouseDown?.OnReset?.Invoke();
-                _selectedMouseDown = null;
-                _selectedMouseUp = null;
-                break;
+        if(_fireMouseDown){
+            _selectedMouseDown?.OnMouseDown?.Invoke();
+            _fireMouseDown = false;
+        }
+        if(_fireMouseUp){
+            _selectedMouseUp?.OnMouseUp?.Invoke();
+            _fireMouseDown = false;
+            _selectedMouseUp = null;
+        }
+        if(_fireReset){
+            _selectedMouseDown?.OnReset?.Invoke();
+            _selectedMouseDown = null;
+            _selectedMouseUp = null;
         }
     }
 
     protected void OnMouseDown(Point point)
     {
-        _selectedMouseDown = Components.Where(c => c.Bounds.Contains(point)).First();
-        if (_state == State.WaitingMouseDown && _selectedMouseDown is not null)
-            _state = State.FireMouseDown;
+        _selectedMouseDown = Components.FirstOrDefault(c => c.Bounds.Contains(point));
+        _fireMouseDown = _selectedMouseDown is not null;
     }
 
     protected void OnMouseUp(Point point)
     {
-        _selectedMouseUp = Components.Where(c => c.Bounds.Contains(point)).First();
-        if (_state == State.WaitingMouseUp)
-        {
-            if (_selectedMouseUp is not null)
-                _state = State.FireMouseUp;
-            else
-                _state = State.FireReset;
-        }
+        _selectedMouseUp = Components.FirstOrDefault(c => c.Bounds.Contains(point));
+        _fireMouseUp = _selectedMouseUp is not null && _selectedMouseDown == _selectedMouseUp;
+        _fireReset = _selectedMouseDown is not null && _selectedMouseDown != _selectedMouseUp;
     }
 }
