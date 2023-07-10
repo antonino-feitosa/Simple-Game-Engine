@@ -18,8 +18,8 @@ public class Vector2
         X += vet.X;
         Y += vet.Y;
     }
-    protected internal bool IsCloseEnough(Vector2 vet) { return Math.Abs(X - vet.X) + Math.Abs(Y - vet.Y) <= CLOSE_ENOUGH; }
-    protected internal bool IsZero() { return X + Y == 0; }
+    public bool IsCloseEnough(Vector2 vet) { return Math.Abs(X - vet.X) + Math.Abs(Y - vet.Y) <= CLOSE_ENOUGH; }
+    public bool IsZero() { return X + Y == 0; }
     public override bool Equals(object? obj) { return obj is Vector2 vet ? vet.X == X && vet.Y == Y : base.Equals(obj); }
     public override int GetHashCode() { return HashCode.Combine(X, Y); }
     public override string ToString() { return String.Format("Vector2({0}, {1})", X, Y); }
