@@ -2,13 +2,13 @@
 namespace SimpleGameEngine;
 
 /// <summary>
-/// This system performs a continuous moviment between two points of a <c>MoveableComponent</c><see cref="MoveableComponent"/>
+/// This system performs a continuous moviment between two points of a <c>MoveableComponent</c><see cref="MovableComponent"/>
 /// </summary>
-public class MotionSystem : SystemBase<MoveableComponent>
+public class MotionSystem : SystemBase<MovableComponent>
 {
     public MotionSystem()
     {
-        _components = new List<MoveableComponent>();
+        _components = new List<MovableComponent>();
     }
 
     public override void Process()
@@ -21,7 +21,7 @@ public class MotionSystem : SystemBase<MoveableComponent>
                 if (!comp._moving)
                 {
                     comp._moving = true;
-                    comp.OnStartMove?.Invoke(comp._position);
+                    comp.OnMoveStart?.Invoke(comp._position);
                 }
             }
             if (comp._moving)
@@ -29,7 +29,7 @@ public class MotionSystem : SystemBase<MoveableComponent>
                 if (comp._position.IsCloseEnough(comp._destination))
                 {
                     comp._moving = false;
-                    comp.OnEndMove?.Invoke(comp._position);
+                    comp.OnMoveEnd?.Invoke(comp._position);
                 }
                 else
                 {
@@ -39,7 +39,7 @@ public class MotionSystem : SystemBase<MoveableComponent>
             }
             else
             {
-                comp.OnIdle?.Invoke(comp._position);
+                comp.OnMoveIdle?.Invoke(comp._position);
             }
         }
     }

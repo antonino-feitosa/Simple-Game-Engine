@@ -130,6 +130,32 @@ public class TestRunner
             // use relative error
             isEquals = diff / (absA + absB) < relativeEpsilon;
         }
-        Assert(isEquals, message == "" ? "Result: <" + result + "> Expected: <" + expected + ">!" : message);
+        Assert(isEquals, message + " Expected: <" + expected + ">, Actual: <" + result + ">.");
+    }
+
+    [StackTraceHidden]
+    public static void AssertPrecisionEquals(double result, double expected, string message = "", double relativeEpsilon = 0.01f)
+    {
+        double absA = Math.Abs(result);
+        double absB = Math.Abs(expected);
+        double diff = Math.Abs(result - expected);
+
+        bool isEquals;
+        if (result == expected)
+        {
+            // shortcut, handles infinities
+            isEquals = true;
+        }
+        else if (result == 0 || expected == 0 || absA + absB < double.MinValue)
+        {
+            // relative error is less meaningful here
+            isEquals = diff < (relativeEpsilon * double.MinValue);
+        }
+        else
+        {
+            // use relative error
+            isEquals = diff / (absA + absB) < relativeEpsilon;
+        }
+        Assert(isEquals, message + " Expected: <" + expected + ">, Actual: <" + result + ">.");
     }
 }

@@ -12,6 +12,7 @@ public class Vector2
         X = x;
         Y = y;
     }
+    public Vector2(Vector2 other) : this(other.X, other.Y) { }
     public void Sum(Vector2 vet)
     {
         X += vet.X;

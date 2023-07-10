@@ -2,12 +2,12 @@
 namespace SimpleGameEngine;
 
 
-public class MoveableComponent : Component
-{   
-    public Action<Vector2>? OnStartMove;
-    public Action<Vector2>? OnEndMove;
+public class MovableComponent : Component
+{
+    public Action<Vector2>? OnMoveStart;
+    public Action<Vector2>? OnMoveEnd;
     public Action<Vector2>? OnMoveIncrement;
-    public Action<Vector2>? OnIdle;
+    public Action<Vector2>? OnMoveIdle;
 
     protected internal bool _fired;
     protected internal bool _moving;
@@ -28,7 +28,9 @@ public class MoveableComponent : Component
         }
     }
 
-    public MoveableComponent(MotionSystem motionSystem, PositionableComponent comp)
+    public Vector2 Position { get => new(_position); }
+
+    public MovableComponent(MotionSystem motionSystem, PositionableComponent comp)
     {
         _position = new Vector2();
         _destination = new Vector2();
@@ -51,6 +53,6 @@ public class MoveableComponent : Component
 
     public override string ToString()
     {
-        return "MotionComponent:" + _positionComponent.ToString();
+        return "MovableComponent:" + _positionComponent.ToString();
     }
 }
