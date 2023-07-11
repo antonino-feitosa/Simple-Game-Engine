@@ -5,7 +5,7 @@ namespace SimpleGameEngine;
 
 public class DeviceHelper
 {
-    private Game _game;
+    private Game? _game;
     private bool _isFullScreen;
     private int _framesPerSecond;
     private readonly Dimension _dimension;
@@ -35,7 +35,7 @@ public class DeviceHelper
 
     public Game Game
     {
-        get { return _game; }
+        get { return _game ?? throw new ArgumentException("The game was not set!"); }
         set
         {
             _onMouseWheel.Clear();
@@ -47,9 +47,8 @@ public class DeviceHelper
         }
     }
 
-    public DeviceHelper(Game game)
+    public DeviceHelper()
     {
-        _game = game;
         _isFullScreen = false;
         _framesPerSecond = 32;
         _dimension = new Dimension(800, 600);

@@ -3,6 +3,8 @@ namespace SimpleGameEngine;
 
 public class Game
 {
+    public Action<IDevice>? OnLoad;
+
     protected LinkedList<ISystem> _systems;
     protected LinkedList<Entity> _entities;
     protected LinkedList<Entity> _entitiesToDestroy;
@@ -16,8 +18,6 @@ public class Game
         _entitiesReferences = new Dictionary<Entity, LinkedListNode<Entity>>();
     }
 
-    public virtual void Configure(IDevice device){}
-
     internal void AddEntity(Entity entity)
     {
         var node = _entities.AddLast(entity);
@@ -30,11 +30,11 @@ public class Game
             _entitiesToDestroy.AddLast(entity);
     }
 
-    internal void AttachSystem(ISystem system)
+    public void AttachSystem(ISystem system)
     {
         _systems.AddLast(system);
     }
-    // TODO start with device. Changes between games
+    
     public void Start()
     {
         foreach (var entity in _entities) { entity.FireStart(); }

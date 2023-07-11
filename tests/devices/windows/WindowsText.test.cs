@@ -8,8 +8,7 @@ public class WindowsTextTest : ITextTest
     public static WindowsDevice CreateDevice()
     {
         var form = new DoubleBufferedForm();
-        var game = new Game();
-        var helper = new DeviceHelper(game);
+        var helper = new DeviceHelper();
         _device = new WindowsDevice(form, helper);
         return _device;
     }

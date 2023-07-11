@@ -12,7 +12,16 @@ public class WindowsDevice : IDevice
     private bool _disposed;
 
 
-    public Game Game { get => _device.Game; set => _device.Game = value; }
+    public Game Game
+    {
+        get => _device.Game;
+        set
+        {
+            _device.Game = value;
+            _device.Game.OnLoad?.Invoke(this);
+            _device.Game.Start();
+        }
+    }
     public Point MousePosition { get => _device.MousePosition; }
     public Dimension Dimension { get => _device.Dimension; set => _device.Dimension = value; }
     public int FramesPerSecond

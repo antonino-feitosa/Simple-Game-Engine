@@ -11,7 +11,7 @@ public class MainScreen : Game {
     public Entity CreateNewGameButton(){
         var newGameButton = new Entity(this);
 
-        var foreground = new RenderableComponent();
+        //var foreground = new RenderableComponent();
 
         return newGameButton;
     }

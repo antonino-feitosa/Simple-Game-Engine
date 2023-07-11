@@ -53,6 +53,7 @@ public interface IImage : IResource
 
 public interface IDevice : IDisposable
 {
+    // set must clear registed events and call game start and onload
     public Game Game { get; set; }
     public Dimension Dimension { get; }
     public Point MousePosition { get; }

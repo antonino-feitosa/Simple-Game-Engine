@@ -18,8 +18,9 @@ public class IDeviceTest
 
         try
         {
-            var game = device.Game;
+            var game = new Game();
             device.Game = game;
+            device.Game = device.Game;
         }
         catch
         {
@@ -102,6 +103,29 @@ public class IDeviceTest
         }
 
         Assert(capturedException == false);
+    }
+
+    public void GivenDevice_whenSetGame_thenCallGameStart()
+    {
+        var called = false;
+        var game = new Game();
+        var entity = new Entity(game);
+        var component = new Component { OnStart = (entity) => called = true };
+        entity.AttachComponent(component);
+
+        device.Game = game;
+
+        AssertTrue(called, "The device must call the game start when set!");
+    }
+
+    public void GivenDevice_whenSetGame_thenFireOnLoad()
+    {
+        var called = false;
+        var game = new Game(){OnLoad = (device) => called = true };
+
+        device.Game = game;
+
+        AssertTrue(called, "The device must fire the event OnLoad at game when set!");
     }
 
     public void GivenValidPath_whenMakeImage_thenDoesNotThrowsFileNotFoundException()

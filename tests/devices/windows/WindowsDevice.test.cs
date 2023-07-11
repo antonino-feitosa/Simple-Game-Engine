@@ -7,8 +7,7 @@ public class WindowsDeviceTest : IDeviceTest
     public static WindowsDevice CreateDevice()
     {
         var form = new DoubleBufferedForm();
-        var game = new Game();
-        var helper = new DeviceHelper(game);
+        var helper = new DeviceHelper();
         return new WindowsDevice(form, helper);
     }
 

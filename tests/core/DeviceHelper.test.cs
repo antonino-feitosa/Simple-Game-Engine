@@ -10,8 +10,7 @@ public class DeviceHelperTest
     // The frames per second must be positive
     public void GivenDeviceHelper_WhenFramesPerSecondIsSetToNegative_thenThrowsArgumentOutOfRangeException()
     {
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy) { FramesPerSecond = 32 };
+        var device = new DeviceHelper() { FramesPerSecond = 32 };
         var capturedException = false;
 
         try
@@ -28,8 +27,7 @@ public class DeviceHelperTest
 
     public void GivenDeviceHelper_whenFramesPerSecondIsSetToZero_thenThrowsArgumentOutOfRangeException()
     {
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy) { FramesPerSecond = 32 };
+                var device = new DeviceHelper() { FramesPerSecond = 32 };
         var capturedException = false;
 
         try
@@ -46,8 +44,7 @@ public class DeviceHelperTest
 
     public void GivenDeviceHelper_whenFramesPerSecondSetThrowsArgumentOutOfRangeException_thenFramesPerSecondNotChange()
     {
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy) { FramesPerSecond = 32 };
+                var device = new DeviceHelper() { FramesPerSecond = 32 };
 
         try
         {
@@ -61,8 +58,7 @@ public class DeviceHelperTest
 
     public void GivenDeviceHelper_whenFramesPerSecondIsSetTo64_thenFramesPerSecondIs64()
     {
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy) { FramesPerSecond = 64 };
+                var device = new DeviceHelper() { FramesPerSecond = 64 };
 
         device.FramesPerSecond = 64;
         var frames = device.FramesPerSecond;
@@ -74,8 +70,7 @@ public class DeviceHelperTest
 
     public void GivenDimension800x600_whenGetDimensionWidthIsChanged_thenDeviceDimensionWidthIsNotChanged()
     {
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy) { Dimension = new Dimension(800, 600) };
+                var device = new DeviceHelper() { Dimension = new Dimension(800, 600) };
 
         device.Dimension.Width = 100;
         var width = device.Dimension.Width;
@@ -85,8 +80,7 @@ public class DeviceHelperTest
 
     public void GivenDimension800x600_whenGetDimensionWidthIsChanged_thenDeviceDimensionHeightIsNotChanged()
     {
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy) { Dimension = new Dimension(800, 600) };
+                var device = new DeviceHelper() { Dimension = new Dimension(800, 600) };
 
         device.Dimension.Width = 100;
         var height = device.Dimension.Height;
@@ -96,8 +90,7 @@ public class DeviceHelperTest
 
     public void GivenDimension800x600_whenGetDimensionHeightIsChanged_thenDeviceDimensionHeightIsNotChanged()
     {
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy) { Dimension = new Dimension(800, 600) };
+                var device = new DeviceHelper() { Dimension = new Dimension(800, 600) };
 
         device.Dimension.Height = 100;
         var height = device.Dimension.Height;
@@ -107,8 +100,7 @@ public class DeviceHelperTest
 
     public void GivenDimension800x600_whenGetDimensionHeightIsChanged_thenDeviceDimensionWidthIsNotChanged()
     {
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy) { Dimension = new Dimension(800, 600) };
+                var device = new DeviceHelper() { Dimension = new Dimension(800, 600) };
 
         device.Dimension.Height = 100;
         var width = device.Dimension.Width;
@@ -119,8 +111,7 @@ public class DeviceHelperTest
     public void GivenDeviceHelper_whenSetDimensionAandAWidthIsChanged_thenDeviceDimensionWidthIsNotChanged()
     {
         var dimension = new Dimension(800, 600);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
 
         device.Dimension = dimension;
         dimension.Width = 100;
@@ -132,8 +123,7 @@ public class DeviceHelperTest
     public void GivenDeviceHelper_whenSetDimensionAandAWidthIsChanged_thenDeviceDimensionHeightIsNotChanged()
     {
         var dimension = new Dimension(800, 600);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
 
         device.Dimension = dimension;
         dimension.Width = 100;
@@ -145,8 +135,7 @@ public class DeviceHelperTest
     public void GivenDeviceHelper_whenSetDimensionAandAHeightIsChanged_thenDeviceDimensionHeightIsNotChanged()
     {
         var dimension = new Dimension(800, 600);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
 
         device.Dimension = dimension;
         dimension.Height = 100;
@@ -158,8 +147,7 @@ public class DeviceHelperTest
     public void GivenDeviceHelper_whenSetDimensionAandAHeightIsChanged_thenDeviceDimensionWidthIsNotChanged()
     {
         var dimension = new Dimension(800, 600);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
 
         device.Dimension = dimension;
         dimension.Height = 100;
@@ -172,8 +160,7 @@ public class DeviceHelperTest
 
     public void GivenMousePosition10x20_whenGetMousePositionXIsChanged_thenDeviceMousePositionXIsNotChanged()
     {
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy) { MousePosition = new Point(10, 20) };
+                var device = new DeviceHelper() { MousePosition = new Point(10, 20) };
 
         device.MousePosition.X = 0;
         var x = device.MousePosition.X;
@@ -183,8 +170,7 @@ public class DeviceHelperTest
 
     public void GivenMousePosition10x20_whenGetMousePositionXIsChanged_thenDeviceMousePositionYIsNotChanged()
     {
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy) { MousePosition = new Point(10, 20) };
+                var device = new DeviceHelper() { MousePosition = new Point(10, 20) };
 
         device.MousePosition.X = 0;
         var y = device.MousePosition.Y;
@@ -194,8 +180,7 @@ public class DeviceHelperTest
 
     public void GivenMousePosition10x20_whenGetMousePositionYIsChanged_thenDeviceMousePositionYIsNotChanged()
     {
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy) { MousePosition = new Point(10, 20) };
+                var device = new DeviceHelper() { MousePosition = new Point(10, 20) };
 
         device.MousePosition.Y = 0;
         var y = device.MousePosition.Y;
@@ -205,8 +190,7 @@ public class DeviceHelperTest
 
     public void GivenMousePosition10x20_whenGetMousePositionYIsChanged_thenDeviceMousePositionXIsNotChanged()
     {
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy) { MousePosition = new Point(10, 20) };
+                var device = new DeviceHelper() { MousePosition = new Point(10, 20) };
 
         device.MousePosition.Y = 0;
         var x = device.MousePosition.X;
@@ -217,8 +201,7 @@ public class DeviceHelperTest
     public void GivenDeviceHelper_whenSetMousePositionAandAXIsChanged_thenDeviceMousePositionXIsNotChanged()
     {
         var point = new Point(10, 20);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
 
         device.MousePosition = point;
         point.X = 0;
@@ -230,8 +213,7 @@ public class DeviceHelperTest
     public void GivenDeviceHelper_whenSetMousePositionAandAXIsChanged_thenDeviceMousePositionYIsNotChanged()
     {
         var point = new Point(10, 20);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
 
         device.MousePosition = point;
         point.X = 0;
@@ -243,8 +225,7 @@ public class DeviceHelperTest
     public void GivenDeviceHelper_whenSetMousePositionAandAYIsChanged_thenDeviceMousePositionYIsNotChanged()
     {
         var point = new Point(10, 20);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
 
         device.MousePosition = point;
         point.Y = 0;
@@ -256,8 +237,7 @@ public class DeviceHelperTest
     public void GivenDeviceHelper_whenSetMousePositionAandAYIsChanged_thenDeviceMousePositionXIsNotChanged()
     {
         var point = new Point(10, 20);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
 
         device.MousePosition = point;
         point.Y = 0;
@@ -272,8 +252,7 @@ public class DeviceHelperTest
     {
         var numOfCalls = 0;
         var loader = (string path) => { numOfCalls++; return new IResourceStub(); };
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
 
         device.LoadResource<IResourceStub>("", loader);
 
@@ -284,8 +263,7 @@ public class DeviceHelperTest
     {
         var numOfCalls = 0;
         var loader = (string path) => { numOfCalls++; return new IResourceStub(); };
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
 
         device.LoadResource<IResourceStub>("", loader);
         device.LoadResource<IResourceStub>("", loader);
@@ -297,8 +275,7 @@ public class DeviceHelperTest
     {
         var calledPath = "";
         var loader = (string path) => { calledPath = path; return new IResourceStub(); };
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
 
         device.LoadResource<IResourceStub>("X", loader);
         device.LoadResource<IResourceStub>("Y", loader);
@@ -309,8 +286,7 @@ public class DeviceHelperTest
     public void GivenNoResourceLoaded_whenInvalidResourceIsLoaded_thenFileNotFoundExceptionIsThrowed()
     {
         var loader = (string path) => { if (path == "valid") return new IResourceStub(); else throw new FileNotFoundException(); };
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         var capturedException = false;
 
         try
@@ -332,8 +308,7 @@ public class DeviceHelperTest
     {
         var calledWithShift = false;
         void command(KeyboardModifier mod) => calledWithShift = mod.HasFlag(KeyboardModifier.Shift);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyUp((int)'a', command);
 
         device.FireKeyUp((int)'a', KeyboardModifier.Shift);
@@ -346,8 +321,7 @@ public class DeviceHelperTest
         var shiftCtrl = KeyboardModifier.Shift | KeyboardModifier.Ctrl;
         var calledWithShift = false;
         void command(KeyboardModifier mod) => calledWithShift = mod.HasFlag(shiftCtrl);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyUp((int)'a', command);
 
         device.FireKeyUp((int)'a', shiftCtrl);
@@ -360,8 +334,7 @@ public class DeviceHelperTest
         var shiftCtrlAlt = KeyboardModifier.Shift | KeyboardModifier.Ctrl | KeyboardModifier.Alt;
         var calledWithShift = false;
         void command(KeyboardModifier mod) => calledWithShift = mod.HasFlag(shiftCtrlAlt);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyUp((int)'a', command);
 
         device.FireKeyUp((int)'a', shiftCtrlAlt);
@@ -373,8 +346,7 @@ public class DeviceHelperTest
     {
         var calledWithCtrl = false;
         void command(KeyboardModifier mod) => calledWithCtrl = mod.HasFlag(KeyboardModifier.Ctrl);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyUp((int)'a', command);
 
         device.FireKeyUp((int)'a', KeyboardModifier.Ctrl);
@@ -387,8 +359,7 @@ public class DeviceHelperTest
         var shiftCtrlAlt = KeyboardModifier.Ctrl | KeyboardModifier.Alt;
         var calledWithCtrl = false;
         void command(KeyboardModifier mod) => calledWithCtrl = mod.HasFlag(shiftCtrlAlt);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyUp((int)'a', command);
 
         device.FireKeyUp((int)'a', shiftCtrlAlt);
@@ -400,8 +371,7 @@ public class DeviceHelperTest
     {
         var calledWithAlt = false;
         void command(KeyboardModifier mod) => calledWithAlt = mod.HasFlag(KeyboardModifier.Alt);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyUp((int)'a', command);
 
         device.FireKeyUp((int)'a', KeyboardModifier.Alt);
@@ -415,8 +385,7 @@ public class DeviceHelperTest
     {
         var called = false;
         void command(KeyboardModifier mod) => called = true;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyUp((int)'a', command);
 
         device.FireKeyUp((int)'a', KeyboardModifier.None);
@@ -429,8 +398,7 @@ public class DeviceHelperTest
         var numOfCalls = 0;
         void first_command(KeyboardModifier mod) => numOfCalls++;
         void second_command(KeyboardModifier mod) => numOfCalls++;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyUp('a', first_command);
         device.RegisterKeyUp('a', second_command);
 
@@ -443,8 +411,7 @@ public class DeviceHelperTest
     {
         var called = false;
         void command(KeyboardModifier mod) => called = true;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyUp((int)'a', command);
 
         device.FireKeyUp((int)'b', KeyboardModifier.None);
@@ -457,8 +424,7 @@ public class DeviceHelperTest
         var called = false;
         void first_command(KeyboardModifier mod) => called = true;
         void second_command(KeyboardModifier mod) { }
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyUp((int)'a', first_command);
         device.RegisterKeyUp((int)'b', second_command);
 
@@ -472,8 +438,7 @@ public class DeviceHelperTest
         var called = false;
         void first_command(KeyboardModifier mod) { }
         void second_command(KeyboardModifier mod) => called = true;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyUp((int)'a', first_command);
         device.RegisterKeyUp((int)'b', second_command);
 
@@ -487,8 +452,7 @@ public class DeviceHelperTest
         var called = false;
         void first_command(KeyboardModifier mod) { }
         void second_command(KeyboardModifier mod) => called = true;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyUp((int)'a', first_command);
         device.RegisterKeyUp((int)'b', second_command);
 
@@ -502,8 +466,7 @@ public class DeviceHelperTest
         var called = false;
         void first_command(KeyboardModifier mod) => called = true;
         void second_command(KeyboardModifier mod) { };
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyUp((int)'a', first_command);
         device.RegisterKeyUp((int)'b', second_command);
 
@@ -520,8 +483,7 @@ public class DeviceHelperTest
     {
         var calledWithShift = false;
         void command(KeyboardModifier mod) => calledWithShift = mod.HasFlag(KeyboardModifier.Shift);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyDown((int)'a', command);
 
         device.FireKeyDown((int)'a', KeyboardModifier.Shift);
@@ -534,8 +496,7 @@ public class DeviceHelperTest
         var shiftCtrl = KeyboardModifier.Shift | KeyboardModifier.Ctrl;
         var calledWithShift = false;
         void command(KeyboardModifier mod) => calledWithShift = mod.HasFlag(shiftCtrl);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyDown((int)'a', command);
 
         device.FireKeyDown((int)'a', shiftCtrl);
@@ -548,8 +509,7 @@ public class DeviceHelperTest
         var shiftCtrlAlt = KeyboardModifier.Shift | KeyboardModifier.Ctrl | KeyboardModifier.Alt;
         var calledWithShift = false;
         void command(KeyboardModifier mod) => calledWithShift = mod.HasFlag(shiftCtrlAlt);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyDown((int)'a', command);
 
         device.FireKeyDown((int)'a', shiftCtrlAlt);
@@ -561,8 +521,7 @@ public class DeviceHelperTest
     {
         var calledWithCtrl = false;
         void command(KeyboardModifier mod) => calledWithCtrl = mod.HasFlag(KeyboardModifier.Ctrl);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyDown((int)'a', command);
 
         device.FireKeyDown((int)'a', KeyboardModifier.Ctrl);
@@ -575,8 +534,7 @@ public class DeviceHelperTest
         var shiftCtrlAlt = KeyboardModifier.Ctrl | KeyboardModifier.Alt;
         var calledWithCtrl = false;
         void command(KeyboardModifier mod) => calledWithCtrl = mod.HasFlag(shiftCtrlAlt);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyDown((int)'a', command);
 
         device.FireKeyDown((int)'a', shiftCtrlAlt);
@@ -588,8 +546,7 @@ public class DeviceHelperTest
     {
         var calledWithAlt = false;
         void command(KeyboardModifier mod) => calledWithAlt = mod.HasFlag(KeyboardModifier.Alt);
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyDown((int)'a', command);
 
         device.FireKeyDown((int)'a', KeyboardModifier.Alt);
@@ -603,8 +560,7 @@ public class DeviceHelperTest
     {
         var called = false;
         void command(KeyboardModifier mod) => called = true;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyDown((int)'a', command);
 
         device.FireKeyDown((int)'a', KeyboardModifier.None);
@@ -616,8 +572,7 @@ public class DeviceHelperTest
     {
         var numOfCalls = 0;
         void command(KeyboardModifier mod) => numOfCalls++;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyDown((int)'a', command);
         device.RegisterKeyDown((int)'a', command);
 
@@ -630,8 +585,7 @@ public class DeviceHelperTest
     {
         var called = false;
         void command(KeyboardModifier mod) => called = true;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyDown((int)'a', command);
 
         device.FireKeyDown((int)'b', KeyboardModifier.None);
@@ -644,8 +598,7 @@ public class DeviceHelperTest
         var called = false;
         void first_command(KeyboardModifier mod) => called = true;
         void second_command(KeyboardModifier mod) { }
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyDown((int)'a', first_command);
         device.RegisterKeyDown((int)'b', second_command);
 
@@ -659,8 +612,7 @@ public class DeviceHelperTest
         var called = false;
         void first_command(KeyboardModifier mod) { }
         void second_command(KeyboardModifier mod) => called = true;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyDown((int)'a', first_command);
         device.RegisterKeyDown((int)'b', second_command);
 
@@ -674,8 +626,7 @@ public class DeviceHelperTest
         var called = false;
         void first_command(KeyboardModifier mod) { }
         void second_command(KeyboardModifier mod) => called = true;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyDown((int)'a', first_command);
         device.RegisterKeyDown((int)'b', second_command);
 
@@ -689,8 +640,7 @@ public class DeviceHelperTest
         var called = false;
         void first_command(KeyboardModifier mod) => called = true;
         void second_command(KeyboardModifier mod) { };
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterKeyDown((int)'a', first_command);
         device.RegisterKeyDown((int)'b', second_command);
 
@@ -707,8 +657,7 @@ public class DeviceHelperTest
     {
         var called = false;
         void command(Point position) => called = true;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterMouseDown(MouseButton.Right, command);
 
         device.FireMouseDown(MouseButton.Right);
@@ -720,8 +669,7 @@ public class DeviceHelperTest
     {
         var called = false;
         void command(Point position) => called = true;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterMouseDown(MouseButton.Left, command);
 
         device.FireMouseDown(MouseButton.Left);
@@ -733,8 +681,7 @@ public class DeviceHelperTest
     {
         var called = false;
         void command(Point position) => called = true;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterMouseDown(MouseButton.Middle, command);
 
         device.FireMouseDown(MouseButton.Middle);
@@ -746,8 +693,7 @@ public class DeviceHelperTest
     {
         var called = false;
         void command(Point position) => called = true;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterMouseDown(MouseButton.Right, command);
 
         device.FireMouseDown(MouseButton.Left);
@@ -760,8 +706,7 @@ public class DeviceHelperTest
         var called = false;
         void first_command(Point position) => called = true;
         void second_command(Point position){};
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterMouseDown(MouseButton.Left, first_command);
         device.RegisterMouseDown(MouseButton.Right, second_command);
 
@@ -775,8 +720,7 @@ public class DeviceHelperTest
         var called = false;
         void first_command(Point position) {}
         void second_command(Point position) => called = true;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterMouseDown(MouseButton.Left, first_command);
         device.RegisterMouseDown(MouseButton.Right, second_command);
 
@@ -789,8 +733,7 @@ public class DeviceHelperTest
     {
         var numOfCalls = 0;
         void command(Point position) => numOfCalls++;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterMouseDown(MouseButton.Right, command);
         device.RegisterMouseDown(MouseButton.Right, command);
 
@@ -805,8 +748,7 @@ public class DeviceHelperTest
     {
         var called = false;
         void command(MouseWheelDirection direction) => called = true;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterMouseWheelScroll(command);
 
         device.FireMouseWheel(MouseWheelDirection.Forward);
@@ -818,8 +760,7 @@ public class DeviceHelperTest
     {
         var calledWithForward = false;
         void command(MouseWheelDirection direction) => calledWithForward = direction == MouseWheelDirection.Forward;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterMouseWheelScroll(command);
 
         device.FireMouseWheel(MouseWheelDirection.Forward);
@@ -831,8 +772,7 @@ public class DeviceHelperTest
     {
         var calledWithBackward = false;
         void command(MouseWheelDirection direction) => calledWithBackward = direction == MouseWheelDirection.Backward;
-        var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+                var device = new DeviceHelper();
         device.RegisterMouseWheelScroll(command);
 
         device.FireMouseWheel(MouseWheelDirection.Backward);
@@ -846,9 +786,9 @@ public class DeviceHelperTest
     public void GivenRegisteredCommandXKeyUpA_whenGameIsSetAndFireKeyUpA_thenCommandXIsNotCalled()
     {
         var called = false;
-        void command(KeyboardModifier mod) => called = true;
         var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+        void command(KeyboardModifier mod) => called = true;
+                var device = new DeviceHelper();
         device.RegisterKeyUp('a', command);
 
         device.Game = gameDummy;
@@ -860,9 +800,9 @@ public class DeviceHelperTest
     public void GivenRegisteredCommandXKeyDownA_whenGameIsSetAndFireKeyDownA_thenCommandXIsNotCalled()
     {
         var called = false;
-        void command(KeyboardModifier mod) => called = true;
         var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+        void command(KeyboardModifier mod) => called = true;
+                var device = new DeviceHelper();
         device.RegisterKeyDown('a', command);
 
         device.Game = gameDummy;
@@ -874,9 +814,9 @@ public class DeviceHelperTest
     public void GivenCommandXMouseUpLeft_whenGameIsSetAndFireMouseUpLeft_thenCommandXIsNotCalled()
     {
         var called = false;
-        void command(Point p) => called = true;
         var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+        void command(Point p) => called = true;
+                var device = new DeviceHelper();
         device.RegisterMouseUp(MouseButton.Left, command);
 
         device.Game = gameDummy;
@@ -888,9 +828,9 @@ public class DeviceHelperTest
     public void GivenCommandXMouseDownLeft_whenGameIsSetAndFireMouseDownLeft_thenCommandXIsNotCalled()
     {
         var called = false;
-        void command(Point p) => called = true;
         var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+        void command(Point p) => called = true;
+                var device = new DeviceHelper();
         device.RegisterMouseDown(MouseButton.Left, command);
 
         device.Game = gameDummy;
@@ -902,9 +842,9 @@ public class DeviceHelperTest
     public void GivenCommandXMouseWheel_whenGameIsSetAndFireMouseWheel_thenCommandXIsNotCalled()
     {
         var called = false;
-        void command(MouseWheelDirection direction) => called = true;
         var gameDummy = new Game();
-        var device = new DeviceHelper(gameDummy);
+        void command(MouseWheelDirection direction) => called = true;
+                var device = new DeviceHelper();
         device.RegisterMouseWheelScroll(command);
 
         device.Game = gameDummy;
