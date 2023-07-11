@@ -16,6 +16,8 @@ public class Game
         _entitiesReferences = new Dictionary<Entity, LinkedListNode<Entity>>();
     }
 
+    public virtual void Configure(IDevice device){}
+
     internal void AddEntity(Entity entity)
     {
         var node = _entities.AddLast(entity);
@@ -32,7 +34,7 @@ public class Game
     {
         _systems.AddLast(system);
     }
-
+    // TODO start with device. Changes between games
     public void Start()
     {
         foreach (var entity in _entities) { entity.FireStart(); }
